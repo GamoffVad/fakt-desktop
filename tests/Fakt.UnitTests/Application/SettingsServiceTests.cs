@@ -86,7 +86,7 @@ public sealed class SettingsServiceLlmKeyTests : IDisposable
     {
         var stored = SavedWithKey();
 
-        Assert.Equal("api.example.test", stored.KeyBoundHost);
+        Assert.Equal("https://api.example.test", stored.KeyBoundHost);
         Assert.True(_h.Service.HasApiKey(stored.Id));
         Assert.DoesNotContain(Key, _h.SettingsJson);
         Assert.Equal(Key, _h.Service.BuildRuntimeConfig(stored, OpenAi).ApiKey);
@@ -96,6 +96,7 @@ public sealed class SettingsServiceLlmKeyTests : IDisposable
     [InlineData("https://evil.example.test/v1")]
     [InlineData("https://api.example.test:8443/v1")]
     [InlineData("https://api.example.test.evil.test/v1")]
+    [InlineData("http://api.example.test/v1")] // тот же хост, но без TLS: ключ не уходит открытым текстом
     public void BuildRuntimeConfig_RefusesToSendKeyToAnotherHost(string otherUrl)
     {
         var moved = SavedWithKey().Clone();
@@ -144,7 +145,7 @@ public sealed class SettingsServiceLlmKeyTests : IDisposable
         _h.Service.SaveProfile(renamed, makeActive: false);
 
         Assert.True(_h.Service.HasApiKey(renamed.Id));
-        Assert.Equal("api.example.test", Stored(renamed.Id).KeyBoundHost);
+        Assert.Equal("https://api.example.test", Stored(renamed.Id).KeyBoundHost);
         Assert.Equal("Переименованный профиль", Stored(renamed.Id).Name);
     }
 

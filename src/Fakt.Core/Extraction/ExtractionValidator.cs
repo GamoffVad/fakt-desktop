@@ -183,7 +183,8 @@ public sealed class ExtractionValidator
             RowHash = record.Hash,
         };
 
-        var scope = new RecordScope(record);
+        // В файле без заголовка имена колонок подобраны моделью и не подтверждают тип значения.
+        var scope = new RecordScope(record) { TrustColumnNames = context?.InferredColumnNames != true };
         var index = 0;
         foreach (var person in row.Persons ?? new List<PersonWire>())
         {
@@ -289,6 +290,7 @@ public sealed class ExtractionValidator
         draft.Patronymic = AcceptText(MainFields.Patronymic, person.Patronymic, sources, scope, context, draft);
         draft.BirthPlace = AcceptText(MainFields.BirthPlace, person.BirthPlace, sources, scope, context, draft);
         AcceptBirthDate(person.BirthDate, sources, scope, context, draft);
+        PromoteValidBirthDate(draft, context);
 
         ValidateFacts(person.Facts, scope, draft, draft);
 
@@ -417,6 +419,59 @@ public sealed class ExtractionValidator
         }
     }
 
+    private static readonly System.Text.RegularExpressions.Regex FullDottedDate =
+        new(@"^\s*(\d{1,2})\.(\d{1,2})\.(\d{4})\s*$", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+    private static readonly string[] ImpossibleDateReasons =
+    {
+        "невозмож", "некоррект", "несуществ", "не существ", "високос", "недопустим", "invalid", "impossible", "does not exist", "leap",
+    };
+
+    /// <summary>
+    /// Модель отнесла дату рождения к неразрешённым, сочтя её невозможной, а календарная проверка приложения
+    /// показывает, что это полная корректная дата дд.мм.гггг (частый случай — 29 февраля високосного года).
+    /// Решения модели по другим причинам (неоднозначность, принадлежность другому лицу) не пересматриваются.
+    /// </summary>
+    private static void PromoteValidBirthDate(ObservationDraft draft, ExtractionContext context)
+    {
+        if (draft.BirthDate.HasValue)
+        {
+            return;
+        }
+
+        var item = draft.Unresolved.FirstOrDefault(u => u.Field == MainFields.BirthDate);
+        var reason = item?.Reason ?? string.Empty;
+        if (item?.RawValue == null || !ImpossibleDateReasons.Any(r => reason.IndexOf(r, StringComparison.OrdinalIgnoreCase) >= 0))
+        {
+            return;
+        }
+
+        var match = FullDottedDate.Match(item.RawValue);
+        if (!match.Success)
+        {
+            return;
+        }
+
+        var day = int.Parse(match.Groups[1].Value, System.Globalization.CultureInfo.InvariantCulture);
+        var month = int.Parse(match.Groups[2].Value, System.Globalization.CultureInfo.InvariantCulture);
+        var year = int.Parse(match.Groups[3].Value, System.Globalization.CultureInfo.InvariantCulture);
+        if (month < 1 || month > 12 || day < 1 || day > DateTime.DaysInMonth(year, month))
+        {
+            return; // дата действительно невозможна
+        }
+
+        var check = BirthDateChecker.Check(new DateTime(year, month, day).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture), item.RawValue, context.Today);
+        if (!check.Date.HasValue)
+        {
+            return;
+        }
+
+        draft.BirthDate = check.Date;
+        draft.FieldProvenance[MainFields.BirthDate] = new FieldProvenance { SourceColumn = item.SourceColumn, Evidence = item.RawValue };
+        draft.Unresolved.Remove(item);
+        draft.Warnings.Add($"Дата рождения «{item.RawValue}» принята: модель сочла её невозможной («{item.Reason}»), но это полная корректная дата дд.мм.гггг (проверено приложением).");
+    }
+
     private static void ValidateFacts(List<FactWire> facts, RecordScope scope, ObservationDraft target, ObservationDraft person)
     {
         if (facts == null)
@@ -453,7 +508,7 @@ public sealed class ExtractionValidator
             }
 
             var value = fact.Value.Trim();
-            var corrected = FactTypeCorrection.Correct(type, value, fact.SourceColumn);
+            var corrected = FactTypeCorrection.Correct(type, value, scope.TrustColumnNames ? fact.SourceColumn : null);
             if (corrected != type)
             {
                 target.Warnings.Add($"Тип факта уточнён по формату значения: «{FactTypes.Title(type)}» → «{FactTypes.Title(corrected)}».");
@@ -541,6 +596,9 @@ public sealed class ExtractionValidator
         private readonly string _normalized;
         private readonly string _alnum;
         private HashSet<string> _words;
+
+        /// <summary>Имена колонок взяты из заголовка файла (а не подобраны моделью) и могут подтверждать тип значения.</summary>
+        public bool TrustColumnNames { get; set; } = true;
 
         public RecordScope(SourceRecord record)
         {

@@ -463,10 +463,14 @@ public sealed class OpenAiChatAdapter : LlmAdapterBase
             throw new LlmException(LlmErrorKind.InvalidResponse, "Ответ провайдера не является JSON.", result.StatusCode, result.RequestId);
         }
 
-        if (root["error"] != null && root["choices"] == null)
+        // JSON null — это JValue, а не null в C#: обращение к его полям бросает исключение, поэтому объекты
+        // извлекаются через «as JObject».
+        var error = root["error"];
+        if (error != null && error.Type != JTokenType.Null && root["choices"] == null)
         {
-            // OpenRouter может вернуть HTTP 200 с ошибкой в теле.
-            var status = root["error"]?["code"]?.Type == JTokenType.Integer ? (int)root["error"]["code"] : 502;
+            // OpenRouter может вернуть HTTP 200 с ошибкой в теле; ошибка бывает объектом или строкой.
+            var code = (error as JObject)?["code"];
+            var status = code?.Type == JTokenType.Integer ? (int)code : 502;
             throw LlmHttp.Classify(new HttpResult { StatusCode = status, Body = result.Body, Headers = result.Headers, RequestId = result.RequestId });
         }
 
@@ -483,8 +487,8 @@ public sealed class OpenAiChatAdapter : LlmAdapterBase
             RequestId = result.RequestId ?? (string)root["id"],
             Latency = result.Elapsed,
             ModelReported = (string)root["model"],
-            InputTokens = Int(root["usage"]?["prompt_tokens"]),
-            OutputTokens = Int(root["usage"]?["completion_tokens"]),
+            InputTokens = Int((root["usage"] as JObject)?["prompt_tokens"]),
+            OutputTokens = Int((root["usage"] as JObject)?["completion_tokens"]),
         };
         response.FinishReason = MapOpenAiFinish(response.RawFinishReason);
 

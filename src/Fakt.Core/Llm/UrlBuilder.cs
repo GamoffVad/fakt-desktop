@@ -105,6 +105,20 @@ public static class UrlBuilder
         return uri.IsDefaultPort ? uri.Host.ToLowerInvariant() : uri.Host.ToLowerInvariant() + ":" + uri.Port;
     }
 
+    /// <summary>
+    /// Привязка ключа API к адресу: схема, хост и нестандартный порт. Ключ, сохранённый для https, не отправляется
+    /// на http того же хоста (открытым текстом) и на другой хост или порт.
+    /// </summary>
+    public static string KeyBindingOf(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url) || !Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri))
+        {
+            return null;
+        }
+
+        return uri.Scheme.ToLowerInvariant() + "://" + HostOf(url);
+    }
+
     public static bool IsValidHttpUrl(string url, out string error)
     {
         error = null;

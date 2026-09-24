@@ -195,6 +195,13 @@ internal sealed class RecordingDatabaseAdmin : IDatabaseAdmin
 
     public string LastPassword { get; private set; }
 
+    public Task<DatabaseProvisionResult> EnsureDatabaseAsync(DatabaseSettings settings, string sqlPassword, string appliedBy, CancellationToken cancellationToken)
+    {
+        Calls++;
+        LastPassword = sqlPassword;
+        return Task.FromResult(new DatabaseProvisionResult { Existed = true });
+    }
+
     public Task<SchemaReport> InspectAsync(DatabaseSettings settings, string sqlPassword, CancellationToken cancellationToken)
     {
         Calls++;

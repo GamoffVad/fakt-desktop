@@ -16,7 +16,7 @@ namespace Fakt.Core.Extraction;
 /// </summary>
 public static class Prompts
 {
-    public const string StructurePromptVersion = "structure-v1";
+    public const string StructurePromptVersion = "structure-v2";
     public const string FactsPromptVersion = "facts-v2";
 
     public const string StructureSystem =
@@ -39,7 +39,7 @@ FIELDS (use null when not applicable; for unstructured and insufficient_sample o
 - has_header: true when the first line after the preamble contains column names.
 - header_row: absolute 0-based physical line index of the header, equal to skip_rows when has_header is true; null otherwise.
 - delimiter: exactly one character (""\t"" for tab). quote_char: normally ""\"""", null if fields are never quoted. escape_char: normally null.
-- columns: column names exactly as written in the header. Without a header: short Russian names derived from the values (""Фамилия"", ""Телефон"") or ""Колонка N"".
+- columns: column names exactly as written in the header. Without a header: give EVERY column a short Russian name that states what its values are, judged from the values in all sample lines (for example ""Номер записи"", ""ФИО"", ""Фамилия"", ""Дата рождения"", ""Место рождения"", ""Телефон"", ""E-mail"", ""ИНН"", ""СНИЛС"", ""Паспорт"", ""Номер счёта"", ""Номер карты"", ""Госномер"", ""VIN"", ""Адрес""). Russian identifier formats: INN - 10 or 12 digits; SNILS - 11 digits, usually XXX-XXX-XXX YY; bank account - 20 digits; bank card - 16 to 19 digits; license plate - letter, 3 digits, 2 letters, region (А123ВС77); VIN - 17 characters. Use ""Колонка N"" only when the values do not show their meaning. These names are used for all records of the file.
 - fixed_widths: for fixed_width only, the list of column widths in characters, left to right, so that every value fits.
 - xml_record_path: path to the repeating record element, e.g. ""/root/items/item"" or ""item""; use a prefix from xml_namespaces for namespaced elements (""p:person"").
 - xml_namespaces: list of {prefix, uri} for prefixes used in xml_record_path; empty list if none.

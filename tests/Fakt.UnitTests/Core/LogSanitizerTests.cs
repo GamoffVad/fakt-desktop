@@ -45,6 +45,23 @@ public sealed class LogSanitizerTests
         Assert.Equal(expected, LogSanitizer.Sanitize(text));
     }
 
+    [Theory]
+    [InlineData("password: hunter2hunter2", "password: ***")]
+    [InlineData("{\"user\":\"fakt\",\"password\":\"S3cr3t!\",\"db\":\"FAKT\"}", "{\"user\":\"fakt\",\"password\":\"***\",\"db\":\"FAKT\"}")]
+    [InlineData("PWD : qwerty12", "PWD : ***")]
+    [InlineData("Authorization: Basic dXNlcjpwYXNzd29yZA==", "Authorization: Basic ***")]
+    [InlineData("\"Authorization\": \"Basic dXNlcjpwYXNz\"", "\"Authorization\": \"Basic ***\"")]
+    public void PasswordsInOtherNotations_AndBasicAuth_AreMasked(string text, string expected)
+    {
+        Assert.Equal(expected, LogSanitizer.Sanitize(text));
+    }
+
+    [Fact]
+    public void WordsContainingPassword_WithoutValue_AreKept()
+    {
+        Assert.Equal("Введите пароль SQL (password) в настройках", LogSanitizer.Sanitize("Введите пароль SQL (password) в настройках"));
+    }
+
     [Fact]
     public void Emails_KeepFirstCharacterAndDomain()
     {

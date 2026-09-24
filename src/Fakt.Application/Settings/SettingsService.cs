@@ -154,7 +154,7 @@ public sealed class SettingsService
         Demand(Permission.ManageSettings);
         ValidateProfile(profile);
         var existing = Current.LlmProfiles.FirstOrDefault(p => p.Id == profile.Id);
-        var newHost = UrlBuilder.HostOf(profile.BaseUrl);
+        var newHost = UrlBuilder.KeyBindingOf(profile.BaseUrl);
         var copy = profile.Clone();
         if (existing != null && Secrets.Exists(SecretKeys.ApiKey(profile.Id)) && !string.Equals(copy.KeyBoundHost, newHost, StringComparison.OrdinalIgnoreCase))
         {
@@ -232,7 +232,7 @@ public sealed class SettingsService
         }
 
         Secrets.Set(SecretKeys.ApiKey(profileId), apiKey.Trim());
-        var host = UrlBuilder.HostOf(profile.BaseUrl);
+        var host = UrlBuilder.KeyBindingOf(profile.BaseUrl);
         Save(settings => settings.LlmProfiles.First(p => p.Id == profileId).KeyBoundHost = host, "ключ API (значение не записывается в настройки)");
     }
 
@@ -266,7 +266,7 @@ public sealed class SettingsService
         string key = null;
         if (secrets.Exists(SecretKeys.ApiKey(profile.Id)))
         {
-            var host = UrlBuilder.HostOf(profile.BaseUrl);
+            var host = UrlBuilder.KeyBindingOf(profile.BaseUrl);
             if (!string.Equals(profile.KeyBoundHost, host, StringComparison.OrdinalIgnoreCase))
             {
                 throw new LlmException(LlmErrorKind.Configuration,

@@ -252,7 +252,7 @@ public sealed class LlmSettingsViewModel : ObservableObject
                 return null;
             }
 
-            var host = UrlBuilder.HostOf(BaseUrl);
+            var host = UrlBuilder.KeyBindingOf(BaseUrl);
             return host != null && !string.Equals(host, _editing.KeyBoundHost, StringComparison.OrdinalIgnoreCase)
                 ? $"Base URL изменён ({host}): сохранённый ключ привязан к {_editing.KeyBoundHost} и не будет отправлен на новый адрес. При сохранении он будет удалён — введите ключ заново."
                 : null;

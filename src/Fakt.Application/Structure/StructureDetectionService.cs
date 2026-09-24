@@ -192,8 +192,34 @@ public sealed class StructureDetectionService
         }
 
         await ValidateWithParserAsync(file, effective, worker, settings, result, cancellationToken).ConfigureAwait(false);
+        ReconcileInferredColumnNames(result);
         result.Elapsed = stopwatch.Elapsed;
         return result;
+    }
+
+    /// <summary>
+    /// Файл без заголовка: имена колонок, подобранные моделью, сверяются со значениями предпросмотра, и явные
+    /// противоречия формату (например, «СНИЛС» у 12-значных номеров) исправляются с предупреждением.
+    /// </summary>
+    private static void ReconcileInferredColumnNames(StructureDetectionResult result)
+    {
+        var structure = result.Structure;
+        var preview = result.Validation?.Preview;
+        if (structure?.HasInferredColumnNames != true || structure.Columns == null || preview == null || preview.Rows.Count == 0)
+        {
+            return;
+        }
+
+        var rows = preview.Rows.Where(r => r.Values != null).Select(r => (IReadOnlyList<string>)r.Values).ToList();
+        foreach (var rename in InferredColumnNames.Reconcile(structure.Columns, rows))
+        {
+            if (rename.Index < preview.Columns.Count && preview.Columns[rename.Index] == rename.OldName)
+            {
+                preview.Columns[rename.Index] = rename.NewName;
+            }
+
+            result.Warnings.Add($"Имя колонки «{rename.OldName}», подобранное моделью, исправлено на «{rename.NewName}»: {rename.Reason}.");
+        }
     }
 
     /// <summary>Проверка структуры, заданной или исправленной пользователем, — без обращения к модели.</summary>

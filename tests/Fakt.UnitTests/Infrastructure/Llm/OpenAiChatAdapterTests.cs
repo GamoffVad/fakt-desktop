@@ -144,6 +144,29 @@ public sealed class OpenAiChatAdapterTests : LlmAdapterTestBase
     }
 
     [Fact]
+    public async Task NullUsage_IsToleratedAndTokensAreUnknown()
+    {
+        Server.Respond(MockResponse.Json(
+            "{\"id\":\"c1\",\"model\":\"m\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"rows\\\":[]}\"},\"finish_reason\":\"stop\"}],\"usage\":null,\"error\":null}"));
+
+        var response = await Complete(Config(OpenAi));
+
+        Assert.Equal("{\"rows\":[]}", response.Text);
+        Assert.Null(response.InputTokens);
+        Assert.Null(response.OutputTokens);
+    }
+
+    [Fact]
+    public async Task ErrorAsPlainString_IsClassifiedNotCrashed()
+    {
+        Server.Respond(MockResponse.Json("{\"error\":\"Upstream provider overloaded\"}"));
+
+        var ex = await Assert.ThrowsAsync<LlmException>(() => Complete(Config(OpenAi)));
+
+        Assert.True(ex.IsTransient, ex.Kind.ToString());
+    }
+
+    [Fact]
     public async Task LengthFinish_MarksResponseTruncated()
     {
         Server.Respond(MockResponse.Json(Completion("{\"rows\":[{\"source_row_id\":\"r1\"", "length")));

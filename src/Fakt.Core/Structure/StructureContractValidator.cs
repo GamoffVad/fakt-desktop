@@ -109,6 +109,26 @@ public static class StructureContractValidator
         return new StructureCheckResult(s, errors, warnings);
     }
 
+    /// <summary>
+    /// Эквивалентные записи пути приводятся к поддерживаемой форме: «./a/b» и «a/b/» — это «a/b».
+    /// Предикаты, атрибуты и поиск по потомкам («//») не нормализуются и отклоняются проверкой ниже.
+    /// </summary>
+    internal static string NormalizeXmlPath(string path)
+    {
+        var result = path?.Trim();
+        if (string.IsNullOrEmpty(result))
+        {
+            return result;
+        }
+
+        while (result.StartsWith("./", StringComparison.Ordinal))
+        {
+            result = result.Substring(2);
+        }
+
+        return result.Length > 1 ? result.TrimEnd('/') : result;
+    }
+
     private static void NormalizeEncoding(StructureDescriptor s, string detectedEncoding, List<string> warnings)
     {
         var detected = EncodingNames.Normalize(detectedEncoding);
@@ -242,7 +262,7 @@ public static class StructureContractValidator
 
     private static void ValidateXml(StructureDescriptor s, List<string> errors)
     {
-        s.XmlRecordPath = s.XmlRecordPath?.Trim();
+        s.XmlRecordPath = NormalizeXmlPath(s.XmlRecordPath);
         if (string.IsNullOrEmpty(s.XmlRecordPath))
         {
             errors.Add("Для XML не указан путь к повторяющимся записям (xml_record_path).");

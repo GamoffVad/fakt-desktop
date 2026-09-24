@@ -113,6 +113,8 @@ public static class LogSanitizer
         new(@"\bAIza[0-9A-Za-z_\-]{20,}", RegexOptions.CultureInvariant),
         new(@"\b(?:xai|gsk|fw|tgp|pplx)[-_][A-Za-z0-9_\-]{16,}", RegexOptions.CultureInvariant),
         new(@"(?i)\bBearer\s+[A-Za-z0-9._~+/=\-]{8,}", RegexOptions.CultureInvariant),
+        new(@"(?i)(\bauthorization\b""?)(\s*[:=]\s*""?(?:basic|digest|negotiate|ntlm)\s+)[A-Za-z0-9+/=._\-]{4,}", RegexOptions.CultureInvariant),
+        new(@"(?i)(""?\b(?:password|passwd|pwd)""?)(\s*:\s*""?)[^""\r\n,;}]+", RegexOptions.CultureInvariant),
         new(@"(?i)(api[-_ ]?key|x-api-key|api-key|x-goog-api-key|authorization|token|secret)(""?\s*[:=]\s*""?)[^\s"",;]{6,}", RegexOptions.CultureInvariant),
         new(@"(?i)\b(password|pwd)\s*=\s*[^;]*", RegexOptions.CultureInvariant),
     };
