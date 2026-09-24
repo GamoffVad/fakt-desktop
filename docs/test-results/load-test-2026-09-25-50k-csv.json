@@ -1,0 +1,1495 @@
+{
+  "tool": "Fakt.LoadTest",
+  "started_at_utc": "2026-09-24T21:44:39.4919248Z",
+  "finished_at_utc": "2026-09-24T21:45:18.2741408Z",
+  "command_line": "Fakt.LoadTest.exe --records 50000 --label 50k-csv",
+  "success": true,
+  "error": null,
+  "notes": [
+    "LLM заменён локальным детерминированным имитатором (Fakt.Testing.LocalLlmSimulator): он нагружает конвейер, но не является провайдером и не доказывает работу реальных API.",
+    "Замеры выполнены на Windows 11 (современная ОС). Целевая платформа Windows 7 SP1 x64 недоступна — совместимость и производительность на ней этим прогоном не проверены.",
+    "SQL Server работает на той же машине, что и клиент: сетевые задержки клиент–сервер не учтены."
+  ],
+  "environment": {
+    "machine": null,
+    "os": "Windows 11 Pro 25H2 (сборка 26200.9457, x64)",
+    "cpu": "Intel(R) Core(TM) Ultra 9 285K",
+    "logical_processors": 24,
+    "total_ram_gb": 95.4,
+    "dot_net_runtime": ".NET Framework 4.8.9345.0 (Release 533509)",
+    "is64_bit_process": true,
+    "gc_mode": "workstation, Interactive",
+    "sql_server": "localhost",
+    "sql_server_version": "17.0.1000.7",
+    "sql_server_edition": "Enterprise Developer Edition (64-bit)",
+    "sql_transport": "Shared memory",
+    "database": "FaktLoad_3b4cf9f38dff",
+    "database_recovery_model": "FULL",
+    "python_path": "D:\\Projects_new\\Fakt\\worker\\build\\out\\python\\python.exe",
+    "worker_directory": "worker",
+    "worker_version": "1.0.0",
+    "python_version": "3.8.10",
+    "pandas_version": "2.0.3",
+    "numpy_version": "1.23.5",
+    "worker_platform": "Windows-10-10.0.26200-SP0"
+  },
+  "settings": {
+    "records": 50000,
+    "format": "csv",
+    "chunk_size": 5000,
+    "batch_rows": 10,
+    "concurrency": 2,
+    "queue_capacity": 8,
+    "sql_batch_size": 500,
+    "max_input_tokens": 6000,
+    "simulator": "задержка 0 мс + 0 мс/запись; без внедрения ошибок",
+    "migrations_applied": [
+      "V001",
+      "V002",
+      "V003",
+      "V004",
+      "V005",
+      "V006",
+      "V007",
+      "V008"
+    ]
+  },
+  "data": {
+    "path": "testdata/large/synthetic_50000.csv",
+    "size_bytes": 7740964,
+    "size_mb": 7.4,
+    "generated": false,
+    "generation_seconds": 0.0,
+    "generator": "python tools/testdata/generate_testdata.py --large 50000 --large-dir <каталог> --large-format csv"
+  },
+  "parse_only": {
+    "seconds": 1.67,
+    "records": 50000,
+    "records_per_second": 30028.0,
+    "megabytes_per_second": 4.44,
+    "chunks": 11,
+    "bad_records": 0,
+    "blank_lines": 0,
+    "ordinals_contiguous": true,
+    "read_chunk_p50_ms": 129.0,
+    "read_chunk_p95_ms": 143.0,
+    "read_chunk_max_ms": 142.7,
+    "memory": {
+      "phase": "parse-only",
+      "seconds": 1.6709387,
+      "samples": 8,
+      "dot_net_peak_private_mb": 94.0078125,
+      "dot_net_peak_working_set_mb": 110.80078125,
+      "managed_heap_peak_mb": 52.924835205078125,
+      "python_peak_private_mb": 52.2578125,
+      "python_peak_working_set_mb": 67.7421875,
+      "python_os_peak_private_mb": 59.05859375,
+      "python_os_peak_working_set_mb": 73.55078125,
+      "max_in_flight_records": 0,
+      "average_in_flight_records": 0.0,
+      "series": [
+        {
+          "seconds": 0.0,
+          "dot_net_private_mb": 34.5,
+          "dot_net_working_set_mb": 50.2,
+          "managed_heap_mb": 2.1,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.25,
+          "dot_net_private_mb": 34.6,
+          "dot_net_working_set_mb": 52.9,
+          "managed_heap_mb": 5.6,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.5,
+          "dot_net_private_mb": 63.8,
+          "dot_net_working_set_mb": 82.1,
+          "managed_heap_mb": 37.3,
+          "python_private_mb": 50.5,
+          "python_working_set_mb": 66.1,
+          "records_read": 5000,
+          "records_committed": 5000
+        },
+        {
+          "seconds": 0.75,
+          "dot_net_private_mb": 60.8,
+          "dot_net_working_set_mb": 77.5,
+          "managed_heap_mb": 28.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 15000,
+          "records_committed": 15000
+        },
+        {
+          "seconds": 1.0,
+          "dot_net_private_mb": 62.1,
+          "dot_net_working_set_mb": 78.8,
+          "managed_heap_mb": 29.0,
+          "python_private_mb": 50.2,
+          "python_working_set_mb": 65.9,
+          "records_read": 25000,
+          "records_committed": 25000
+        },
+        {
+          "seconds": 1.25,
+          "dot_net_private_mb": 94.0,
+          "dot_net_working_set_mb": 110.8,
+          "managed_heap_mb": 28.4,
+          "python_private_mb": 50.2,
+          "python_working_set_mb": 65.9,
+          "records_read": 35000,
+          "records_committed": 35000
+        },
+        {
+          "seconds": 1.5,
+          "dot_net_private_mb": 86.4,
+          "dot_net_working_set_mb": 103.2,
+          "managed_heap_mb": 28.9,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.7,
+          "records_read": 45000,
+          "records_committed": 45000
+        },
+        {
+          "seconds": 1.67,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 107.2,
+          "managed_heap_mb": 52.9,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 50000,
+          "records_committed": 50000
+        }
+      ]
+    }
+  },
+  "pipeline": {
+    "job_status": "Completed",
+    "status_message": "Завершено",
+    "total_seconds": 20.31,
+    "hash_and_register_seconds": 0.04,
+    "processing_seconds": 20.27,
+    "records_per_second_total": 2462.0,
+    "records_per_second_processing": 2467.0,
+    "llm_requests": 5000,
+    "records_sent_to_llm": 50000,
+    "simulated_faults": {},
+    "commits": 841,
+    "failed_commits": 0,
+    "duplicate_commits": 0,
+    "average_rows_per_commit": 59.5,
+    "max_rows_per_commit": 110,
+    "commit_p50_ms": 21.0,
+    "commit_p95_ms": 30.0,
+    "commit_max_ms": 136.1,
+    "commit_total_seconds": 18.6,
+    "commit_busy_share": 0.916,
+    "worker_chunks": 11,
+    "worker_read_total_seconds": 1.1,
+    "worker_busy_share": 0.056,
+    "read_chunk_p50_ms": 114.0,
+    "read_chunk_p95_ms": 126.0,
+    "memory": {
+      "phase": "pipeline",
+      "seconds": 20.3055083,
+      "samples": 82,
+      "dot_net_peak_private_mb": 105.36328125,
+      "dot_net_peak_working_set_mb": 124.671875,
+      "managed_heap_peak_mb": 66.7519302368164,
+      "python_peak_private_mb": 52.77734375,
+      "python_peak_working_set_mb": 68.234375,
+      "python_os_peak_private_mb": 59.53125,
+      "python_os_peak_working_set_mb": 73.91796875,
+      "max_in_flight_records": 4990,
+      "average_in_flight_records": 2298.3544303797466,
+      "series": [
+        {
+          "seconds": 0.0,
+          "dot_net_private_mb": 39.5,
+          "dot_net_working_set_mb": 56.8,
+          "managed_heap_mb": 2.0,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.25,
+          "dot_net_private_mb": 41.8,
+          "dot_net_working_set_mb": 57.9,
+          "managed_heap_mb": 6.6,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.5,
+          "dot_net_private_mb": 64.9,
+          "dot_net_working_set_mb": 82.8,
+          "managed_heap_mb": 31.2,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.75,
+          "dot_net_private_mb": 67.5,
+          "dot_net_working_set_mb": 86.4,
+          "managed_heap_mb": 33.1,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 30
+        },
+        {
+          "seconds": 1.0,
+          "dot_net_private_mb": 67.4,
+          "dot_net_working_set_mb": 86.4,
+          "managed_heap_mb": 30.6,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 600
+        },
+        {
+          "seconds": 1.25,
+          "dot_net_private_mb": 68.8,
+          "dot_net_working_set_mb": 87.8,
+          "managed_heap_mb": 31.9,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 1200
+        },
+        {
+          "seconds": 1.5,
+          "dot_net_private_mb": 68.7,
+          "dot_net_working_set_mb": 87.7,
+          "managed_heap_mb": 34.9,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 1710
+        },
+        {
+          "seconds": 1.75,
+          "dot_net_private_mb": 70.5,
+          "dot_net_working_set_mb": 89.5,
+          "managed_heap_mb": 32.3,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 2280
+        },
+        {
+          "seconds": 2.0,
+          "dot_net_private_mb": 70.1,
+          "dot_net_working_set_mb": 89.1,
+          "managed_heap_mb": 35.7,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 3000
+        },
+        {
+          "seconds": 2.25,
+          "dot_net_private_mb": 71.2,
+          "dot_net_working_set_mb": 90.3,
+          "managed_heap_mb": 34.1,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 3720
+        },
+        {
+          "seconds": 2.5,
+          "dot_net_private_mb": 71.7,
+          "dot_net_working_set_mb": 90.8,
+          "managed_heap_mb": 34.8,
+          "python_private_mb": 46.6,
+          "python_working_set_mb": 62.4,
+          "records_read": 5000,
+          "records_committed": 4320
+        },
+        {
+          "seconds": 2.75,
+          "dot_net_private_mb": 74.8,
+          "dot_net_working_set_mb": 93.9,
+          "managed_heap_mb": 40.1,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 5000,
+          "records_committed": 5000
+        },
+        {
+          "seconds": 3.01,
+          "dot_net_private_mb": 95.6,
+          "dot_net_working_set_mb": 114.8,
+          "managed_heap_mb": 15.6,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 5480
+        },
+        {
+          "seconds": 3.26,
+          "dot_net_private_mb": 49.2,
+          "dot_net_working_set_mb": 68.4,
+          "managed_heap_mb": 14.9,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 6080
+        },
+        {
+          "seconds": 3.51,
+          "dot_net_private_mb": 51.0,
+          "dot_net_working_set_mb": 70.2,
+          "managed_heap_mb": 16.0,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 6810
+        },
+        {
+          "seconds": 3.76,
+          "dot_net_private_mb": 51.4,
+          "dot_net_working_set_mb": 70.6,
+          "managed_heap_mb": 15.0,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 7400
+        },
+        {
+          "seconds": 4.01,
+          "dot_net_private_mb": 52.5,
+          "dot_net_working_set_mb": 71.7,
+          "managed_heap_mb": 20.8,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 8240
+        },
+        {
+          "seconds": 4.26,
+          "dot_net_private_mb": 54.6,
+          "dot_net_working_set_mb": 73.9,
+          "managed_heap_mb": 22.3,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 8970
+        },
+        {
+          "seconds": 4.51,
+          "dot_net_private_mb": 53.7,
+          "dot_net_working_set_mb": 73.0,
+          "managed_heap_mb": 21.3,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.0,
+          "records_read": 10000,
+          "records_committed": 9570
+        },
+        {
+          "seconds": 4.76,
+          "dot_net_private_mb": 73.4,
+          "dot_net_working_set_mb": 92.7,
+          "managed_heap_mb": 41.9,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 10000,
+          "records_committed": 10000
+        },
+        {
+          "seconds": 5.03,
+          "dot_net_private_mb": 49.8,
+          "dot_net_working_set_mb": 69.1,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 10620
+        },
+        {
+          "seconds": 5.28,
+          "dot_net_private_mb": 51.7,
+          "dot_net_working_set_mb": 71.1,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 11340
+        },
+        {
+          "seconds": 5.53,
+          "dot_net_private_mb": 52.4,
+          "dot_net_working_set_mb": 71.7,
+          "managed_heap_mb": 17.1,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 11880
+        },
+        {
+          "seconds": 5.78,
+          "dot_net_private_mb": 54.1,
+          "dot_net_working_set_mb": 73.5,
+          "managed_heap_mb": 21.2,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 12600
+        },
+        {
+          "seconds": 6.03,
+          "dot_net_private_mb": 57.0,
+          "dot_net_working_set_mb": 76.4,
+          "managed_heap_mb": 22.2,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 13380
+        },
+        {
+          "seconds": 6.28,
+          "dot_net_private_mb": 57.0,
+          "dot_net_working_set_mb": 76.4,
+          "managed_heap_mb": 14.5,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 14100
+        },
+        {
+          "seconds": 6.54,
+          "dot_net_private_mb": 56.3,
+          "dot_net_working_set_mb": 75.7,
+          "managed_heap_mb": 14.7,
+          "python_private_mb": 51.4,
+          "python_working_set_mb": 66.8,
+          "records_read": 15000,
+          "records_committed": 14640
+        },
+        {
+          "seconds": 6.79,
+          "dot_net_private_mb": 83.6,
+          "dot_net_working_set_mb": 102.9,
+          "managed_heap_mb": 37.4,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 15000,
+          "records_committed": 15000
+        },
+        {
+          "seconds": 7.04,
+          "dot_net_private_mb": 74.7,
+          "dot_net_working_set_mb": 94.0,
+          "managed_heap_mb": 28.1,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 15720
+        },
+        {
+          "seconds": 7.29,
+          "dot_net_private_mb": 74.0,
+          "dot_net_working_set_mb": 93.3,
+          "managed_heap_mb": 34.4,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 16440
+        },
+        {
+          "seconds": 7.54,
+          "dot_net_private_mb": 73.8,
+          "dot_net_working_set_mb": 93.2,
+          "managed_heap_mb": 29.3,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 17160
+        },
+        {
+          "seconds": 7.79,
+          "dot_net_private_mb": 73.8,
+          "dot_net_working_set_mb": 93.2,
+          "managed_heap_mb": 32.0,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 17780
+        },
+        {
+          "seconds": 8.04,
+          "dot_net_private_mb": 73.6,
+          "dot_net_working_set_mb": 93.0,
+          "managed_heap_mb": 36.7,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 18360
+        },
+        {
+          "seconds": 8.29,
+          "dot_net_private_mb": 73.5,
+          "dot_net_working_set_mb": 92.9,
+          "managed_heap_mb": 36.8,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 19100
+        },
+        {
+          "seconds": 8.54,
+          "dot_net_private_mb": 74.4,
+          "dot_net_working_set_mb": 93.8,
+          "managed_heap_mb": 36.7,
+          "python_private_mb": 51.9,
+          "python_working_set_mb": 67.3,
+          "records_read": 20000,
+          "records_committed": 19820
+        },
+        {
+          "seconds": 8.79,
+          "dot_net_private_mb": 105.4,
+          "dot_net_working_set_mb": 124.7,
+          "managed_heap_mb": 66.8,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 20240
+        },
+        {
+          "seconds": 9.05,
+          "dot_net_private_mb": 49.4,
+          "dot_net_working_set_mb": 68.9,
+          "managed_heap_mb": 11.8,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 20940
+        },
+        {
+          "seconds": 9.3,
+          "dot_net_private_mb": 50.6,
+          "dot_net_working_set_mb": 70.1,
+          "managed_heap_mb": 15.1,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 21660
+        },
+        {
+          "seconds": 9.55,
+          "dot_net_private_mb": 51.9,
+          "dot_net_working_set_mb": 71.4,
+          "managed_heap_mb": 18.8,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 22180
+        },
+        {
+          "seconds": 9.8,
+          "dot_net_private_mb": 54.1,
+          "dot_net_working_set_mb": 73.6,
+          "managed_heap_mb": 18.3,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 22900
+        },
+        {
+          "seconds": 10.05,
+          "dot_net_private_mb": 55.8,
+          "dot_net_working_set_mb": 75.4,
+          "managed_heap_mb": 23.7,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 23700
+        },
+        {
+          "seconds": 10.3,
+          "dot_net_private_mb": 56.6,
+          "dot_net_working_set_mb": 76.1,
+          "managed_heap_mb": 18.3,
+          "python_private_mb": 51.6,
+          "python_working_set_mb": 67.1,
+          "records_read": 25000,
+          "records_committed": 24420
+        },
+        {
+          "seconds": 10.56,
+          "dot_net_private_mb": 60.6,
+          "dot_net_working_set_mb": 80.1,
+          "managed_heap_mb": 21.7,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 25000,
+          "records_committed": 25000
+        },
+        {
+          "seconds": 10.81,
+          "dot_net_private_mb": 74.3,
+          "dot_net_working_set_mb": 93.9,
+          "managed_heap_mb": 28.7,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 25480
+        },
+        {
+          "seconds": 11.06,
+          "dot_net_private_mb": 74.0,
+          "dot_net_working_set_mb": 93.6,
+          "managed_heap_mb": 33.1,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 26200
+        },
+        {
+          "seconds": 11.31,
+          "dot_net_private_mb": 75.3,
+          "dot_net_working_set_mb": 94.9,
+          "managed_heap_mb": 35.6,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 26680
+        },
+        {
+          "seconds": 11.56,
+          "dot_net_private_mb": 74.8,
+          "dot_net_working_set_mb": 94.3,
+          "managed_heap_mb": 36.0,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 27400
+        },
+        {
+          "seconds": 11.81,
+          "dot_net_private_mb": 74.2,
+          "dot_net_working_set_mb": 93.8,
+          "managed_heap_mb": 34.7,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 28120
+        },
+        {
+          "seconds": 12.06,
+          "dot_net_private_mb": 74.7,
+          "dot_net_working_set_mb": 94.3,
+          "managed_heap_mb": 34.5,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 28860
+        },
+        {
+          "seconds": 12.31,
+          "dot_net_private_mb": 74.1,
+          "dot_net_working_set_mb": 93.6,
+          "managed_heap_mb": 40.1,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 30000,
+          "records_committed": 29580
+        },
+        {
+          "seconds": 12.56,
+          "dot_net_private_mb": 104.3,
+          "dot_net_working_set_mb": 123.9,
+          "managed_heap_mb": 29.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 30000,
+          "records_committed": 30000
+        },
+        {
+          "seconds": 12.81,
+          "dot_net_private_mb": 99.1,
+          "dot_net_working_set_mb": 118.7,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 30620
+        },
+        {
+          "seconds": 13.06,
+          "dot_net_private_mb": 99.0,
+          "dot_net_working_set_mb": 118.6,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 31340
+        },
+        {
+          "seconds": 13.31,
+          "dot_net_private_mb": 99.0,
+          "dot_net_working_set_mb": 118.7,
+          "managed_heap_mb": 35.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 31820
+        },
+        {
+          "seconds": 13.56,
+          "dot_net_private_mb": 50.9,
+          "dot_net_working_set_mb": 70.6,
+          "managed_heap_mb": 14.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 32540
+        },
+        {
+          "seconds": 13.81,
+          "dot_net_private_mb": 52.2,
+          "dot_net_working_set_mb": 71.9,
+          "managed_heap_mb": 18.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 33190
+        },
+        {
+          "seconds": 14.06,
+          "dot_net_private_mb": 55.5,
+          "dot_net_working_set_mb": 75.1,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 33910
+        },
+        {
+          "seconds": 14.31,
+          "dot_net_private_mb": 56.1,
+          "dot_net_working_set_mb": 75.8,
+          "managed_heap_mb": 23.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 35000,
+          "records_committed": 34630
+        },
+        {
+          "seconds": 14.57,
+          "dot_net_private_mb": 77.0,
+          "dot_net_working_set_mb": 96.7,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 35000,
+          "records_committed": 35000
+        },
+        {
+          "seconds": 14.82,
+          "dot_net_private_mb": 78.5,
+          "dot_net_working_set_mb": 98.1,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 35620
+        },
+        {
+          "seconds": 15.07,
+          "dot_net_private_mb": 78.5,
+          "dot_net_working_set_mb": 98.2,
+          "managed_heap_mb": 30.6,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 36440
+        },
+        {
+          "seconds": 15.32,
+          "dot_net_private_mb": 77.7,
+          "dot_net_working_set_mb": 97.4,
+          "managed_heap_mb": 31.1,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 37160
+        },
+        {
+          "seconds": 15.57,
+          "dot_net_private_mb": 78.4,
+          "dot_net_working_set_mb": 98.1,
+          "managed_heap_mb": 35.2,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 37540
+        },
+        {
+          "seconds": 15.82,
+          "dot_net_private_mb": 77.4,
+          "dot_net_working_set_mb": 97.1,
+          "managed_heap_mb": 33.0,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 38360
+        },
+        {
+          "seconds": 16.07,
+          "dot_net_private_mb": 78.9,
+          "dot_net_working_set_mb": 98.5,
+          "managed_heap_mb": 40.4,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 39080
+        },
+        {
+          "seconds": 16.32,
+          "dot_net_private_mb": 78.6,
+          "dot_net_working_set_mb": 98.3,
+          "managed_heap_mb": 34.8,
+          "python_private_mb": 52.5,
+          "python_working_set_mb": 68.0,
+          "records_read": 40000,
+          "records_committed": 39800
+        },
+        {
+          "seconds": 16.57,
+          "dot_net_private_mb": 99.6,
+          "dot_net_working_set_mb": 119.2,
+          "managed_heap_mb": 33.2,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 40010
+        },
+        {
+          "seconds": 16.82,
+          "dot_net_private_mb": 99.9,
+          "dot_net_working_set_mb": 119.5,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 40730
+        },
+        {
+          "seconds": 17.07,
+          "dot_net_private_mb": 98.7,
+          "dot_net_working_set_mb": 118.3,
+          "managed_heap_mb": 30.2,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 41560
+        },
+        {
+          "seconds": 17.32,
+          "dot_net_private_mb": 98.9,
+          "dot_net_working_set_mb": 118.6,
+          "managed_heap_mb": 35.0,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 42290
+        },
+        {
+          "seconds": 17.58,
+          "dot_net_private_mb": 49.7,
+          "dot_net_working_set_mb": 69.4,
+          "managed_heap_mb": 14.6,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 42960
+        },
+        {
+          "seconds": 17.83,
+          "dot_net_private_mb": 50.7,
+          "dot_net_working_set_mb": 70.4,
+          "managed_heap_mb": 16.7,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 43610
+        },
+        {
+          "seconds": 18.08,
+          "dot_net_private_mb": 53.1,
+          "dot_net_working_set_mb": 72.9,
+          "managed_heap_mb": 18.0,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 43920
+        },
+        {
+          "seconds": 18.33,
+          "dot_net_private_mb": 53.5,
+          "dot_net_working_set_mb": 73.3,
+          "managed_heap_mb": 21.8,
+          "python_private_mb": 52.3,
+          "python_working_set_mb": 67.8,
+          "records_read": 45000,
+          "records_committed": 44690
+        },
+        {
+          "seconds": 18.58,
+          "dot_net_private_mb": 78.4,
+          "dot_net_working_set_mb": 98.1,
+          "managed_heap_mb": 41.2,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 45120
+        },
+        {
+          "seconds": 18.84,
+          "dot_net_private_mb": 49.5,
+          "dot_net_working_set_mb": 69.3,
+          "managed_heap_mb": 11.9,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 45800
+        },
+        {
+          "seconds": 19.09,
+          "dot_net_private_mb": 51.0,
+          "dot_net_working_set_mb": 70.8,
+          "managed_heap_mb": 13.5,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 46520
+        },
+        {
+          "seconds": 19.35,
+          "dot_net_private_mb": 53.3,
+          "dot_net_working_set_mb": 73.1,
+          "managed_heap_mb": 19.4,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 47240
+        },
+        {
+          "seconds": 19.6,
+          "dot_net_private_mb": 54.3,
+          "dot_net_working_set_mb": 74.1,
+          "managed_heap_mb": 19.2,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 48020
+        },
+        {
+          "seconds": 19.85,
+          "dot_net_private_mb": 56.2,
+          "dot_net_working_set_mb": 76.0,
+          "managed_heap_mb": 24.5,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 48740
+        },
+        {
+          "seconds": 20.1,
+          "dot_net_private_mb": 56.5,
+          "dot_net_working_set_mb": 76.3,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 52.8,
+          "python_working_set_mb": 68.2,
+          "records_read": 50000,
+          "records_committed": 49460
+        },
+        {
+          "seconds": 20.31,
+          "dot_net_private_mb": 56.3,
+          "dot_net_working_set_mb": 76.1,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 50000,
+          "records_committed": 50000
+        }
+      ]
+    },
+    "managed_heap_after_full_gc_mb": 2.4,
+    "dot_net_private_after_run_mb": 41.5,
+    "log_counts": {
+      "Info:job.created": 1,
+      "Info:job.finished": 1,
+      "Info:llm.request": 5000,
+      "Info:worker.started": 3
+    },
+    "recent_warnings": [],
+    "progress_by_share": [
+      {
+        "share": "10 %",
+        "seconds": 2.75,
+        "records_committed": 5000,
+        "dot_net_private_mb": 74.8,
+        "managed_heap_mb": 40.1,
+        "python_private_mb": 51.6,
+        "in_flight_records": 0
+      },
+      {
+        "share": "25 %",
+        "seconds": 5.78,
+        "records_committed": 12600,
+        "dot_net_private_mb": 54.1,
+        "managed_heap_mb": 21.2,
+        "python_private_mb": 51.4,
+        "in_flight_records": 2400
+      },
+      {
+        "share": "50 %",
+        "seconds": 10.56,
+        "records_committed": 25000,
+        "dot_net_private_mb": 60.6,
+        "managed_heap_mb": 21.7,
+        "python_private_mb": 52.3,
+        "in_flight_records": 0
+      },
+      {
+        "share": "75 %",
+        "seconds": 15.57,
+        "records_committed": 37540,
+        "dot_net_private_mb": 78.4,
+        "managed_heap_mb": 35.2,
+        "python_private_mb": 52.5,
+        "in_flight_records": 2460
+      },
+      {
+        "share": "90 %",
+        "seconds": 18.58,
+        "records_committed": 45120,
+        "dot_net_private_mb": 78.4,
+        "managed_heap_mb": 41.2,
+        "python_private_mb": 52.8,
+        "in_flight_records": 4880
+      },
+      {
+        "share": "100 %",
+        "seconds": 20.31,
+        "records_committed": 50000,
+        "dot_net_private_mb": 56.3,
+        "managed_heap_mb": 12.1,
+        "python_private_mb": 0.0,
+        "in_flight_records": 0
+      }
+    ]
+  },
+  "sql": {
+    "stored": {
+      "source_file_id": 1,
+      "extraction_version": "facts-v1-0079d47d6a315794",
+      "row_outcomes": 50000,
+      "distinct_ordinals": 50000,
+      "min_ordinal": 1,
+      "max_ordinal": 50000,
+      "outcome_extracted": 50000,
+      "outcome_no_facts": 0,
+      "outcome_errors": 0,
+      "person_facts": 50000,
+      "duplicate_observation_keys": 0,
+      "search_docs": 50000,
+      "fact_values": 150000,
+      "row_errors": 0,
+      "id_order_inversions": 0,
+      "confirmed_ordinal": 50000,
+      "completed": true,
+      "progress_extracted": 50000,
+      "progress_no_facts": 0,
+      "progress_errors": 0,
+      "progress_observations": 50000,
+      "content_hash": null,
+      "is_contiguous_up_to_checkpoint": true
+    },
+    "commit_log_rows": 841,
+    "job_file_records_read": 50000,
+    "job_file_extracted": 50000,
+    "job_file_observations": 50000,
+    "job_file_requests": 5000,
+    "database_size_mb": 328.0,
+    "data_used_mb": 273.1,
+    "log_size_mb": 264.0,
+    "verification_query_seconds": 0.3,
+    "tables": [
+      {
+        "table": "PersonFacts",
+        "rows": 50000,
+        "reserved_mb": 144.2
+      },
+      {
+        "table": "FaktSearchDocs",
+        "rows": 50000,
+        "reserved_mb": 72.4
+      },
+      {
+        "table": "FaktFactValues",
+        "rows": 150000,
+        "reserved_mb": 43.8
+      },
+      {
+        "table": "FaktRowOutcomes",
+        "rows": 50000,
+        "reserved_mb": 7.3
+      },
+      {
+        "table": "SourceFiles",
+        "rows": 1,
+        "reserved_mb": 0.2
+      },
+      {
+        "table": "FaktCommitLog",
+        "rows": 841,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktJobFiles",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktJobs",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktFileProgress",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktSchemaMigrations",
+        "rows": 8,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktRowErrors",
+        "rows": 0,
+        "reserved_mb": 0.0
+      }
+    ]
+  },
+  "verification": [
+    {
+      "name": "Задание завершено",
+      "passed": true,
+      "details": "Completed: Завершено"
+    },
+    {
+      "name": "Файл отмечен обработанным, граница = N",
+      "passed": true,
+      "details": "Completed=True, ConfirmedOrdinal=50 000"
+    },
+    {
+      "name": "Реестр строк: N записей, номера 1..N без пропусков и повторов",
+      "passed": true,
+      "details": "строк 50 000, различных 50 000, 1..50000"
+    },
+    {
+      "name": "Каждая запись дала результат «извлечено» без ошибок",
+      "passed": true,
+      "details": "извлечено 50 000, без фактов 0, ошибок 0, журнал ошибок 0"
+    },
+    {
+      "name": "PersonFacts: одно наблюдение на запись, без дубликатов ключа",
+      "passed": true,
+      "details": "наблюдений 50 000, повторов ключа 0"
+    },
+    {
+      "name": "Поисковая проекция: документ на каждое наблюдение",
+      "passed": true,
+      "details": "документов 50 000"
+    },
+    {
+      "name": "Индекс идентификаторов: телефон, e-mail и счёт каждого лица",
+      "passed": true,
+      "details": "значений 150 000 (ожидалось 150 000)"
+    },
+    {
+      "name": "Порядок ID наблюдений совпадает с порядком записей файла",
+      "passed": true,
+      "details": "нарушений 0"
+    },
+    {
+      "name": "Счётчики checkpoint равны содержимому реестра",
+      "passed": true,
+      "details": "checkpoint: 50 000/0/0/50 000"
+    },
+    {
+      "name": "Счётчики файла задания",
+      "passed": true,
+      "details": "прочитано 50 000, извлечено 50 000, наблюдений 50 000, запросов 5 000"
+    },
+    {
+      "name": "Журнал фиксаций: по записи на успешную фиксацию",
+      "passed": true,
+      "details": "записей журнала 841, фиксаций 841 (повторов-дубликатов 0)"
+    },
+    {
+      "name": "Выборочная сверка 25 записей файла с базой (ФИО, дата и место рождения, телефон, e-mail, счёт)",
+      "passed": true,
+      "details": "номера записей: 1, 470, 1763, 6426, 11898, 12043, 14491, 15636, 16001, 16666, 22330, 23326, 25000, 25341, 26351, 27655, 30178, 30193, 32109, 35882, 37786, 47029, 49980, 49999, 50000"
+    },
+    {
+      "name": "Поиск находит выбранную запись по телефону в другом формате и по ФИО с городом",
+      "passed": true,
+      "details": "телефон: строк 1; ФИО+город: строк 1"
+    }
+  ],
+  "full_text": {
+    "pending_at_pipeline_end": 25220,
+    "wait_seconds_after_pipeline": 14.0,
+    "timed_out": false,
+    "indexed_items": 50000,
+    "populate_status": 0
+  },
+  "search": [
+    {
+      "name": "fts_common_word",
+      "description": "Все слова: «Иван» (частое имя)",
+      "runs_ms": [
+        30.8,
+        3.7,
+        2.9
+      ],
+      "first_ms": 30.8,
+      "warm_median_ms": 3.3,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "fts_surname_name",
+      "description": "Все слова: «Тестов Иван»",
+      "runs_ms": [
+        3.5,
+        3.4,
+        2.9
+      ],
+      "first_ms": 3.5,
+      "warm_median_ms": 3.2,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "fts_rare_person",
+      "description": "Все слова: ФИО и город одной записи (Строкина … Макетовка)",
+      "runs_ms": [
+        2.6,
+        2.6,
+        2.5
+      ],
+      "first_ms": 2.6,
+      "warm_median_ms": 2.6,
+      "rows": 1,
+      "has_more": false,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "fts_exact_phrase",
+      "description": "Точная фраза: имя и отчество одной записи",
+      "runs_ms": [
+        2.9,
+        3.0,
+        2.7
+      ],
+      "first_ms": 2.9,
+      "warm_median_ms": 2.8,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "fts_any_word",
+      "description": "Любое слово: два города",
+      "runs_ms": [
+        3.5,
+        4.4,
+        3.4
+      ],
+      "first_ms": 3.5,
+      "warm_median_ms": 3.9,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "fts_file_code",
+      "description": "Все слова: код файла (совпадают все документы)",
+      "runs_ms": [
+        29.6,
+        29.6,
+        29.7
+      ],
+      "first_ms": 29.6,
+      "warm_median_ms": 29.6,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "identifier_phone",
+      "description": "Идентификатор: телефон одной записи в другом формате (тип «телефон»)",
+      "runs_ms": [
+        12.7,
+        0.4,
+        0.4
+      ],
+      "first_ms": 12.7,
+      "warm_median_ms": 0.4,
+      "rows": 1,
+      "has_more": false,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "identifier_account_any",
+      "description": "Идентификатор: счёт одной записи без указания типа",
+      "runs_ms": [
+        7.2,
+        0.3,
+        0.3
+      ],
+      "first_ms": 7.2,
+      "warm_median_ms": 0.3,
+      "rows": 1,
+      "has_more": false,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "identifier_prefix",
+      "description": "Идентификатор по началу: 7 первых цифр телефона",
+      "runs_ms": [
+        9.6,
+        0.7,
+        0.6
+      ],
+      "first_ms": 9.6,
+      "warm_median_ms": 0.6,
+      "rows": 14,
+      "has_more": false,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "filter_surname_prefix",
+      "description": "Фильтр: фамилия по началу «Синтетик»",
+      "runs_ms": [
+        4.7,
+        2.5,
+        1.7
+      ],
+      "first_ms": 4.7,
+      "warm_median_ms": 2.1,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "filter_birth_range",
+      "description": "Фильтр: дата рождения в январе 1990",
+      "runs_ms": [
+        3.6,
+        1.4,
+        1.1
+      ],
+      "first_ms": 3.6,
+      "warm_median_ms": 1.2,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "filter_birth_place",
+      "description": "Фильтр: место рождения «Макетовка» (полнотекстовый по проекции)",
+      "runs_ms": [
+        18.6,
+        4.2,
+        3.2
+      ],
+      "first_ms": 18.6,
+      "warm_median_ms": 3.7,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    },
+    {
+      "name": "count_common_word",
+      "description": "Точное число результатов «Иван» (отдельный подсчёт)",
+      "runs_ms": [
+        13.0,
+        7.5,
+        6.9
+      ],
+      "first_ms": 13.0,
+      "warm_median_ms": 7.2,
+      "rows": 0,
+      "has_more": false,
+      "total_count": 1724,
+      "used_full_text": true,
+      "error": null
+    },
+    {
+      "name": "substring_like",
+      "description": "Подстрока (LIKE %…%, без индекса): «интетико»",
+      "runs_ms": [
+        11.8,
+        8.6,
+        7.8
+      ],
+      "first_ms": 11.8,
+      "warm_median_ms": 8.2,
+      "rows": 50,
+      "has_more": true,
+      "total_count": null,
+      "used_full_text": false,
+      "error": null
+    }
+  ]
+}

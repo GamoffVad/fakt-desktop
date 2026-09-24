@@ -9,7 +9,7 @@ the header)."""
 from typing import Any, Dict, Iterator, List, Tuple
 
 from ..records import Record
-from . import BaseParser, LineSource
+from . import BaseParser, LineSource, drop_empty_skiprows
 
 _STRIP = "\r\n\t "
 
@@ -61,6 +61,7 @@ class FixedWidthParser(BaseParser):
             source, colspecs=self.colspecs, header=None, names=list(range(count)),
             index_col=None, dtype=str, keep_default_na=False, na_filter=False,
             skip_blank_lines=False, chunksize=self.chunk_size)
+        drop_empty_skiprows(reader)
         try:
             for frame in reader:
                 for row in frame.values.tolist():

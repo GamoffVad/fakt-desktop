@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import tracemalloc
 import unittest
 
 from fakt_worker import readers
@@ -53,6 +54,36 @@ class ReaderTests(TempDirTestCase):
         full, _ = read_all(jsonl_path, json_structure("jsonl"))
         resumed, _ = read_all(jsonl_path, json_structure("jsonl"), start_after_ordinal=40)
         self.assertEqual([key(r) for r in resumed], [key(r) for r in full[40:]])
+
+    def test_chunk_memory_does_not_grow_with_position_in_file(self):
+        # Regression: pandas' python engine built set(range(row number)) for every chunk, so the
+        # memory and time of one read_chunk grew with the position in the file (PROTOCOL.md §7).
+        rows = people(40000)
+        csv_path = self.write_text("long.csv", csv_text(rows, header=HEADER))
+        widths = [30, 12, 20, 9]
+        fixed_path = self.write_text("long.txt", "".join(
+            "".join(value.ljust(width) for value, width in zip(row, widths)) + "\r\n" for row in rows))
+        fixed = {"format": "fixed_width", "encoding": None, "has_header": False, "header_row": None,
+                 "skip_rows": 0, "columns": list(HEADER), "fixed_widths": widths}
+        for path, structure in ((csv_path, delimited_structure(list(HEADER))), (fixed_path, fixed)):
+            reader_id = self.open(path, structure, chunk_size=500)
+            peaks = []
+            total = 0
+            while True:
+                tracemalloc.start()  # Python 3.8 has no reset_peak: trace each chunk separately
+                chunk = readers.read_chunk({"reader_id": reader_id})
+                peaks.append(tracemalloc.get_traced_memory()[1])
+                tracemalloc.stop()
+                total += len(chunk["records"])
+                if chunk["eof"]:
+                    break
+            readers.close_reader({"reader_id": reader_id})
+            self.assertEqual(total, 40000, structure["format"])
+            early = max(peaks[1:6])
+            late = max(peaks[-6:])
+            self.assertLess(late, early * 1.5 + 256 * 1024,
+                            "%s: chunk memory peak %d bytes at the end of the file, %d at the start"
+                            % (structure["format"], late, early))
 
     def test_chunks_respect_max_chunk_bytes(self):
         rows = [[p[0], p[1], p[2], "текст " * 30] for p in people(300)]

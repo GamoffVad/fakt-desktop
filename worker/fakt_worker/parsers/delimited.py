@@ -28,7 +28,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple
 from ..protocol import INTERNAL_ERROR, INVALID_STRUCTURE, MAX_RECORD_CHARS, WorkerError
 from ..records import Record, error_record
 from ..structure import dedupe_columns, normalize_header_name
-from . import OVERSIZED_MARK, BaseParser, LineSource, fields_message
+from . import OVERSIZED_MARK, BaseParser, LineSource, drop_empty_skiprows, fields_message
 
 SENTINEL = ""
 _SEP = "\x1f"
@@ -291,6 +291,7 @@ class DelimitedParser(BaseParser):
             on_bad_lines=self._bad_lines_handler(ncols), quotechar=self.dialect["quotechar"],
             quoting=self.dialect["quoting"], escapechar=self.dialect["escapechar"],
             doublequote=True, skipinitialspace=False)
+        drop_empty_skiprows(reader)
         try:
             if len(trackers) != 1:
                 raise WorkerError(INTERNAL_ERROR, "Неподдерживаемая версия pandas: чтение CSV "

@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Нагрузочный тест конвейера FAKT на синтетических данных: настоящий Python worker (open_reader/read_chunk),
+       настоящие ProcessingService/FilePipeline/SqlFactWriter и временная база SQL Server. Провайдер LLM заменён
+       локальным имитатором — он нагружает конвейер, но не доказывает работу провайдера. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PlatformTarget>x64</PlatformTarget>
+    <RootNamespace>Fakt.LoadTest</RootNamespace>
+    <AssemblyName>Fakt.LoadTest</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Fakt.Core\Fakt.Core.csproj" />
+    <ProjectReference Include="..\..\src\Fakt.Application\Fakt.Application.csproj" />
+    <ProjectReference Include="..\..\src\Fakt.Infrastructure\Fakt.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Общая обвязка с интеграционными тестами конвейера: имитатор LLM, композиция сервисов, замеры памяти и стадий. -->
+    <Compile Include="..\..\tests\Fakt.IntegrationTests\Harness\*.cs" LinkBase="Harness" />
+  </ItemGroup>
+</Project>

@@ -1410,19 +1410,48 @@ def gen_security(out):
 # Большой файл для нагрузочного теста (по запросу, не в репозитории)
 # --------------------------------------------------------------------------------------
 
-def gen_large(count, directory):
-    # type: (int, str) -> str
+LARGE_COLUMNS = ["Номер", "ФИО", "Дата рождения", "Место рождения", "Телефон", "Email", "Номер счёта"]
+# Ширины колонок варианта fixed: каждое значение и имя колонки короче ширины (между колонками остаётся пробел).
+LARGE_FIXED_WIDTHS = [10, 45, 14, 20, 20, 40, 22]
+LARGE_EXTENSIONS = {"csv": "csv", "fixed": "txt", "jsonl": "jsonl"}
+
+
+def large_rows(count):
+    """Записи большого файла; одинаковы для всех форматов при одном N (одна последовательность ГСЧ)."""
+    rng = rng_for("large:%d" % count)
+    for i in range(1, count + 1):
+        p = make_person(rng)
+        yield ["%09d" % i, fio(p), d_dmy(p["birth"]), p["city"], fmt_phone(rand_phone10(rng), rng.choice(PHONE_STYLES)),
+               rand_email(rng, p), rand_account(rng, rng.random() < 0.1)]
+
+
+def gen_large(count, directory, fmt="csv"):
+    # type: (int, str, str) -> str
     if not os.path.isdir(directory):
         os.makedirs(directory)
-    path = os.path.join(directory, "synthetic_%d.csv" % count)
-    rng = rng_for("large:%d" % count)
-    with io.open(path, "w", encoding="utf-8", newline="") as handle:
-        handle.write("\ufeffНомер;ФИО;Дата рождения;Место рождения;Телефон;Email;Номер счёта\r\n")
-        for i in range(1, count + 1):
-            p = make_person(rng)
-            handle.write("%09d;%s;%s;%s;%s;%s;%s\r\n" % (
-                i, fio(p), d_dmy(p["birth"]), p["city"], fmt_phone(rand_phone10(rng), rng.choice(PHONE_STYLES)),
-                rand_email(rng, p), rand_account(rng, rng.random() < 0.1)))
+    path = os.path.join(directory, "synthetic_%d.%s" % (count, LARGE_EXTENSIONS[fmt]))
+    if fmt == "csv":
+        with io.open(path, "w", encoding="utf-8", newline="") as handle:
+            handle.write("\ufeff" + ";".join(LARGE_COLUMNS) + "\r\n")
+            for row in large_rows(count):
+                handle.write(";".join(row) + "\r\n")
+    elif fmt == "fixed":
+        def line(values):
+            for value, width in zip(values, LARGE_FIXED_WIDTHS):
+                if len(value) >= width:
+                    raise ValueError("Значение длиннее ширины колонки %d: %s" % (width, value))
+            return "".join(value.ljust(width) for value, width in zip(values, LARGE_FIXED_WIDTHS)).rstrip() + "\r\n"
+
+        with io.open(path, "w", encoding="utf-8", newline="") as handle:
+            handle.write("\ufeff" + line(LARGE_COLUMNS))
+            for row in large_rows(count):
+                handle.write(line(row))
+    elif fmt == "jsonl":
+        with io.open(path, "w", encoding="utf-8", newline="") as handle:
+            for row in large_rows(count):
+                handle.write(json.dumps(dict(zip(LARGE_COLUMNS, row)), ensure_ascii=False) + "\n")
+    else:
+        raise ValueError(fmt)
     return path
 
 
@@ -1510,7 +1539,8 @@ python tools/testdata/generate_testdata.py --scan-edge D:\\tmp\\fakt-scan-edge
 python tools/testdata/generate_testdata.py --cleanup-scan-edge D:\\tmp\\fakt-scan-edge
 ```
 
-- `--large N` — CSV на N синтетических записей для нагрузочного теста парсинга и SQL.
+- `--large N` — CSV на N синтетических записей для нагрузочного теста парсинга и SQL (`tools/Fakt.LoadTest`);
+  `--large-format fixed|jsonl` — те же записи в формате фиксированной ширины или JSON Lines.
 - `--scan-edge` — цикл junction, недоступный каталог (запрет ACL для текущего пользователя) и путь длиннее
   260 символов для проверки сканирования. `--cleanup-scan-edge` снимает запрет и удаляет каталог.
 
@@ -1594,6 +1624,8 @@ def main(argv=None):
     parser.add_argument("--out", default=os.path.join(REPO_ROOT, "testdata"), help="каталог набора (по умолчанию testdata/)")
     parser.add_argument("--large", type=int, default=0, help="создать CSV на N записей для нагрузочного теста")
     parser.add_argument("--large-dir", default=os.path.join(REPO_ROOT, "testdata", "large"), help="каталог большого файла")
+    parser.add_argument("--large-format", choices=sorted(LARGE_EXTENSIONS), default="csv",
+                        help="формат большого файла: csv (по умолчанию), fixed (фиксированная ширина) или jsonl")
     parser.add_argument("--scan-edge", help="создать каталог со сценариями сканирования (junction, ACL, длинный путь)")
     parser.add_argument("--cleanup-scan-edge", help="удалить каталог, созданный --scan-edge")
     args = parser.parse_args(argv)
@@ -1605,7 +1637,7 @@ def main(argv=None):
         make_scan_edge(args.scan_edge)
         return 0
     if args.large:
-        path = gen_large(args.large, args.large_dir)
+        path = gen_large(args.large, args.large_dir, args.large_format)
         print("Создан %s (%.1f МБ)" % (path, os.path.getsize(path) / 1048576.0))
         return 0
 
