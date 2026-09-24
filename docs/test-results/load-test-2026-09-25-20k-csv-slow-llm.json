@@ -1,0 +1,4531 @@
+{
+  "tool": "Fakt.LoadTest",
+  "started_at_utc": "2026-09-24T22:10:38.7135472Z",
+  "finished_at_utc": "2026-09-24T22:12:25.9694088Z",
+  "command_line": "Fakt.LoadTest.exe --records 20000 --latency-ms 200 --concurrency 4 --skip-parse-only --skip-search --label 20k-csv-slow-llm",
+  "success": true,
+  "error": null,
+  "notes": [
+    "LLM заменён локальным детерминированным имитатором (Fakt.Testing.LocalLlmSimulator): он нагружает конвейер, но не является провайдером и не доказывает работу реальных API.",
+    "Замеры выполнены на Windows 11 (современная ОС). Целевая платформа Windows 7 SP1 x64 недоступна — совместимость и производительность на ней этим прогоном не проверены.",
+    "SQL Server работает на той же машине, что и клиент: сетевые задержки клиент–сервер не учтены."
+  ],
+  "environment": {
+    "machine": null,
+    "os": "Windows 11 Pro 25H2 (сборка 26200.9457, x64)",
+    "cpu": "Intel(R) Core(TM) Ultra 9 285K",
+    "logical_processors": 24,
+    "total_ram_gb": 95.4,
+    "dot_net_runtime": ".NET Framework 4.8.9345.0 (Release 533509)",
+    "is64_bit_process": true,
+    "gc_mode": "workstation, Interactive",
+    "sql_server": "localhost",
+    "sql_server_version": "17.0.1000.7",
+    "sql_server_edition": "Enterprise Developer Edition (64-bit)",
+    "sql_transport": "Shared memory",
+    "database": "FaktLoad_a45787656681",
+    "database_recovery_model": "FULL",
+    "python_path": "D:\\Projects_new\\Fakt\\worker\\build\\out\\python\\python.exe",
+    "worker_directory": "worker",
+    "worker_version": "1.0.0",
+    "python_version": "3.8.10",
+    "pandas_version": "2.0.3",
+    "numpy_version": "1.23.5",
+    "worker_platform": "Windows-10-10.0.26200-SP0"
+  },
+  "settings": {
+    "records": 20000,
+    "format": "csv",
+    "chunk_size": 5000,
+    "batch_rows": 10,
+    "concurrency": 4,
+    "queue_capacity": 8,
+    "sql_batch_size": 500,
+    "max_input_tokens": 6000,
+    "simulator": "задержка 200 мс + 0 мс/запись; без внедрения ошибок",
+    "migrations_applied": [
+      "V001",
+      "V002",
+      "V003",
+      "V004",
+      "V005",
+      "V006",
+      "V007",
+      "V008"
+    ]
+  },
+  "data": {
+    "path": "testdata/large/synthetic_20000.csv",
+    "size_bytes": 3096122,
+    "size_mb": 3.0,
+    "generated": true,
+    "generation_seconds": 0.3,
+    "generator": "python tools/testdata/generate_testdata.py --large 20000 --large-dir <каталог> --large-format csv"
+  },
+  "parse_only": null,
+  "pipeline": {
+    "job_status": "Completed",
+    "status_message": "Завершено",
+    "total_seconds": 104.96,
+    "hash_and_register_seconds": 0.04,
+    "processing_seconds": 104.92,
+    "records_per_second_total": 191.0,
+    "records_per_second_processing": 191.0,
+    "llm_requests": 2000,
+    "records_sent_to_llm": 20000,
+    "simulated_faults": {},
+    "commits": 1353,
+    "failed_commits": 0,
+    "duplicate_commits": 0,
+    "average_rows_per_commit": 14.8,
+    "max_rows_per_commit": 40,
+    "commit_p50_ms": 13.0,
+    "commit_p95_ms": 16.0,
+    "commit_max_ms": 142.1,
+    "commit_total_seconds": 17.5,
+    "commit_busy_share": 0.167,
+    "worker_chunks": 5,
+    "worker_read_total_seconds": 0.4,
+    "worker_busy_share": 0.004,
+    "read_chunk_p50_ms": 100.0,
+    "read_chunk_p95_ms": 127.0,
+    "memory": {
+      "phase": "pipeline",
+      "seconds": 104.96201789999999,
+      "samples": 420,
+      "dot_net_peak_private_mb": 97.82421875,
+      "dot_net_peak_working_set_mb": 116.015625,
+      "managed_heap_peak_mb": 62.214035034179688,
+      "python_peak_private_mb": 51.984375,
+      "python_peak_working_set_mb": 67.5625,
+      "python_os_peak_private_mb": 58.7578125,
+      "python_os_peak_working_set_mb": 73.24609375,
+      "max_in_flight_records": 5080,
+      "average_in_flight_records": 2552.9807692307691,
+      "series": [
+        {
+          "seconds": 0.0,
+          "dot_net_private_mb": 34.7,
+          "dot_net_working_set_mb": 50.8,
+          "managed_heap_mb": 1.9,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.25,
+          "dot_net_private_mb": 37.1,
+          "dot_net_working_set_mb": 53.8,
+          "managed_heap_mb": 6.6,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.5,
+          "dot_net_private_mb": 58.0,
+          "dot_net_working_set_mb": 74.2,
+          "managed_heap_mb": 27.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 0.75,
+          "dot_net_private_mb": 65.9,
+          "dot_net_working_set_mb": 82.8,
+          "managed_heap_mb": 26.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 0,
+          "records_committed": 0
+        },
+        {
+          "seconds": 1.0,
+          "dot_net_private_mb": 66.5,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 28.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 20
+        },
+        {
+          "seconds": 1.25,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 28.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 80
+        },
+        {
+          "seconds": 1.5,
+          "dot_net_private_mb": 68.1,
+          "dot_net_working_set_mb": 85.9,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 130
+        },
+        {
+          "seconds": 1.75,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 31.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 200
+        },
+        {
+          "seconds": 2.01,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 240
+        },
+        {
+          "seconds": 2.26,
+          "dot_net_private_mb": 69.3,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 29.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 280
+        },
+        {
+          "seconds": 2.51,
+          "dot_net_private_mb": 69.3,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 29.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 320
+        },
+        {
+          "seconds": 2.76,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 360
+        },
+        {
+          "seconds": 3.01,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 32.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 440
+        },
+        {
+          "seconds": 3.26,
+          "dot_net_private_mb": 68.5,
+          "dot_net_working_set_mb": 86.4,
+          "managed_heap_mb": 30.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 480
+        },
+        {
+          "seconds": 3.51,
+          "dot_net_private_mb": 68.5,
+          "dot_net_working_set_mb": 86.4,
+          "managed_heap_mb": 31.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 520
+        },
+        {
+          "seconds": 3.76,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 560
+        },
+        {
+          "seconds": 4.01,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 630
+        },
+        {
+          "seconds": 4.26,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 680
+        },
+        {
+          "seconds": 4.51,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 720
+        },
+        {
+          "seconds": 4.76,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 29.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 760
+        },
+        {
+          "seconds": 5.01,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 29.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 800
+        },
+        {
+          "seconds": 5.26,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.7,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 870
+        },
+        {
+          "seconds": 5.51,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 84.7,
+          "managed_heap_mb": 32.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 920
+        },
+        {
+          "seconds": 5.76,
+          "dot_net_private_mb": 67.4,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 31.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 960
+        },
+        {
+          "seconds": 6.01,
+          "dot_net_private_mb": 67.4,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1000
+        },
+        {
+          "seconds": 6.26,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 31.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1040
+        },
+        {
+          "seconds": 6.51,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1110
+        },
+        {
+          "seconds": 6.76,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 84.8,
+          "managed_heap_mb": 32.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1150
+        },
+        {
+          "seconds": 7.01,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 84.8,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1200
+        },
+        {
+          "seconds": 7.26,
+          "dot_net_private_mb": 67.8,
+          "dot_net_working_set_mb": 85.8,
+          "managed_heap_mb": 31.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1240
+        },
+        {
+          "seconds": 7.51,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 27.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1280
+        },
+        {
+          "seconds": 7.76,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1350
+        },
+        {
+          "seconds": 8.02,
+          "dot_net_private_mb": 67.3,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 33.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1400
+        },
+        {
+          "seconds": 8.27,
+          "dot_net_private_mb": 67.0,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1440
+        },
+        {
+          "seconds": 8.52,
+          "dot_net_private_mb": 67.0,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1480
+        },
+        {
+          "seconds": 8.77,
+          "dot_net_private_mb": 67.3,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1520
+        },
+        {
+          "seconds": 9.02,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 28.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1590
+        },
+        {
+          "seconds": 9.27,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1640
+        },
+        {
+          "seconds": 9.52,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1680
+        },
+        {
+          "seconds": 9.77,
+          "dot_net_private_mb": 67.0,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1720
+        },
+        {
+          "seconds": 10.02,
+          "dot_net_private_mb": 67.0,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1760
+        },
+        {
+          "seconds": 10.27,
+          "dot_net_private_mb": 69.0,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 30.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1810
+        },
+        {
+          "seconds": 10.52,
+          "dot_net_private_mb": 69.0,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 35.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1880
+        },
+        {
+          "seconds": 10.77,
+          "dot_net_private_mb": 69.0,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 32.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1920
+        },
+        {
+          "seconds": 11.02,
+          "dot_net_private_mb": 69.0,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 32.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 1960
+        },
+        {
+          "seconds": 11.27,
+          "dot_net_private_mb": 69.0,
+          "dot_net_working_set_mb": 87.1,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2000
+        },
+        {
+          "seconds": 11.52,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2080
+        },
+        {
+          "seconds": 11.77,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2120
+        },
+        {
+          "seconds": 12.02,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2160
+        },
+        {
+          "seconds": 12.27,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2200
+        },
+        {
+          "seconds": 12.52,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 33.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2240
+        },
+        {
+          "seconds": 12.77,
+          "dot_net_private_mb": 68.0,
+          "dot_net_working_set_mb": 86.1,
+          "managed_heap_mb": 30.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2290
+        },
+        {
+          "seconds": 13.02,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 28.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2360
+        },
+        {
+          "seconds": 13.28,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2400
+        },
+        {
+          "seconds": 13.53,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2440
+        },
+        {
+          "seconds": 13.78,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 29.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2490
+        },
+        {
+          "seconds": 14.03,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2550
+        },
+        {
+          "seconds": 14.28,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2600
+        },
+        {
+          "seconds": 14.53,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 28.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2640
+        },
+        {
+          "seconds": 14.78,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 29.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2680
+        },
+        {
+          "seconds": 15.03,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 31.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2730
+        },
+        {
+          "seconds": 15.28,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2800
+        },
+        {
+          "seconds": 15.53,
+          "dot_net_private_mb": 67.3,
+          "dot_net_working_set_mb": 85.5,
+          "managed_heap_mb": 30.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2840
+        },
+        {
+          "seconds": 15.78,
+          "dot_net_private_mb": 67.3,
+          "dot_net_working_set_mb": 85.5,
+          "managed_heap_mb": 30.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2880
+        },
+        {
+          "seconds": 16.03,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 29.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2920
+        },
+        {
+          "seconds": 16.28,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 29.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 2970
+        },
+        {
+          "seconds": 16.53,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 31.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3040
+        },
+        {
+          "seconds": 16.78,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 31.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3080
+        },
+        {
+          "seconds": 17.03,
+          "dot_net_private_mb": 68.0,
+          "dot_net_working_set_mb": 86.1,
+          "managed_heap_mb": 30.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3120
+        },
+        {
+          "seconds": 17.28,
+          "dot_net_private_mb": 68.0,
+          "dot_net_working_set_mb": 86.1,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3170
+        },
+        {
+          "seconds": 17.53,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3240
+        },
+        {
+          "seconds": 17.79,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3280
+        },
+        {
+          "seconds": 18.04,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 30.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3320
+        },
+        {
+          "seconds": 18.29,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 31.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3360
+        },
+        {
+          "seconds": 18.54,
+          "dot_net_private_mb": 68.3,
+          "dot_net_working_set_mb": 86.5,
+          "managed_heap_mb": 29.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3400
+        },
+        {
+          "seconds": 18.79,
+          "dot_net_private_mb": 68.3,
+          "dot_net_working_set_mb": 86.5,
+          "managed_heap_mb": 34.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3470
+        },
+        {
+          "seconds": 19.04,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3520
+        },
+        {
+          "seconds": 19.29,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3560
+        },
+        {
+          "seconds": 19.54,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.2,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3600
+        },
+        {
+          "seconds": 19.79,
+          "dot_net_private_mb": 66.7,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3640
+        },
+        {
+          "seconds": 20.04,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3720
+        },
+        {
+          "seconds": 20.29,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.3,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3760
+        },
+        {
+          "seconds": 20.54,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3800
+        },
+        {
+          "seconds": 20.79,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3840
+        },
+        {
+          "seconds": 21.04,
+          "dot_net_private_mb": 68.6,
+          "dot_net_working_set_mb": 86.8,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3880
+        },
+        {
+          "seconds": 21.29,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 27.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 3930
+        },
+        {
+          "seconds": 21.54,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.7,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4000
+        },
+        {
+          "seconds": 21.79,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4040
+        },
+        {
+          "seconds": 22.04,
+          "dot_net_private_mb": 67.5,
+          "dot_net_working_set_mb": 85.8,
+          "managed_heap_mb": 31.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4080
+        },
+        {
+          "seconds": 22.29,
+          "dot_net_private_mb": 67.5,
+          "dot_net_working_set_mb": 85.8,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4120
+        },
+        {
+          "seconds": 22.54,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 31.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4160
+        },
+        {
+          "seconds": 22.79,
+          "dot_net_private_mb": 67.2,
+          "dot_net_working_set_mb": 85.5,
+          "managed_heap_mb": 33.9,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4230
+        },
+        {
+          "seconds": 23.04,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.0,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4280
+        },
+        {
+          "seconds": 23.3,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 32.6,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4320
+        },
+        {
+          "seconds": 23.55,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4360
+        },
+        {
+          "seconds": 23.8,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.8,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4400
+        },
+        {
+          "seconds": 24.05,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4480
+        },
+        {
+          "seconds": 24.3,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4520
+        },
+        {
+          "seconds": 24.55,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4560
+        },
+        {
+          "seconds": 24.8,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4600
+        },
+        {
+          "seconds": 25.05,
+          "dot_net_private_mb": 69.2,
+          "dot_net_working_set_mb": 87.4,
+          "managed_heap_mb": 30.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4640
+        },
+        {
+          "seconds": 25.3,
+          "dot_net_private_mb": 69.2,
+          "dot_net_working_set_mb": 87.4,
+          "managed_heap_mb": 35.1,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4710
+        },
+        {
+          "seconds": 25.55,
+          "dot_net_private_mb": 69.2,
+          "dot_net_working_set_mb": 87.4,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4760
+        },
+        {
+          "seconds": 25.8,
+          "dot_net_private_mb": 69.2,
+          "dot_net_working_set_mb": 87.4,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4800
+        },
+        {
+          "seconds": 26.05,
+          "dot_net_private_mb": 67.6,
+          "dot_net_working_set_mb": 85.8,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 46.0,
+          "python_working_set_mb": 61.7,
+          "records_read": 5000,
+          "records_committed": 4840
+        },
+        {
+          "seconds": 26.3,
+          "dot_net_private_mb": 93.1,
+          "dot_net_working_set_mb": 111.3,
+          "managed_heap_mb": 53.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 5000,
+          "records_committed": 4880
+        },
+        {
+          "seconds": 26.55,
+          "dot_net_private_mb": 93.1,
+          "dot_net_working_set_mb": 111.4,
+          "managed_heap_mb": 58.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 4920
+        },
+        {
+          "seconds": 26.8,
+          "dot_net_private_mb": 97.8,
+          "dot_net_working_set_mb": 116.0,
+          "managed_heap_mb": 58.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5000
+        },
+        {
+          "seconds": 27.05,
+          "dot_net_private_mb": 95.8,
+          "dot_net_working_set_mb": 114.2,
+          "managed_heap_mb": 13.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5040
+        },
+        {
+          "seconds": 27.3,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 14.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5080
+        },
+        {
+          "seconds": 27.56,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 14.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5120
+        },
+        {
+          "seconds": 27.81,
+          "dot_net_private_mb": 91.4,
+          "dot_net_working_set_mb": 109.8,
+          "managed_heap_mb": 14.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5160
+        },
+        {
+          "seconds": 28.06,
+          "dot_net_private_mb": 92.3,
+          "dot_net_working_set_mb": 110.7,
+          "managed_heap_mb": 19.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5240
+        },
+        {
+          "seconds": 28.31,
+          "dot_net_private_mb": 93.5,
+          "dot_net_working_set_mb": 111.9,
+          "managed_heap_mb": 20.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5280
+        },
+        {
+          "seconds": 28.56,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 15.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5320
+        },
+        {
+          "seconds": 28.81,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 15.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5360
+        },
+        {
+          "seconds": 29.06,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.5,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5410
+        },
+        {
+          "seconds": 29.31,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5470
+        },
+        {
+          "seconds": 29.56,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5520
+        },
+        {
+          "seconds": 29.81,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5560
+        },
+        {
+          "seconds": 30.06,
+          "dot_net_private_mb": 90.8,
+          "dot_net_working_set_mb": 109.3,
+          "managed_heap_mb": 15.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5600
+        },
+        {
+          "seconds": 30.31,
+          "dot_net_private_mb": 91.0,
+          "dot_net_working_set_mb": 109.5,
+          "managed_heap_mb": 18.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5670
+        },
+        {
+          "seconds": 30.56,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5710
+        },
+        {
+          "seconds": 30.81,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5760
+        },
+        {
+          "seconds": 31.06,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 15.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5800
+        },
+        {
+          "seconds": 31.31,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 16.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5840
+        },
+        {
+          "seconds": 31.56,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5910
+        },
+        {
+          "seconds": 31.81,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 12.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 5960
+        },
+        {
+          "seconds": 32.06,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6000
+        },
+        {
+          "seconds": 32.32,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6040
+        },
+        {
+          "seconds": 32.57,
+          "dot_net_private_mb": 91.1,
+          "dot_net_working_set_mb": 109.5,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6080
+        },
+        {
+          "seconds": 32.82,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 12.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6150
+        },
+        {
+          "seconds": 33.07,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 17.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6190
+        },
+        {
+          "seconds": 33.32,
+          "dot_net_private_mb": 91.2,
+          "dot_net_working_set_mb": 109.6,
+          "managed_heap_mb": 18.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6240
+        },
+        {
+          "seconds": 33.57,
+          "dot_net_private_mb": 90.0,
+          "dot_net_working_set_mb": 108.5,
+          "managed_heap_mb": 16.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6280
+        },
+        {
+          "seconds": 33.82,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6330
+        },
+        {
+          "seconds": 34.07,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 14.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6390
+        },
+        {
+          "seconds": 34.32,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 12.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6430
+        },
+        {
+          "seconds": 34.57,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 13.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6480
+        },
+        {
+          "seconds": 34.82,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 11.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6520
+        },
+        {
+          "seconds": 35.07,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 14.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6570
+        },
+        {
+          "seconds": 35.32,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6630
+        },
+        {
+          "seconds": 35.57,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6670
+        },
+        {
+          "seconds": 35.82,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 13.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6720
+        },
+        {
+          "seconds": 36.07,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 13.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6760
+        },
+        {
+          "seconds": 36.32,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 14.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6820
+        },
+        {
+          "seconds": 36.57,
+          "dot_net_private_mb": 90.1,
+          "dot_net_working_set_mb": 108.6,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6860
+        },
+        {
+          "seconds": 36.82,
+          "dot_net_private_mb": 91.1,
+          "dot_net_working_set_mb": 109.5,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6920
+        },
+        {
+          "seconds": 37.07,
+          "dot_net_private_mb": 91.1,
+          "dot_net_working_set_mb": 109.5,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 6960
+        },
+        {
+          "seconds": 37.33,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 16.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7010
+        },
+        {
+          "seconds": 37.58,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 16.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7060
+        },
+        {
+          "seconds": 37.83,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 14.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7100
+        },
+        {
+          "seconds": 38.08,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 17.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7150
+        },
+        {
+          "seconds": 38.33,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7200
+        },
+        {
+          "seconds": 38.58,
+          "dot_net_private_mb": 90.7,
+          "dot_net_working_set_mb": 109.1,
+          "managed_heap_mb": 18.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7260
+        },
+        {
+          "seconds": 38.83,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7300
+        },
+        {
+          "seconds": 39.08,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 16.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7340
+        },
+        {
+          "seconds": 39.33,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 14.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7380
+        },
+        {
+          "seconds": 39.58,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7440
+        },
+        {
+          "seconds": 39.83,
+          "dot_net_private_mb": 91.2,
+          "dot_net_working_set_mb": 109.6,
+          "managed_heap_mb": 17.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7500
+        },
+        {
+          "seconds": 40.08,
+          "dot_net_private_mb": 91.2,
+          "dot_net_working_set_mb": 109.6,
+          "managed_heap_mb": 17.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7540
+        },
+        {
+          "seconds": 40.33,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 16.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7580
+        },
+        {
+          "seconds": 40.58,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 15.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7620
+        },
+        {
+          "seconds": 40.83,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 13.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7680
+        },
+        {
+          "seconds": 41.08,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 12.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7740
+        },
+        {
+          "seconds": 41.33,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7780
+        },
+        {
+          "seconds": 41.59,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7820
+        },
+        {
+          "seconds": 41.84,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 15.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7860
+        },
+        {
+          "seconds": 42.09,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7940
+        },
+        {
+          "seconds": 42.34,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 7980
+        },
+        {
+          "seconds": 42.59,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8020
+        },
+        {
+          "seconds": 42.84,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8060
+        },
+        {
+          "seconds": 43.09,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8100
+        },
+        {
+          "seconds": 43.34,
+          "dot_net_private_mb": 91.7,
+          "dot_net_working_set_mb": 110.1,
+          "managed_heap_mb": 16.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8140
+        },
+        {
+          "seconds": 43.59,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 13.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8220
+        },
+        {
+          "seconds": 43.84,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 13.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8260
+        },
+        {
+          "seconds": 44.09,
+          "dot_net_private_mb": 91.2,
+          "dot_net_working_set_mb": 109.6,
+          "managed_heap_mb": 18.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8300
+        },
+        {
+          "seconds": 44.34,
+          "dot_net_private_mb": 91.6,
+          "dot_net_working_set_mb": 110.0,
+          "managed_heap_mb": 16.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8340
+        },
+        {
+          "seconds": 44.59,
+          "dot_net_private_mb": 90.7,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 13.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8410
+        },
+        {
+          "seconds": 44.84,
+          "dot_net_private_mb": 90.7,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 15.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8460
+        },
+        {
+          "seconds": 45.09,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 13.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8500
+        },
+        {
+          "seconds": 45.34,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 13.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8540
+        },
+        {
+          "seconds": 45.6,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.1,
+          "managed_heap_mb": 14.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8580
+        },
+        {
+          "seconds": 45.85,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.1,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8650
+        },
+        {
+          "seconds": 46.1,
+          "dot_net_private_mb": 90.8,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 14.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8700
+        },
+        {
+          "seconds": 46.35,
+          "dot_net_private_mb": 90.8,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 15.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8740
+        },
+        {
+          "seconds": 46.6,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 12.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8780
+        },
+        {
+          "seconds": 46.85,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 16.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8820
+        },
+        {
+          "seconds": 47.1,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 16.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8890
+        },
+        {
+          "seconds": 47.35,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 16.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8940
+        },
+        {
+          "seconds": 47.6,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 8980
+        },
+        {
+          "seconds": 47.85,
+          "dot_net_private_mb": 90.5,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 14.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9020
+        },
+        {
+          "seconds": 48.1,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 16.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9090
+        },
+        {
+          "seconds": 48.35,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.7,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9140
+        },
+        {
+          "seconds": 48.6,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9180
+        },
+        {
+          "seconds": 48.85,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 15.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9220
+        },
+        {
+          "seconds": 49.1,
+          "dot_net_private_mb": 90.7,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 14.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9260
+        },
+        {
+          "seconds": 49.35,
+          "dot_net_private_mb": 90.8,
+          "dot_net_working_set_mb": 109.2,
+          "managed_heap_mb": 16.3,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9310
+        },
+        {
+          "seconds": 49.6,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9380
+        },
+        {
+          "seconds": 49.85,
+          "dot_net_private_mb": 90.6,
+          "dot_net_working_set_mb": 109.0,
+          "managed_heap_mb": 17.5,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9420
+        },
+        {
+          "seconds": 50.1,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9460
+        },
+        {
+          "seconds": 50.36,
+          "dot_net_private_mb": 90.2,
+          "dot_net_working_set_mb": 108.7,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9500
+        },
+        {
+          "seconds": 50.61,
+          "dot_net_private_mb": 90.9,
+          "dot_net_working_set_mb": 109.4,
+          "managed_heap_mb": 14.2,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9550
+        },
+        {
+          "seconds": 50.86,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9620
+        },
+        {
+          "seconds": 51.11,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9660
+        },
+        {
+          "seconds": 51.36,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9700
+        },
+        {
+          "seconds": 51.61,
+          "dot_net_private_mb": 90.9,
+          "dot_net_working_set_mb": 109.4,
+          "managed_heap_mb": 15.6,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9740
+        },
+        {
+          "seconds": 51.86,
+          "dot_net_private_mb": 90.3,
+          "dot_net_working_set_mb": 108.8,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9790
+        },
+        {
+          "seconds": 52.11,
+          "dot_net_private_mb": 90.4,
+          "dot_net_working_set_mb": 108.9,
+          "managed_heap_mb": 13.4,
+          "python_private_mb": 50.6,
+          "python_working_set_mb": 66.2,
+          "records_read": 10000,
+          "records_committed": 9860
+        },
+        {
+          "seconds": 52.39,
+          "dot_net_private_mb": 64.2,
+          "dot_net_working_set_mb": 82.8,
+          "managed_heap_mb": 26.7,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 10000,
+          "records_committed": 9900
+        },
+        {
+          "seconds": 52.64,
+          "dot_net_private_mb": 64.4,
+          "dot_net_working_set_mb": 82.8,
+          "managed_heap_mb": 31.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 9940
+        },
+        {
+          "seconds": 52.89,
+          "dot_net_private_mb": 66.6,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 30.6,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10010
+        },
+        {
+          "seconds": 53.14,
+          "dot_net_private_mb": 67.4,
+          "dot_net_working_set_mb": 85.9,
+          "managed_heap_mb": 35.6,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10050
+        },
+        {
+          "seconds": 53.39,
+          "dot_net_private_mb": 68.4,
+          "dot_net_working_set_mb": 86.9,
+          "managed_heap_mb": 31.9,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10100
+        },
+        {
+          "seconds": 53.64,
+          "dot_net_private_mb": 68.7,
+          "dot_net_working_set_mb": 87.2,
+          "managed_heap_mb": 37.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10140
+        },
+        {
+          "seconds": 53.89,
+          "dot_net_private_mb": 69.3,
+          "dot_net_working_set_mb": 87.8,
+          "managed_heap_mb": 37.2,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10180
+        },
+        {
+          "seconds": 54.14,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.3,
+          "managed_heap_mb": 30.8,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10220
+        },
+        {
+          "seconds": 54.39,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10290
+        },
+        {
+          "seconds": 54.64,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 29.7,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10340
+        },
+        {
+          "seconds": 54.89,
+          "dot_net_private_mb": 66.2,
+          "dot_net_working_set_mb": 84.7,
+          "managed_heap_mb": 34.6,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10380
+        },
+        {
+          "seconds": 55.14,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10420
+        },
+        {
+          "seconds": 55.39,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.3,
+          "managed_heap_mb": 30.1,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10490
+        },
+        {
+          "seconds": 55.64,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.3,
+          "managed_heap_mb": 30.2,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10530
+        },
+        {
+          "seconds": 55.89,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.5,
+          "managed_heap_mb": 28.8,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10580
+        },
+        {
+          "seconds": 56.15,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.5,
+          "managed_heap_mb": 29.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10620
+        },
+        {
+          "seconds": 56.4,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.1,
+          "managed_heap_mb": 34.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10660
+        },
+        {
+          "seconds": 56.65,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.5,
+          "managed_heap_mb": 31.7,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10730
+        },
+        {
+          "seconds": 56.9,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 29.7,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10770
+        },
+        {
+          "seconds": 57.15,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 31.1,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10820
+        },
+        {
+          "seconds": 57.4,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10860
+        },
+        {
+          "seconds": 57.65,
+          "dot_net_private_mb": 65.2,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 32.2,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10900
+        },
+        {
+          "seconds": 57.9,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 30.5,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 10970
+        },
+        {
+          "seconds": 58.15,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11010
+        },
+        {
+          "seconds": 58.4,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.6,
+          "managed_heap_mb": 31.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11060
+        },
+        {
+          "seconds": 58.65,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.6,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11100
+        },
+        {
+          "seconds": 58.9,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 32.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11140
+        },
+        {
+          "seconds": 59.15,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11210
+        },
+        {
+          "seconds": 59.4,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 32.0,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11250
+        },
+        {
+          "seconds": 59.65,
+          "dot_net_private_mb": 65.2,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11300
+        },
+        {
+          "seconds": 59.9,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 51.8,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11340
+        },
+        {
+          "seconds": 60.15,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 30.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11380
+        },
+        {
+          "seconds": 60.4,
+          "dot_net_private_mb": 65.2,
+          "dot_net_working_set_mb": 83.8,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11450
+        },
+        {
+          "seconds": 60.65,
+          "dot_net_private_mb": 65.2,
+          "dot_net_working_set_mb": 83.8,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11490
+        },
+        {
+          "seconds": 60.91,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 31.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11540
+        },
+        {
+          "seconds": 61.16,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11580
+        },
+        {
+          "seconds": 61.41,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 33.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11620
+        },
+        {
+          "seconds": 61.66,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 33.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11690
+        },
+        {
+          "seconds": 61.91,
+          "dot_net_private_mb": 65.0,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 33.0,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11740
+        },
+        {
+          "seconds": 62.16,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.6,
+          "managed_heap_mb": 33.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11780
+        },
+        {
+          "seconds": 62.41,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.1,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11820
+        },
+        {
+          "seconds": 62.66,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 28.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11860
+        },
+        {
+          "seconds": 62.91,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 33.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11930
+        },
+        {
+          "seconds": 63.16,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 27.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 11980
+        },
+        {
+          "seconds": 63.41,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 32.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12020
+        },
+        {
+          "seconds": 63.66,
+          "dot_net_private_mb": 65.1,
+          "dot_net_working_set_mb": 83.7,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12060
+        },
+        {
+          "seconds": 63.91,
+          "dot_net_private_mb": 65.7,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 30.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12130
+        },
+        {
+          "seconds": 64.16,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 28.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12170
+        },
+        {
+          "seconds": 64.41,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 29.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12220
+        },
+        {
+          "seconds": 64.66,
+          "dot_net_private_mb": 66.3,
+          "dot_net_working_set_mb": 84.8,
+          "managed_heap_mb": 34.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12260
+        },
+        {
+          "seconds": 64.92,
+          "dot_net_private_mb": 66.3,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12300
+        },
+        {
+          "seconds": 65.17,
+          "dot_net_private_mb": 66.6,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 30.2,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12370
+        },
+        {
+          "seconds": 65.42,
+          "dot_net_private_mb": 66.6,
+          "dot_net_working_set_mb": 85.1,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12410
+        },
+        {
+          "seconds": 65.67,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 29.2,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12460
+        },
+        {
+          "seconds": 65.92,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 29.0,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12500
+        },
+        {
+          "seconds": 66.17,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 33.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12540
+        },
+        {
+          "seconds": 66.42,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12610
+        },
+        {
+          "seconds": 66.67,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.5,
+          "managed_heap_mb": 30.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12660
+        },
+        {
+          "seconds": 66.92,
+          "dot_net_private_mb": 66.9,
+          "dot_net_working_set_mb": 85.5,
+          "managed_heap_mb": 30.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12700
+        },
+        {
+          "seconds": 67.17,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 28.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12740
+        },
+        {
+          "seconds": 67.42,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 33.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12780
+        },
+        {
+          "seconds": 67.67,
+          "dot_net_private_mb": 66.3,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 30.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12850
+        },
+        {
+          "seconds": 67.92,
+          "dot_net_private_mb": 66.3,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 31.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12890
+        },
+        {
+          "seconds": 68.17,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 29.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12940
+        },
+        {
+          "seconds": 68.42,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 29.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 12980
+        },
+        {
+          "seconds": 68.67,
+          "dot_net_private_mb": 66.3,
+          "dot_net_working_set_mb": 84.9,
+          "managed_heap_mb": 34.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13020
+        },
+        {
+          "seconds": 68.92,
+          "dot_net_private_mb": 66.4,
+          "dot_net_working_set_mb": 85.0,
+          "managed_heap_mb": 31.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13070
+        },
+        {
+          "seconds": 69.17,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13130
+        },
+        {
+          "seconds": 69.43,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 32.2,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13180
+        },
+        {
+          "seconds": 69.68,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 29.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13220
+        },
+        {
+          "seconds": 69.93,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 29.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13260
+        },
+        {
+          "seconds": 70.18,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13330
+        },
+        {
+          "seconds": 70.43,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 32.1,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13370
+        },
+        {
+          "seconds": 70.68,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.6,
+          "managed_heap_mb": 31.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13410
+        },
+        {
+          "seconds": 70.93,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.6,
+          "managed_heap_mb": 31.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13460
+        },
+        {
+          "seconds": 71.18,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 29.1,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13500
+        },
+        {
+          "seconds": 71.43,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13570
+        },
+        {
+          "seconds": 71.68,
+          "dot_net_private_mb": 65.7,
+          "dot_net_working_set_mb": 84.3,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13610
+        },
+        {
+          "seconds": 71.93,
+          "dot_net_private_mb": 65.7,
+          "dot_net_working_set_mb": 84.3,
+          "managed_heap_mb": 33.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13650
+        },
+        {
+          "seconds": 72.18,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.6,
+          "managed_heap_mb": 31.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13700
+        },
+        {
+          "seconds": 72.43,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.6,
+          "managed_heap_mb": 33.0,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13740
+        },
+        {
+          "seconds": 72.68,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 32.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13810
+        },
+        {
+          "seconds": 72.93,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13850
+        },
+        {
+          "seconds": 73.18,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 32.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13890
+        },
+        {
+          "seconds": 73.43,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 33.2,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13940
+        },
+        {
+          "seconds": 73.68,
+          "dot_net_private_mb": 66.0,
+          "dot_net_working_set_mb": 84.7,
+          "managed_heap_mb": 29.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 13980
+        },
+        {
+          "seconds": 73.93,
+          "dot_net_private_mb": 66.8,
+          "dot_net_working_set_mb": 85.4,
+          "managed_heap_mb": 35.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14050
+        },
+        {
+          "seconds": 74.18,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 32.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14090
+        },
+        {
+          "seconds": 74.43,
+          "dot_net_private_mb": 65.3,
+          "dot_net_working_set_mb": 83.9,
+          "managed_heap_mb": 32.9,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14130
+        },
+        {
+          "seconds": 74.68,
+          "dot_net_private_mb": 65.4,
+          "dot_net_working_set_mb": 84.0,
+          "managed_heap_mb": 32.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14180
+        },
+        {
+          "seconds": 74.93,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.7,
+          "managed_heap_mb": 29.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14240
+        },
+        {
+          "seconds": 75.18,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.7,
+          "managed_heap_mb": 29.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14290
+        },
+        {
+          "seconds": 75.43,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.7,
+          "managed_heap_mb": 34.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14330
+        },
+        {
+          "seconds": 75.69,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.1,
+          "managed_heap_mb": 32.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14370
+        },
+        {
+          "seconds": 75.94,
+          "dot_net_private_mb": 65.5,
+          "dot_net_working_set_mb": 84.1,
+          "managed_heap_mb": 33.6,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14410
+        },
+        {
+          "seconds": 76.19,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 31.2,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14490
+        },
+        {
+          "seconds": 76.44,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 28.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14530
+        },
+        {
+          "seconds": 76.69,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 33.5,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14570
+        },
+        {
+          "seconds": 76.94,
+          "dot_net_private_mb": 65.6,
+          "dot_net_working_set_mb": 84.2,
+          "managed_heap_mb": 33.8,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14610
+        },
+        {
+          "seconds": 77.19,
+          "dot_net_private_mb": 65.8,
+          "dot_net_working_set_mb": 84.4,
+          "managed_heap_mb": 30.4,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14650
+        },
+        {
+          "seconds": 77.44,
+          "dot_net_private_mb": 66.1,
+          "dot_net_working_set_mb": 84.8,
+          "managed_heap_mb": 30.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14730
+        },
+        {
+          "seconds": 77.69,
+          "dot_net_private_mb": 66.1,
+          "dot_net_working_set_mb": 84.8,
+          "managed_heap_mb": 30.3,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14770
+        },
+        {
+          "seconds": 77.94,
+          "dot_net_private_mb": 66.6,
+          "dot_net_working_set_mb": 85.2,
+          "managed_heap_mb": 35.0,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14810
+        },
+        {
+          "seconds": 78.19,
+          "dot_net_private_mb": 67.1,
+          "dot_net_working_set_mb": 85.7,
+          "managed_heap_mb": 32.7,
+          "python_private_mb": 51.7,
+          "python_working_set_mb": 67.4,
+          "records_read": 15000,
+          "records_committed": 14850
+        },
+        {
+          "seconds": 78.44,
+          "dot_net_private_mb": 96.0,
+          "dot_net_working_set_mb": 114.7,
+          "managed_heap_mb": 56.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 15000,
+          "records_committed": 14890
+        },
+        {
+          "seconds": 78.69,
+          "dot_net_private_mb": 96.1,
+          "dot_net_working_set_mb": 114.7,
+          "managed_heap_mb": 55.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 14970
+        },
+        {
+          "seconds": 78.94,
+          "dot_net_private_mb": 96.1,
+          "dot_net_working_set_mb": 114.7,
+          "managed_heap_mb": 60.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15010
+        },
+        {
+          "seconds": 79.19,
+          "dot_net_private_mb": 96.1,
+          "dot_net_working_set_mb": 114.7,
+          "managed_heap_mb": 60.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15050
+        },
+        {
+          "seconds": 79.44,
+          "dot_net_private_mb": 96.1,
+          "dot_net_working_set_mb": 114.7,
+          "managed_heap_mb": 61.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15090
+        },
+        {
+          "seconds": 79.69,
+          "dot_net_private_mb": 96.4,
+          "dot_net_working_set_mb": 114.9,
+          "managed_heap_mb": 62.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15130
+        },
+        {
+          "seconds": 79.94,
+          "dot_net_private_mb": 94.1,
+          "dot_net_working_set_mb": 112.7,
+          "managed_heap_mb": 13.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15210
+        },
+        {
+          "seconds": 80.19,
+          "dot_net_private_mb": 94.1,
+          "dot_net_working_set_mb": 112.7,
+          "managed_heap_mb": 18.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15250
+        },
+        {
+          "seconds": 80.44,
+          "dot_net_private_mb": 94.1,
+          "dot_net_working_set_mb": 112.7,
+          "managed_heap_mb": 19.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15290
+        },
+        {
+          "seconds": 80.69,
+          "dot_net_private_mb": 94.1,
+          "dot_net_working_set_mb": 112.7,
+          "managed_heap_mb": 19.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15330
+        },
+        {
+          "seconds": 80.94,
+          "dot_net_private_mb": 94.1,
+          "dot_net_working_set_mb": 112.7,
+          "managed_heap_mb": 20.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15370
+        },
+        {
+          "seconds": 81.19,
+          "dot_net_private_mb": 88.5,
+          "dot_net_working_set_mb": 107.1,
+          "managed_heap_mb": 12.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15410
+        },
+        {
+          "seconds": 81.45,
+          "dot_net_private_mb": 88.5,
+          "dot_net_working_set_mb": 107.1,
+          "managed_heap_mb": 17.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15490
+        },
+        {
+          "seconds": 81.7,
+          "dot_net_private_mb": 88.5,
+          "dot_net_working_set_mb": 107.1,
+          "managed_heap_mb": 17.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15530
+        },
+        {
+          "seconds": 81.95,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 15.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15570
+        },
+        {
+          "seconds": 82.2,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15610
+        },
+        {
+          "seconds": 82.45,
+          "dot_net_private_mb": 88.8,
+          "dot_net_working_set_mb": 107.4,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15660
+        },
+        {
+          "seconds": 82.7,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 12.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15730
+        },
+        {
+          "seconds": 82.95,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15770
+        },
+        {
+          "seconds": 83.2,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15810
+        },
+        {
+          "seconds": 83.45,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15850
+        },
+        {
+          "seconds": 83.7,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15900
+        },
+        {
+          "seconds": 83.95,
+          "dot_net_private_mb": 88.8,
+          "dot_net_working_set_mb": 107.4,
+          "managed_heap_mb": 14.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 15970
+        },
+        {
+          "seconds": 84.2,
+          "dot_net_private_mb": 89.8,
+          "dot_net_working_set_mb": 108.4,
+          "managed_heap_mb": 11.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16010
+        },
+        {
+          "seconds": 84.45,
+          "dot_net_private_mb": 89.8,
+          "dot_net_working_set_mb": 108.4,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16050
+        },
+        {
+          "seconds": 84.7,
+          "dot_net_private_mb": 89.8,
+          "dot_net_working_set_mb": 108.4,
+          "managed_heap_mb": 17.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16090
+        },
+        {
+          "seconds": 84.95,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 16.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16140
+        },
+        {
+          "seconds": 85.2,
+          "dot_net_private_mb": 88.8,
+          "dot_net_working_set_mb": 107.5,
+          "managed_heap_mb": 14.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16210
+        },
+        {
+          "seconds": 85.45,
+          "dot_net_private_mb": 88.9,
+          "dot_net_working_set_mb": 107.5,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16250
+        },
+        {
+          "seconds": 85.7,
+          "dot_net_private_mb": 89.7,
+          "dot_net_working_set_mb": 108.3,
+          "managed_heap_mb": 19.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16290
+        },
+        {
+          "seconds": 85.95,
+          "dot_net_private_mb": 88.0,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 12.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16330
+        },
+        {
+          "seconds": 86.2,
+          "dot_net_private_mb": 88.5,
+          "dot_net_working_set_mb": 107.2,
+          "managed_heap_mb": 18.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16380
+        },
+        {
+          "seconds": 86.45,
+          "dot_net_private_mb": 89.0,
+          "dot_net_working_set_mb": 107.6,
+          "managed_heap_mb": 16.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16450
+        },
+        {
+          "seconds": 86.7,
+          "dot_net_private_mb": 89.8,
+          "dot_net_working_set_mb": 108.4,
+          "managed_heap_mb": 14.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16490
+        },
+        {
+          "seconds": 86.96,
+          "dot_net_private_mb": 89.8,
+          "dot_net_working_set_mb": 108.4,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16530
+        },
+        {
+          "seconds": 87.21,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 13.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16580
+        },
+        {
+          "seconds": 87.46,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16620
+        },
+        {
+          "seconds": 87.71,
+          "dot_net_private_mb": 89.2,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16690
+        },
+        {
+          "seconds": 87.96,
+          "dot_net_private_mb": 89.2,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 16.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16730
+        },
+        {
+          "seconds": 88.21,
+          "dot_net_private_mb": 89.7,
+          "dot_net_working_set_mb": 108.3,
+          "managed_heap_mb": 14.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16770
+        },
+        {
+          "seconds": 88.46,
+          "dot_net_private_mb": 89.7,
+          "dot_net_working_set_mb": 108.3,
+          "managed_heap_mb": 16.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16810
+        },
+        {
+          "seconds": 88.71,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 14.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16870
+        },
+        {
+          "seconds": 88.96,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 17.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16930
+        },
+        {
+          "seconds": 89.21,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 16970
+        },
+        {
+          "seconds": 89.46,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 15.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17010
+        },
+        {
+          "seconds": 89.71,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 15.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17060
+        },
+        {
+          "seconds": 89.96,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17110
+        },
+        {
+          "seconds": 90.21,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17170
+        },
+        {
+          "seconds": 90.46,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17210
+        },
+        {
+          "seconds": 90.71,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 16.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17250
+        },
+        {
+          "seconds": 90.97,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 16.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17300
+        },
+        {
+          "seconds": 91.22,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 16.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17350
+        },
+        {
+          "seconds": 91.47,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 12.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17400
+        },
+        {
+          "seconds": 91.72,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17450
+        },
+        {
+          "seconds": 91.97,
+          "dot_net_private_mb": 89.3,
+          "dot_net_working_set_mb": 107.9,
+          "managed_heap_mb": 18.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17490
+        },
+        {
+          "seconds": 92.22,
+          "dot_net_private_mb": 89.3,
+          "dot_net_working_set_mb": 107.9,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17540
+        },
+        {
+          "seconds": 92.47,
+          "dot_net_private_mb": 89.3,
+          "dot_net_working_set_mb": 107.9,
+          "managed_heap_mb": 18.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17580
+        },
+        {
+          "seconds": 92.72,
+          "dot_net_private_mb": 89.3,
+          "dot_net_working_set_mb": 107.9,
+          "managed_heap_mb": 13.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17630
+        },
+        {
+          "seconds": 92.97,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 12.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17690
+        },
+        {
+          "seconds": 93.22,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 13.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17740
+        },
+        {
+          "seconds": 93.47,
+          "dot_net_private_mb": 89.2,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 18.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17780
+        },
+        {
+          "seconds": 93.72,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 13.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17830
+        },
+        {
+          "seconds": 93.97,
+          "dot_net_private_mb": 88.5,
+          "dot_net_working_set_mb": 107.1,
+          "managed_heap_mb": 18.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17870
+        },
+        {
+          "seconds": 94.22,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17930
+        },
+        {
+          "seconds": 94.47,
+          "dot_net_private_mb": 88.4,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 13.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 17980
+        },
+        {
+          "seconds": 94.72,
+          "dot_net_private_mb": 88.4,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 13.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18020
+        },
+        {
+          "seconds": 94.97,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 13.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18070
+        },
+        {
+          "seconds": 95.22,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 14.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18120
+        },
+        {
+          "seconds": 95.48,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18170
+        },
+        {
+          "seconds": 95.73,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 15.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18220
+        },
+        {
+          "seconds": 95.98,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 14.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18260
+        },
+        {
+          "seconds": 96.23,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 15.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18310
+        },
+        {
+          "seconds": 96.48,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 15.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18360
+        },
+        {
+          "seconds": 96.73,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18410
+        },
+        {
+          "seconds": 96.98,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 16.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18460
+        },
+        {
+          "seconds": 97.23,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 17.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18510
+        },
+        {
+          "seconds": 97.48,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 15.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18550
+        },
+        {
+          "seconds": 97.73,
+          "dot_net_private_mb": 88.8,
+          "dot_net_working_set_mb": 107.5,
+          "managed_heap_mb": 18.4,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18600
+        },
+        {
+          "seconds": 97.98,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18650
+        },
+        {
+          "seconds": 98.23,
+          "dot_net_private_mb": 88.6,
+          "dot_net_working_set_mb": 107.2,
+          "managed_heap_mb": 18.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18700
+        },
+        {
+          "seconds": 98.48,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 17.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18750
+        },
+        {
+          "seconds": 98.73,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 12.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18800
+        },
+        {
+          "seconds": 98.98,
+          "dot_net_private_mb": 88.3,
+          "dot_net_working_set_mb": 107.0,
+          "managed_heap_mb": 13.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18840
+        },
+        {
+          "seconds": 99.23,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 12.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18890
+        },
+        {
+          "seconds": 99.49,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 14.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18940
+        },
+        {
+          "seconds": 99.74,
+          "dot_net_private_mb": 88.0,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 18990
+        },
+        {
+          "seconds": 99.99,
+          "dot_net_private_mb": 88.0,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 14.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19040
+        },
+        {
+          "seconds": 100.24,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 14.1,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19090
+        },
+        {
+          "seconds": 100.49,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 14.3,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19130
+        },
+        {
+          "seconds": 100.74,
+          "dot_net_private_mb": 89.2,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 14.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19180
+        },
+        {
+          "seconds": 100.99,
+          "dot_net_private_mb": 89.2,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19230
+        },
+        {
+          "seconds": 101.24,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 14.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19280
+        },
+        {
+          "seconds": 101.49,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 16.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19330
+        },
+        {
+          "seconds": 101.74,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 14.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19370
+        },
+        {
+          "seconds": 101.99,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 17.2,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19420
+        },
+        {
+          "seconds": 102.24,
+          "dot_net_private_mb": 88.0,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 16.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19470
+        },
+        {
+          "seconds": 102.49,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.7,
+          "managed_heap_mb": 16.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19520
+        },
+        {
+          "seconds": 102.74,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 16.6,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19570
+        },
+        {
+          "seconds": 102.99,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 16.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19610
+        },
+        {
+          "seconds": 103.24,
+          "dot_net_private_mb": 88.4,
+          "dot_net_working_set_mb": 107.1,
+          "managed_heap_mb": 17.7,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19670
+        },
+        {
+          "seconds": 103.49,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 11.9,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19720
+        },
+        {
+          "seconds": 103.74,
+          "dot_net_private_mb": 88.1,
+          "dot_net_working_set_mb": 106.8,
+          "managed_heap_mb": 17.0,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19760
+        },
+        {
+          "seconds": 104.0,
+          "dot_net_private_mb": 88.9,
+          "dot_net_working_set_mb": 107.5,
+          "managed_heap_mb": 18.5,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19810
+        },
+        {
+          "seconds": 104.25,
+          "dot_net_private_mb": 89.1,
+          "dot_net_working_set_mb": 107.8,
+          "managed_heap_mb": 16.8,
+          "python_private_mb": 52.0,
+          "python_working_set_mb": 67.6,
+          "records_read": 20000,
+          "records_committed": 19850
+        },
+        {
+          "seconds": 104.5,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 12.5,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 20000,
+          "records_committed": 19910
+        },
+        {
+          "seconds": 104.75,
+          "dot_net_private_mb": 88.2,
+          "dot_net_working_set_mb": 106.9,
+          "managed_heap_mb": 14.0,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 20000,
+          "records_committed": 19960
+        },
+        {
+          "seconds": 104.96,
+          "dot_net_private_mb": 89.0,
+          "dot_net_working_set_mb": 107.6,
+          "managed_heap_mb": 18.5,
+          "python_private_mb": 0.0,
+          "python_working_set_mb": 0.0,
+          "records_read": 20000,
+          "records_committed": 20000
+        }
+      ]
+    },
+    "managed_heap_after_full_gc_mb": 2.4,
+    "dot_net_private_after_run_mb": 41.2,
+    "log_counts": {
+      "Info:job.created": 1,
+      "Info:job.finished": 1,
+      "Info:llm.request": 2000,
+      "Info:worker.started": 3
+    },
+    "recent_warnings": [],
+    "progress_by_share": [
+      {
+        "share": "10 %",
+        "seconds": 11.27,
+        "records_committed": 2000,
+        "dot_net_private_mb": 69.0,
+        "managed_heap_mb": 31.3,
+        "python_private_mb": 46.0,
+        "in_flight_records": 3000
+      },
+      {
+        "share": "25 %",
+        "seconds": 26.8,
+        "records_committed": 5000,
+        "dot_net_private_mb": 97.8,
+        "managed_heap_mb": 58.0,
+        "python_private_mb": 50.6,
+        "in_flight_records": 5000
+      },
+      {
+        "share": "50 %",
+        "seconds": 52.89,
+        "records_committed": 10010,
+        "dot_net_private_mb": 66.6,
+        "managed_heap_mb": 30.6,
+        "python_private_mb": 51.8,
+        "in_flight_records": 4990
+      },
+      {
+        "share": "75 %",
+        "seconds": 78.94,
+        "records_committed": 15010,
+        "dot_net_private_mb": 96.1,
+        "managed_heap_mb": 60.6,
+        "python_private_mb": 52.0,
+        "in_flight_records": 4990
+      },
+      {
+        "share": "90 %",
+        "seconds": 94.72,
+        "records_committed": 18020,
+        "dot_net_private_mb": 88.4,
+        "managed_heap_mb": 13.8,
+        "python_private_mb": 52.0,
+        "in_flight_records": 1980
+      },
+      {
+        "share": "100 %",
+        "seconds": 104.96,
+        "records_committed": 20000,
+        "dot_net_private_mb": 89.0,
+        "managed_heap_mb": 18.5,
+        "python_private_mb": 0.0,
+        "in_flight_records": 0
+      }
+    ]
+  },
+  "sql": {
+    "stored": {
+      "source_file_id": 1,
+      "extraction_version": "facts-v1-0079d47d6a315794",
+      "row_outcomes": 20000,
+      "distinct_ordinals": 20000,
+      "min_ordinal": 1,
+      "max_ordinal": 20000,
+      "outcome_extracted": 20000,
+      "outcome_no_facts": 0,
+      "outcome_errors": 0,
+      "person_facts": 20000,
+      "duplicate_observation_keys": 0,
+      "search_docs": 20000,
+      "fact_values": 60000,
+      "row_errors": 0,
+      "id_order_inversions": 0,
+      "confirmed_ordinal": 20000,
+      "completed": true,
+      "progress_extracted": 20000,
+      "progress_no_facts": 0,
+      "progress_errors": 0,
+      "progress_observations": 20000,
+      "content_hash": null,
+      "is_contiguous_up_to_checkpoint": true
+    },
+    "commit_log_rows": 1353,
+    "job_file_records_read": 20000,
+    "job_file_extracted": 20000,
+    "job_file_observations": 20000,
+    "job_file_requests": 2000,
+    "database_size_mb": 136.0,
+    "data_used_mb": 125.9,
+    "log_size_mb": 200.0,
+    "verification_query_seconds": 0.1,
+    "tables": [
+      {
+        "table": "PersonFacts",
+        "rows": 20000,
+        "reserved_mb": 57.7
+      },
+      {
+        "table": "FaktSearchDocs",
+        "rows": 20000,
+        "reserved_mb": 41.0
+      },
+      {
+        "table": "FaktFactValues",
+        "rows": 60000,
+        "reserved_mb": 18.3
+      },
+      {
+        "table": "FaktRowOutcomes",
+        "rows": 20000,
+        "reserved_mb": 2.9
+      },
+      {
+        "table": "FaktCommitLog",
+        "rows": 1353,
+        "reserved_mb": 0.3
+      },
+      {
+        "table": "SourceFiles",
+        "rows": 1,
+        "reserved_mb": 0.2
+      },
+      {
+        "table": "FaktJobFiles",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktJobs",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktFileProgress",
+        "rows": 1,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktSchemaMigrations",
+        "rows": 8,
+        "reserved_mb": 0.1
+      },
+      {
+        "table": "FaktRowErrors",
+        "rows": 0,
+        "reserved_mb": 0.0
+      }
+    ]
+  },
+  "verification": [
+    {
+      "name": "Задание завершено",
+      "passed": true,
+      "details": "Completed: Завершено"
+    },
+    {
+      "name": "Файл отмечен обработанным, граница = N",
+      "passed": true,
+      "details": "Completed=True, ConfirmedOrdinal=20 000"
+    },
+    {
+      "name": "Реестр строк: N записей, номера 1..N без пропусков и повторов",
+      "passed": true,
+      "details": "строк 20 000, различных 20 000, 1..20000"
+    },
+    {
+      "name": "Каждая запись дала результат «извлечено» без ошибок",
+      "passed": true,
+      "details": "извлечено 20 000, без фактов 0, ошибок 0, журнал ошибок 0"
+    },
+    {
+      "name": "PersonFacts: одно наблюдение на запись, без дубликатов ключа",
+      "passed": true,
+      "details": "наблюдений 20 000, повторов ключа 0"
+    },
+    {
+      "name": "Поисковая проекция: документ на каждое наблюдение",
+      "passed": true,
+      "details": "документов 20 000"
+    },
+    {
+      "name": "Индекс идентификаторов: телефон, e-mail и счёт каждого лица",
+      "passed": true,
+      "details": "значений 60 000 (ожидалось 60 000)"
+    },
+    {
+      "name": "Порядок ID наблюдений совпадает с порядком записей файла",
+      "passed": true,
+      "details": "нарушений 0"
+    },
+    {
+      "name": "Счётчики checkpoint равны содержимому реестра",
+      "passed": true,
+      "details": "checkpoint: 20 000/0/0/20 000"
+    },
+    {
+      "name": "Счётчики файла задания",
+      "passed": true,
+      "details": "прочитано 20 000, извлечено 20 000, наблюдений 20 000, запросов 2 000"
+    },
+    {
+      "name": "Журнал фиксаций: по записи на успешную фиксацию",
+      "passed": true,
+      "details": "записей журнала 1 353, фиксаций 1 353 (повторов-дубликатов 0)"
+    },
+    {
+      "name": "Выборочная сверка 25 записей файла с базой (ФИО, дата и место рождения, телефон, e-mail, счёт)",
+      "passed": true,
+      "details": "номера записей: 1, 188, 705, 2571, 4760, 4817, 5797, 6255, 6401, 6666, 8932, 9331, 10000, 10137, 10541, 11062, 12072, 12077, 12844, 14353, 15115, 18812, 19992, 19999, 20000"
+    }
+  ],
+  "full_text": null,
+  "search": []
+}

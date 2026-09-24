@@ -40,6 +40,9 @@ public sealed class PythonWorkerClient : IWorkerClient
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly LinkedList<string> _stderrTail = new();
     private readonly object _stderrGate = new();
+
+    // Читатель существует только в процессе, который его открыл.
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, Process> _readerOwners = new(StringComparer.Ordinal);
     private Process _process;
     private StreamWriter _stdin;
     private Task _readerTask;
@@ -108,11 +111,19 @@ public sealed class PythonWorkerClient : IWorkerClient
             ["expected_mtime_ns"] = request.ExpectedMtimeNs,
         };
         var result = await SendAsync("open_reader", args, _launch.DefaultTimeout, cancellationToken).ConfigureAwait(false);
-        return (string)result["reader_id"];
+        var readerId = (string)result["reader_id"];
+        var owner = _process;
+        if (readerId != null && owner != null)
+        {
+            _readerOwners[readerId] = owner;
+        }
+
+        return readerId;
     }
 
     public async Task<RecordChunk> ReadChunkAsync(string readerId, CancellationToken cancellationToken)
     {
+        EnsureReaderProcessAlive(readerId);
         // Пропуск до границы возобновления может потребовать перечитывания большой части файла.
         var result = await SendAsync("read_chunk", new JObject { ["reader_id"] = readerId }, TimeSpan.FromHours(2), cancellationToken).ConfigureAwait(false);
         return result.ToObject<RecordChunk>();
@@ -120,12 +131,49 @@ public sealed class PythonWorkerClient : IWorkerClient
 
     public async Task CloseReaderAsync(string readerId, CancellationToken cancellationToken)
     {
+        _readerOwners.TryRemove(readerId ?? string.Empty, out _);
         if (_faulted || _process == null)
         {
             return;
         }
 
         await SendAsync("close_reader", new JObject { ["reader_id"] = readerId }, TimeSpan.FromSeconds(30), cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Состояние читателя живёт только в процессе, который его открыл. Если этот процесс завершился (авария,
+    /// принудительное завершение), перезапуск worker читателя не восстановит: новый процесс ответил бы
+    /// «reader_not_found» и скрыл бы настоящую причину. Поэтому сообщается сбой worker.
+    /// </summary>
+    private void EnsureReaderProcessAlive(string readerId)
+    {
+        if (readerId == null || !_readerOwners.TryGetValue(readerId, out var owner))
+        {
+            return;
+        }
+
+        string exitCode = null;
+        var alive = ReferenceEquals(owner, _process) && !_faulted;
+        try
+        {
+            if (owner.HasExited)
+            {
+                alive = false;
+                exitCode = owner.ExitCode.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            // Процесс уже заменён новым и освобождён.
+            alive = false;
+        }
+
+        if (!alive)
+        {
+            _readerOwners.TryRemove(readerId, out _);
+            throw new WorkerException("worker_crashed",
+                $"Процесс worker завершился{(exitCode != null ? " (код " + exitCode + ")" : string.Empty)}: открытое чтение файла прервано.{StderrSummary()}");
+        }
     }
 
     private async Task<JObject> SendAsync(string command, JObject args, TimeSpan timeout, CancellationToken cancellationToken)

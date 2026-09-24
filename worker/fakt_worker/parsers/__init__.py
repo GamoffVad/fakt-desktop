@@ -41,6 +41,31 @@ def fields_message(expected, actual):
                                              actual)
 
 
+def drop_empty_skiprows(reader):
+    # type: (Any) -> None
+    """Work around quadratic chunked reading in pandas' python engine (read_csv/read_fwf).
+
+    pandas turns the default ``skiprows=None`` into an empty set, and then
+    ``PythonParser._get_lines`` evaluates ``set(self.skiprows) - set(range(self.pos))``
+    for every chunk: a set of all row numbers read so far. Memory and time of a chunk
+    grow with the position in the file (seen in pandas 2.0.3: +10 MB and +140 ms per
+    5000-row chunk at row 300 000), which breaks the bounded-memory guarantee of
+    PROTOCOL.md §7 on large files. The worker never passes skiprows (the preamble is
+    consumed by LineSource), so the empty set is replaced by None with a skip function
+    that skips nothing: the same meaning without the growth."""
+    engine = getattr(reader, "_engine", None)
+    skiprows = getattr(engine, "skiprows", None)
+    if engine is None or skiprows is None or callable(skiprows):
+        return
+    try:
+        empty = len(skiprows) == 0
+    except TypeError:
+        return
+    if empty:
+        engine.skiprows = None
+        engine.skipfunc = lambda row: False
+
+
 class LineSource(object):
     """Iterator over physical lines of a text stream (terminators kept).
 
