@@ -45,7 +45,26 @@ public abstract class LlmAdapterBase : ILlmAdapter
     protected async Task<HttpResult> SendAsync(HttpMethod method, string url, JObject body, IReadOnlyDictionary<string, string> headers,
         LlmRuntimeConfig config, CancellationToken cancellationToken)
     {
-        return await Http.SendAsync(method, url, body, headers, TimeoutOf(config), cancellationToken).ConfigureAwait(false);
+        var result = await Http.SendAsync(method, url, body, headers, TimeoutOf(config), cancellationToken).ConfigureAwait(false);
+        if (!result.IsSuccess)
+        {
+            // Сервис может повторить присланный ключ в тексте ошибки («Incorrect API key provided: …»). Маскирование
+            // по шаблонам знает не все форматы ключей, поэтому ключ профиля вырезается из тела ошибки явно.
+            result.Body = RedactKey(result.Body, config.ApiKey);
+        }
+
+        return result;
+    }
+
+    /// <summary>Замена ключа API в тексте на «***» (ключи короче 6 символов не заменяются, как и в <see cref="Fakt.Core.Logging.LogSanitizer"/>).</summary>
+    internal static string RedactKey(string text, string apiKey)
+    {
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(apiKey) || apiKey.Length < 6)
+        {
+            return text;
+        }
+
+        return text.Replace(apiKey, "***");
     }
 
     /// <summary>Преобразование ошибки списка моделей в состояние интерфейса.</summary>

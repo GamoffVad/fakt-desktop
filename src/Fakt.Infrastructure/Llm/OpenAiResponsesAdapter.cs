@@ -113,21 +113,23 @@ public sealed class OpenAiResponsesAdapter : LlmAdapterBase
             throw new LlmException(LlmErrorKind.InvalidResponse, "Ответ провайдера не является JSON.", result.StatusCode, result.RequestId);
         }
 
+        // usage, incomplete_details и error в ответе бывают JSON null: обращение к полю JValue бросает исключение.
+        var usage = root["usage"] as JObject;
         var response = new LlmResponse
         {
             RequestId = result.RequestId ?? (string)root["id"],
             Latency = result.Elapsed,
             ModelReported = (string)root["model"],
-            InputTokens = Int(root["usage"]?["input_tokens"]),
-            OutputTokens = Int(root["usage"]?["output_tokens"]),
+            InputTokens = Int(usage?["input_tokens"]),
+            OutputTokens = Int(usage?["output_tokens"]),
         };
 
         var status = (string)root["status"];
-        var incompleteReason = (string)root["incomplete_details"]?["reason"];
+        var incompleteReason = (string)(root["incomplete_details"] as JObject)?["reason"];
         response.RawFinishReason = incompleteReason ?? status;
         if (status == "failed")
         {
-            throw new LlmException(LlmErrorKind.ServerError, "Провайдер завершил ответ с ошибкой: " + (string)root["error"]?["message"], result.StatusCode, response.RequestId);
+            throw new LlmException(LlmErrorKind.ServerError, "Провайдер завершил ответ с ошибкой: " + (string)(root["error"] as JObject)?["message"], result.StatusCode, response.RequestId);
         }
 
         response.FinishReason = status == "incomplete"

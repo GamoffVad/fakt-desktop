@@ -160,7 +160,18 @@ public sealed class JsonLineLogger : IAppLogger, IDisposable
 
     public static LogEntry Parse(string line)
     {
-        var obj = JObject.Parse(line);
+        // Без автоматического разбора дат: иначе «ts» становится DateTime и при обратном приведении к строке
+        // теряет миллисекунды (порядок записей одной секунды на странице «Журнал» нарушается).
+        JObject obj;
+        using (var reader = new JsonTextReader(new StringReader(line)) { DateParseHandling = DateParseHandling.None })
+        {
+            obj = JObject.Load(reader);
+            while (reader.Read())
+            {
+                // Как JObject.Parse: любое содержимое после объекта, кроме комментария, вызывает исключение читателя.
+            }
+        }
+
         var entry = new LogEntry
         {
             TimestampUtc = DateTime.Parse((string)obj["ts"], CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal),

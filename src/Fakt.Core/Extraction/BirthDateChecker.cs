@@ -22,11 +22,24 @@ public static class BirthDateChecker
     private static readonly Regex YearPattern = new(@"(?<!\d)(\d{4})(?!\d)", RegexOptions.CultureInvariant);
     private static readonly Regex NumberPattern = new(@"(?<!\d)(\d{1,4})(?!\d)", RegexOptions.CultureInvariant);
 
-    // Русские основы допускают окончания (не длиннее 3 символов после основы): «февраля», «марта», «мая».
+    // Русские основы допускают только падежные окончания месяца: «февраля», «марта», «сентябре».
+    // Произвольный хвост не допускается: имена и слова с той же основой («Майя», «майор», «Мартин») — не месяцы.
     private static readonly string[][] MonthStems =
     {
         new[] { "январ" }, new[] { "феврал" }, new[] { "март" }, new[] { "апрел" }, new[] { "мая", "май" }, new[] { "июн" },
         new[] { "июл" }, new[] { "август" }, new[] { "сентябр" }, new[] { "октябр" }, new[] { "ноябр" }, new[] { "декабр" },
+    };
+
+    // Окончания единственного числа («ё» при нормализации заменено на «е»): мягкая основа (январь), твёрдая (март);
+    // «мая» и «май» — только целиком.
+    private static readonly string[] SoftEndings = { "ь", "я", "е", "ю", "ем" };
+    private static readonly string[] HardEndings = { "", "а", "е", "у", "ом" };
+    private static readonly string[] WholeWord = { "" };
+
+    private static readonly string[][] MonthEndings =
+    {
+        SoftEndings, SoftEndings, HardEndings, SoftEndings, WholeWord, SoftEndings,
+        SoftEndings, HardEndings, SoftEndings, SoftEndings, SoftEndings, SoftEndings,
     };
 
     // Английские названия — только точное совпадение слова, чтобы «Jane» или «Mark» не стали месяцем.
@@ -159,7 +172,7 @@ public static class BirthDateChecker
             {
                 foreach (var stem in MonthStems[i])
                 {
-                    if (word.StartsWith(stem, StringComparison.Ordinal) && word.Length <= stem.Length + 3)
+                    if (word.StartsWith(stem, StringComparison.Ordinal) && MonthEndings[i].Contains(word.Substring(stem.Length)))
                     {
                         return i + 1;
                     }

@@ -122,6 +122,8 @@ public static class LogSanitizer
     // Последовательности из 7+ цифр с разделителями: телефоны, счета, карты, документы.
     private static readonly Regex DigitRun = new(@"\+?\d[\d\s\-().]{5,}\d", RegexOptions.CultureInvariant);
 
+    private static readonly Regex DatePrefix = new(@"^(?:\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})", RegexOptions.CultureInvariant);
+
     public static string Sanitize(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -166,9 +168,11 @@ public static class LogSanitizer
         }
 
         // Даты и время (2026-09-24, 10:00:00) не маскируются: у них короткие группы и есть разделители дат.
-        if (Regex.IsMatch(value, @"^\d{4}-\d{2}-\d{2}") || Regex.IsMatch(value, @"^\d{2}\.\d{2}\.\d{4}"))
+        // Цифры после даты в той же последовательности (например, номер счёта через пробел) маскируются отдельно.
+        var date = DatePrefix.Match(value);
+        if (date.Success)
         {
-            return value;
+            return date.Value + DigitRun.Replace(value.Substring(date.Length), MaskDigits);
         }
 
         var keep = digitCount >= 12 ? 4 : 2;
