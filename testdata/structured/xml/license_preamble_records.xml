@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Тестовая выгрузка FAKT. Все сведения синтетические.
+  Файл проверяет случай, когда первых пяти физических строк
+  недостаточно для определения структуры: первая запись
+  начинается ниже служебного комментария и метаданных.
+  Ожидаемый результат анализа: insufficient_sample,
+  статус «Требует настройки», затем расширенный образец.
+  Условия использования: только для тестирования.
+-->
+<export version="2">
+  <meta>
+    <created>2026-09-24T10:00:00Z</created>
+    <system>ТЕСТОВЫЙ КОНТУР</system>
+  </meta>
+  <records>
+    <record>
+      <FIO>Сводкина Наталья Михайловна</FIO>
+      <BirthDate>16.08.1977</BirthDate>
+      <Phone>8 (000) 171-81-13</Phone>
+      <CarPlate>Н000РУ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Условнов Пётр Николаевич</FIO>
+      <BirthDate>24.01.1999</BirthDate>
+      <Phone>8 (000) 073-57-47</Phone>
+      <CarPlate>М000ЕТ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Строкина Наталья Ивановна</FIO>
+      <BirthDate>29.05.1995</BirthDate>
+      <Phone>8 (000) 475-72-43</Phone>
+      <CarPlate>А000МТ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Отчётова Наталья Олеговна</FIO>
+      <BirthDate>04.04.1963</BirthDate>
+      <Phone>8 (000) 873-25-37</Phone>
+      <CarPlate>А000ЕА000</CarPlate>
+    </record>
+    <record>
+      <FIO>Строкин Николай Дмитриевич</FIO>
+      <BirthDate>17.03.1965</BirthDate>
+      <Phone>8 (000) 082-41-61</Phone>
+      <CarPlate>Р000УР000</CarPlate>
+    </record>
+    <record>
+      <FIO>Архивова Анна Сергеевна</FIO>
+      <BirthDate>02.01.1976</BirthDate>
+      <Phone>8 (000) 770-91-90</Phone>
+      <CarPlate>Х000ТУ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Столбцова Вера Дмитриевна</FIO>
+      <BirthDate>15.12.1995</BirthDate>
+      <Phone>8 (000) 185-67-47</Phone>
+      <CarPlate>Н000РЕ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Образцова Полина Павловна</FIO>
+      <BirthDate>23.12.1987</BirthDate>
+      <Phone>8 (000) 825-67-38</Phone>
+      <CarPlate>М000НТ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Полева Софья Сергеевна</FIO>
+      <BirthDate>05.08.1984</BirthDate>
+      <Phone>8 (000) 304-38-37</Phone>
+      <CarPlate>У000МС000</CarPlate>
+    </record>
+    <record>
+      <FIO>Образцова Алина Павловна</FIO>
+      <BirthDate>21.05.1992</BirthDate>
+      <Phone>8 (000) 261-77-18</Phone>
+      <CarPlate>А000КМ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Эталонов Тимур Павлович</FIO>
+      <BirthDate>05.04.1994</BirthDate>
+      <Phone>8 (000) 054-93-79</Phone>
+      <CarPlate>Х000РМ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Записева Софья Романовна</FIO>
+      <BirthDate>06.01.1967</BirthDate>
+      <Phone>8 (000) 855-26-74</Phone>
+      <CarPlate>О000РА000</CarPlate>
+    </record>
+    <record>
+      <FIO>Опытов Глеб Иванович</FIO>
+      <BirthDate>22.11.1983</BirthDate>
+      <Phone>8 (000) 461-83-55</Phone>
+      <CarPlate>Т000НТ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Выгрузкин Дмитрий Егорович</FIO>
+      <BirthDate>02.04.1968</BirthDate>
+      <Phone>8 (000) 457-66-98</Phone>
+      <CarPlate>Р000ЕС000</CarPlate>
+    </record>
+    <record>
+      <FIO>Тестов Андрей Михайлович</FIO>
+      <BirthDate>08.03.1959</BirthDate>
+      <Phone>8 (000) 643-49-47</Phone>
+      <CarPlate>Р000АО000</CarPlate>
+    </record>
+    <record>
+      <FIO>Столбцов Тимур Сергеевич</FIO>
+      <BirthDate>04.08.1952</BirthDate>
+      <Phone>8 (000) 576-47-31</Phone>
+      <CarPlate>Н000НН000</CarPlate>
+    </record>
+    <record>
+      <FIO>Условнов Иван Михайлович</FIO>
+      <BirthDate>18.11.1983</BirthDate>
+      <Phone>8 (000) 460-29-62</Phone>
+      <CarPlate>Х000ЕУ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Тестов Сергей Алексеевич</FIO>
+      <BirthDate>05.01.1955</BirthDate>
+      <Phone>8 (000) 357-90-75</Phone>
+      <CarPlate>А000ХВ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Образцова Ксения Олеговна</FIO>
+      <BirthDate>25.11.1998</BirthDate>
+      <Phone>8 (000) 278-71-61</Phone>
+      <CarPlate>Х000НН000</CarPlate>
+    </record>
+    <record>
+      <FIO>Пробников Алексей Егорович</FIO>
+      <BirthDate>25.05.1962</BirthDate>
+      <Phone>8 (000) 069-35-01</Phone>
+      <CarPlate>М000ОТ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Сводкин Роман Михайлович</FIO>
+      <BirthDate>27.11.1965</BirthDate>
+      <Phone>8 (000) 524-10-66</Phone>
+      <CarPlate>С000ОЕ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Тестова Дарья Дмитриевна</FIO>
+      <BirthDate>02.10.1965</BirthDate>
+      <Phone>8 (000) 976-05-22</Phone>
+      <CarPlate>Е000СА000</CarPlate>
+    </record>
+    <record>
+      <FIO>Тестов Олег Николаевич</FIO>
+      <BirthDate>17.03.1981</BirthDate>
+      <Phone>8 (000) 500-34-38</Phone>
+      <CarPlate>Р000АА000</CarPlate>
+    </record>
+    <record>
+      <FIO>Таблицына Вера Дмитриевна</FIO>
+      <BirthDate>05.02.1991</BirthDate>
+      <Phone>8 (000) 166-57-72</Phone>
+      <CarPlate>Т000ОР000</CarPlate>
+    </record>
+    <record>
+      <FIO>Демонстрова Татьяна Петровна</FIO>
+      <BirthDate>09.06.1975</BirthDate>
+      <Phone>8 (000) 260-47-37</Phone>
+      <CarPlate>У000УО000</CarPlate>
+    </record>
+    <record>
+      <FIO>Проверкин Глеб Егорович</FIO>
+      <BirthDate>15.01.1992</BirthDate>
+      <Phone>8 (000) 842-76-40</Phone>
+      <CarPlate>У000СО000</CarPlate>
+    </record>
+    <record>
+      <FIO>Условнова Ксения Алексеевна</FIO>
+      <BirthDate>14.06.1950</BirthDate>
+      <Phone>8 (000) 002-35-54</Phone>
+      <CarPlate>Н000ОН000</CarPlate>
+    </record>
+    <record>
+      <FIO>Демонстрова Мария Егоровна</FIO>
+      <BirthDate>07.08.1974</BirthDate>
+      <Phone>8 (000) 368-25-15</Phone>
+      <CarPlate>О000АЕ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Условнов Михаил Павлович</FIO>
+      <BirthDate>24.02.1990</BirthDate>
+      <Phone>8 (000) 801-95-84</Phone>
+      <CarPlate>С000АЕ000</CarPlate>
+    </record>
+    <record>
+      <FIO>Выгрузкин Егор Алексеевич</FIO>
+      <BirthDate>08.08.1986</BirthDate>
+      <Phone>8 (000) 855-22-27</Phone>
+      <CarPlate>С000СВ000</CarPlate>
+    </record>
+  </records>
+</export>

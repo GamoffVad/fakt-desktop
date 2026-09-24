@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Реализации контрактов: SQL Server (System.Data.SqlClient из .NET Framework 4.8),
+       HTTP-адаптеры LLM, IPC с Python worker, DPAPI, файловая система, журнал. -->
+  <PropertyGroup>
+    <RootNamespace>Fakt.Infrastructure</RootNamespace>
+    <AssemblyName>Fakt.Infrastructure</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fakt.Core\Fakt.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- SQL-миграции и поисковые скрипты встраиваются из каталога database/ репозитория. -->
+    <EmbeddedResource Include="..\..\database\migrations\*.sql" LogicalName="Fakt.Migrations.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fakt.UnitTests" />
+    <InternalsVisibleTo Include="Fakt.IntegrationTests" />
+  </ItemGroup>
+</Project>

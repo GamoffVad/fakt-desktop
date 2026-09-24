@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Конвейер обработки, команды и прикладные сервисы. Зависит только от контрактов Fakt.Core. -->
+  <PropertyGroup>
+    <RootNamespace>Fakt.Application</RootNamespace>
+    <AssemblyName>Fakt.Application</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Fakt.Core\Fakt.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fakt.UnitTests" />
+    <InternalsVisibleTo Include="Fakt.IntegrationTests" />
+  </ItemGroup>
+</Project>

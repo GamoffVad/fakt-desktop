@@ -1,0 +1,29 @@
+<Project>
+  <!-- Общие параметры сборки всех проектов FAKT.
+       Целевая платформа клиента: Windows 7 SP1 x64 + .NET Framework 4.8 (не 4.8.1). -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <Prefer32Bit>false</Prefer32Bit>
+    <Company>FAKT</Company>
+    <Product>FAKT</Product>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <NeutralLanguage>ru-RU</NeutralLanguage>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors>CS4014;CS1998</WarningsAsErrors>
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <RestoreLockedMode Condition="'$(ContinuousIntegrationBuild)' == 'true'">true</RestoreLockedMode>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Эталонные сборки .NET Framework 4.8 из NuGet: сборка не зависит от установленного targeting pack. -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" PrivateAssets="all" />
+  </ItemGroup>
+</Project>

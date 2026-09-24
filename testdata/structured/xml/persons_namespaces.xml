@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registry xmlns="urn:fakt:test:registry" xmlns:p="urn:fakt:test:person" generated="2026-09-24" source="synthetic">
+  <p:person id="0001" status="active">
+    <p:surname>Сводкина</p:surname>
+    <p:name>Ирина</p:name>
+    <p:patronymic>Егоровна</p:patronymic>
+    <p:birthDate>1973-12-16</p:birthDate>
+    <p:birthPlace>ст. Пробная</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80005634060</p:phone>
+      <p:phone type="work">8-000-187-52-17</p:phone>
+    </p:contacts>
+  </p:person>
+  <p:person id="0002" status="active">
+    <p:surname>Модельнова</p:surname>
+    <p:name>Дарья</p:name>
+    <p:patronymic>Павловна</p:patronymic>
+    <p:birthDate>1994-06-12</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 400-38-65</p:phone>
+      <p:phone type="work">+7(000)1962167</p:phone>
+      <p:email>d.modelnova92@example.net</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0003" status="archived">
+    <p:surname>Опытов</p:surname>
+    <p:name>Олег</p:name>
+    <p:patronymic>Романович</p:patronymic>
+    <p:birthDate>2005-04-02</p:birthDate>
+    <p:birthPlace>г. Эталонск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)8605044</p:phone>
+      <p:phone type="work">8-000-486-14-33</p:phone>
+    </p:contacts>
+  </p:person>
+  <p:person id="0004" status="active">
+    <p:surname>Примерова</p:surname>
+    <p:name>Дарья</p:name>
+    <p:patronymic>Михайловна</p:patronymic>
+    <p:birthDate>1998-08-10</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 946 51 64</p:phone>
+      <p:phone type="work">80000836787</p:phone>
+      <p:email>d.primerova@example.net</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Водитель</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0005" status="archived">
+    <p:surname>Отчётова</p:surname>
+    <p:name>Ирина</p:name>
+    <p:patronymic>Михайловна</p:patronymic>
+    <p:birthDate>2004-11-19</p:birthDate>
+    <p:birthPlace>ст. Пробная</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 453-05-87</p:phone>
+      <p:phone type="work">8-000-492-50-30</p:phone>
+      <p:email>i.otchetova@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0006" status="archived">
+    <p:surname>Столбцова</p:surname>
+    <p:name>Анна</p:name>
+    <p:patronymic>Павловна</p:patronymic>
+    <p:birthDate>1952-09-26</p:birthDate>
+    <p:birthPlace>пос. Шаблоново</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8-000-902-04-56</p:phone>
+      <p:email>a.stolbtsova@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Тестовая организация»</p:organization>
+      <p:position>Специалист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0007" status="active">
+    <p:surname>Условнов</p:surname>
+    <p:name>Пётр</p:name>
+    <p:patronymic>Егорович</p:patronymic>
+    <p:birthDate>2005-09-06</p:birthDate>
+    <p:birthPlace>г. Выгрузинск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 156 51 73</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Бухгалтер</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0008" status="active">
+    <p:surname>Опытов</p:surname>
+    <p:name>Алексей</p:name>
+    <p:patronymic>Олегович</p:patronymic>
+    <p:birthDate>1997-07-15</p:birthDate>
+    <p:birthPlace>пос. Шаблоново</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)3162516</p:phone>
+      <p:phone type="work">+7(000)3511620</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Специалист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0009" status="archived">
+    <p:surname>Записев</p:surname>
+    <p:name>Егор</p:name>
+    <p:patronymic>Романович</p:patronymic>
+    <p:birthDate>1951-02-23</p:birthDate>
+    <p:birthPlace>г. Тестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 111-18-33</p:phone>
+      <p:phone type="work">8 (000) 880-17-07</p:phone>
+      <p:email>e.zapisev83@example.net</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Шаблон Логистик»</p:organization>
+      <p:position>Экономист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0010" status="archived">
+    <p:surname>Пробников</p:surname>
+    <p:name>Глеб</p:name>
+    <p:patronymic>Сергеевич</p:patronymic>
+    <p:birthDate>1963-01-31</p:birthDate>
+    <p:birthPlace>г. Эталонск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80008079988</p:phone>
+      <p:email>g.probnikov@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0011" status="active">
+    <p:surname>Выборкин</p:surname>
+    <p:name>Пётр</p:name>
+    <p:patronymic>Олегович</p:patronymic>
+    <p:birthDate>1957-12-19</p:birthDate>
+    <p:birthPlace>ст. Пробная</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8 (000) 962-18-65</p:phone>
+      <p:email>p.vyborkin@example.com</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Образец и партнёры»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0012" status="active">
+    <p:surname>Примеров</p:surname>
+    <p:name>Сергей</p:name>
+    <p:patronymic>Алексеевич</p:patronymic>
+    <p:birthDate>2002-01-29</p:birthDate>
+    <p:birthPlace>г. Новотестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)0662133</p:phone>
+      <p:email>s.primerov@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0013" status="archived">
+    <p:surname>Синтетикова</p:surname>
+    <p:name>Ольга</p:name>
+    <p:patronymic>Дмитриевна</p:patronymic>
+    <p:birthDate>1997-11-14</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)7790006</p:phone>
+      <p:phone type="work">+7 000 164-80-25</p:phone>
+      <p:email>o.sintetikova3@example.com</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Специалист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0014" status="archived">
+    <p:surname>Архивов</p:surname>
+    <p:name>Николай</p:name>
+    <p:patronymic>Сергеевич</p:patronymic>
+    <p:birthDate>1987-02-08</p:birthDate>
+    <p:birthPlace>пос. Шаблоново</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)5513298</p:phone>
+      <p:email>n.arkhivov4@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Тестовая организация»</p:organization>
+      <p:position>Специалист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0015" status="archived">
+    <p:surname>Пробникова</p:surname>
+    <p:name>Ольга</p:name>
+    <p:patronymic>Михайловна</p:patronymic>
+    <p:birthDate>1999-01-18</p:birthDate>
+    <p:birthPlace>г. Тестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 515 23 39</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Тестовая организация»</p:organization>
+      <p:position>Юрист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0016" status="archived">
+    <p:surname>Строкин</p:surname>
+    <p:name>Дмитрий</p:name>
+    <p:patronymic>Романович</p:patronymic>
+    <p:birthDate>2000-09-17</p:birthDate>
+    <p:birthPlace>с. Опытное</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8 (000) 062-22-86</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>АО «Пример-Сервис»</p:organization>
+      <p:position>Оператор</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0017" status="active">
+    <p:surname>Модельнов</p:surname>
+    <p:name>Егор</p:name>
+    <p:patronymic>Егорович</p:patronymic>
+    <p:birthDate>2000-07-10</p:birthDate>
+    <p:birthPlace>г. Условный</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 950-88-66</p:phone>
+      <p:phone type="work">8 (000) 217-98-40</p:phone>
+      <p:email>e.modelnov25@example.net</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0018" status="archived">
+    <p:surname>Записева</p:surname>
+    <p:name>Дарья</p:name>
+    <p:patronymic>Павловна</p:patronymic>
+    <p:birthDate>1997-11-10</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8 (000) 310-58-72</p:phone>
+      <p:email>d.zapiseva@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Оператор</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0019" status="active">
+    <p:surname>Образцова</p:surname>
+    <p:name>Ольга</p:name>
+    <p:patronymic>Егоровна</p:patronymic>
+    <p:birthDate>1982-12-01</p:birthDate>
+    <p:birthPlace>с. Макетовка</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8-000-939-94-51</p:phone>
+      <p:phone type="work">80005472597</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Оператор</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0020" status="active">
+    <p:surname>Выгрузкин</p:surname>
+    <p:name>Николай</p:name>
+    <p:patronymic>Алексеевич</p:patronymic>
+    <p:birthDate>1962-07-12</p:birthDate>
+    <p:birthPlace>г. Выгрузинск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 900 05 56</p:phone>
+      <p:phone type="work">+7 000 904 57 40</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Шаблон Логистик»</p:organization>
+      <p:position>Бухгалтер</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0021" status="archived">
+    <p:surname>Эталонова</p:surname>
+    <p:name>Алина</p:name>
+    <p:patronymic>Алексеевна</p:patronymic>
+    <p:birthDate>1999-12-24</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 823-56-42</p:phone>
+      <p:phone type="work">+7 000 873-97-22</p:phone>
+      <p:email>a.etalonova@example.net</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0022" status="archived">
+    <p:surname>Образцов</p:surname>
+    <p:name>Михаил</p:name>
+    <p:patronymic>Андреевич</p:patronymic>
+    <p:birthDate>1985-03-09</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)8790434</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ГБУ «Условный центр»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0023" status="archived">
+    <p:surname>Тестов</p:surname>
+    <p:name>Пётр</p:name>
+    <p:patronymic>Сергеевич</p:patronymic>
+    <p:birthDate>1960-08-10</p:birthDate>
+    <p:birthPlace>г. Новотестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)3927059</p:phone>
+      <p:email>p.testov@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0024" status="active">
+    <p:surname>Эталонова</p:surname>
+    <p:name>Полина</p:name>
+    <p:patronymic>Ивановна</p:patronymic>
+    <p:birthDate>1987-06-29</p:birthDate>
+    <p:birthPlace>с. Опытное</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80009805849</p:phone>
+      <p:phone type="work">8 (000) 504-83-75</p:phone>
+      <p:email>p.etalonova28@example.com</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0025" status="archived">
+    <p:surname>Эталонова</p:surname>
+    <p:name>Ольга</p:name>
+    <p:patronymic>Сергеевна</p:patronymic>
+    <p:birthDate>1998-12-28</p:birthDate>
+    <p:birthPlace>с. Макетовка</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 602 68 95</p:phone>
+      <p:email>o.etalonova@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Образец и партнёры»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0026" status="archived">
+    <p:surname>Синтетикова</p:surname>
+    <p:name>Ольга</p:name>
+    <p:patronymic>Ивановна</p:patronymic>
+    <p:birthDate>1952-10-09</p:birthDate>
+    <p:birthPlace>г. Условный</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8 (000) 616-46-64</p:phone>
+      <p:email>o.sintetikova75@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0027" status="archived">
+    <p:surname>Выгрузкин</p:surname>
+    <p:name>Павел</p:name>
+    <p:patronymic>Дмитриевич</p:patronymic>
+    <p:birthDate>1969-04-30</p:birthDate>
+    <p:birthPlace>г. Выгрузинск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 551 75 44</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Аналитик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0028" status="archived">
+    <p:surname>Пробников</p:surname>
+    <p:name>Глеб</p:name>
+    <p:patronymic>Дмитриевич</p:patronymic>
+    <p:birthDate>1984-03-20</p:birthDate>
+    <p:birthPlace>с. Макетовка</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80005979693</p:phone>
+      <p:email>g.probnikov@example.org</p:email>
+    </p:contacts>
+  </p:person>
+  <p:person id="0029" status="archived">
+    <p:surname>Проверкин</p:surname>
+    <p:name>Артём</p:name>
+    <p:patronymic>Павлович</p:patronymic>
+    <p:birthDate>1996-08-09</p:birthDate>
+    <p:birthPlace>пос. Шаблоново</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 799-89-14</p:phone>
+      <p:phone type="work">+7 000 823 60 78</p:phone>
+      <p:email>a.proverkin@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ГБУ «Условный центр»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0030" status="archived">
+    <p:surname>Таблицын</p:surname>
+    <p:name>Михаил</p:name>
+    <p:patronymic>Дмитриевич</p:patronymic>
+    <p:birthDate>1983-04-18</p:birthDate>
+    <p:birthPlace>г. Эталонск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80009243354</p:phone>
+      <p:phone type="work">+7(000)0633853</p:phone>
+      <p:email>m.tablitsyn38@example.net</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Шаблон Логистик»</p:organization>
+      <p:position>Водитель</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0031" status="active">
+    <p:surname>Примерова</p:surname>
+    <p:name>Алина</p:name>
+    <p:patronymic>Олеговна</p:patronymic>
+    <p:birthDate>1973-12-28</p:birthDate>
+    <p:birthPlace>г. Эталонск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)9276109</p:phone>
+      <p:phone type="work">8 (000) 309-09-69</p:phone>
+      <p:email>a.primerova59@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Менеджер</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0032" status="archived">
+    <p:surname>Шаблонов</p:surname>
+    <p:name>Андрей</p:name>
+    <p:patronymic>Андреевич</p:patronymic>
+    <p:birthDate>2002-04-15</p:birthDate>
+    <p:birthPlace>г. Тестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8-000-270-87-66</p:phone>
+      <p:phone type="work">8-000-746-02-14</p:phone>
+      <p:email>a.shablonov@example.com</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0033" status="archived">
+    <p:surname>Демонстров</p:surname>
+    <p:name>Роман</p:name>
+    <p:patronymic>Алексеевич</p:patronymic>
+    <p:birthDate>2000-03-25</p:birthDate>
+    <p:birthPlace>с. Макетовка</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 457-13-21</p:phone>
+    </p:contacts>
+  </p:person>
+  <p:person id="0034" status="archived">
+    <p:surname>Выгрузкина</p:surname>
+    <p:name>Софья</p:name>
+    <p:patronymic>Николаевна</p:patronymic>
+    <p:birthDate>1954-04-03</p:birthDate>
+    <p:birthPlace>г. Тестовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8 (000) 914-70-13</p:phone>
+      <p:phone type="work">+7(000)0106102</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0035" status="active">
+    <p:surname>Опытова</p:surname>
+    <p:name>Анна</p:name>
+    <p:patronymic>Николаевна</p:patronymic>
+    <p:birthDate>1957-07-29</p:birthDate>
+    <p:birthPlace>г. Примерск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">8-000-491-60-57</p:phone>
+      <p:email>a.opytova72@example.net</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Образец и партнёры»</p:organization>
+      <p:position>Кладовщик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0036" status="active">
+    <p:surname>Примеров</p:surname>
+    <p:name>Иван</p:name>
+    <p:patronymic>Петрович</p:patronymic>
+    <p:birthDate>1957-11-15</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 524 54 04</p:phone>
+      <p:phone type="work">+7(000)2068936</p:phone>
+      <p:email>i.primerov@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>АО «Пример-Сервис»</p:organization>
+      <p:position>Аналитик</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0037" status="active">
+    <p:surname>Отчётова</p:surname>
+    <p:name>Юлия</p:name>
+    <p:patronymic>Ивановна</p:patronymic>
+    <p:birthDate>2001-03-13</p:birthDate>
+    <p:birthPlace>с. Макетовка</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7(000)4086069</p:phone>
+      <p:phone type="work">+7 000 998 98 36</p:phone>
+      <p:email>y.otchetova@example.net</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>МУП «Опытное хозяйство»</p:organization>
+      <p:position>Главный инженер</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0038" status="active">
+    <p:surname>Отчётов</p:surname>
+    <p:name>Михаил</p:name>
+    <p:patronymic>Сергеевич</p:patronymic>
+    <p:birthDate>1955-09-02</p:birthDate>
+    <p:birthPlace>г. Примерск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 732-33-23</p:phone>
+      <p:phone type="work">+7 000 226 21 12</p:phone>
+      <p:email>m.otchetov68@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ООО «Тестовая организация»</p:organization>
+      <p:position>Бухгалтер</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0039" status="active">
+    <p:surname>Пробников</p:surname>
+    <p:name>Сергей</p:name>
+    <p:patronymic>Олегович</p:patronymic>
+    <p:birthDate>1986-12-05</p:birthDate>
+    <p:birthPlace>г. Образцовск</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">+7 000 863-44-76</p:phone>
+      <p:phone type="work">+7 000 054-01-38</p:phone>
+      <p:email>s.probnikov@example.org</p:email>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Специалист</p:position>
+    </p:employment>
+  </p:person>
+  <p:person id="0040" status="archived">
+    <p:surname>Макетов</p:surname>
+    <p:name>Иван</p:name>
+    <p:patronymic>Петрович</p:patronymic>
+    <p:birthDate>1979-07-14</p:birthDate>
+    <p:birthPlace>дер. Черновая</p:birthPlace>
+    <p:contacts>
+      <p:phone type="mobile">80003590217</p:phone>
+      <p:phone type="work">+7(000)1380971</p:phone>
+    </p:contacts>
+    <p:employment>
+      <p:organization>ПАО «Эталон-Банк (тест)»</p:organization>
+      <p:position>Экономист</p:position>
+    </p:employment>
+  </p:person>
+</registry>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE people [
+  <!ENTITY secret SYSTEM "file:///C:/Windows/win.ini">
+]>
+<people>
+  <person><name>Тестов Тест</name><note>&secret;</note></person>
+  <person><name>Примерова Анна</name><note>обычная запись</note></person>
+</people>

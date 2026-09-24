@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Модели, контракты и правила предметной области. Без зависимостей от UI, SQL и HTTP. -->
+  <PropertyGroup>
+    <RootNamespace>Fakt.Core</RootNamespace>
+    <AssemblyName>Fakt.Core</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fakt.UnitTests" />
+  </ItemGroup>
+</Project>

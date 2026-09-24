@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<people>
+  <person surname="Архивов" name="Пётр" patronymic="Романович" birthDate="1964-08-18" birthPlace="дер. Черновая" phone="+7 000 204 70 49" email="p.arkhivov@example.com"/>
+  <person surname="Демонстрова" name="Ирина" patronymic="Ивановна" birthDate="1976-06-16" birthPlace="с. Макетовка" phone="+7 000 679 42 74" email="i.demonstrova13@example.org"/>
+  <person surname="Условнов" name="Михаил" patronymic="Егорович" birthDate="1953-10-20" birthPlace="с. Макетовка" phone="+7 000 924 82 62" email="m.uslovnov@example.com"/>
+  <person surname="Модельнов" name="Михаил" patronymic="Романович" birthDate="1966-09-30" birthPlace="дер. Черновая" phone="+7 000 146 69 60" email="m.modelnov17@example.com"/>
+  <person surname="Проверкина" name="Дарья" patronymic="Дмитриевна" birthDate="1956-09-11" birthPlace="г. Образцовск" phone="+7 000 314 11 89" email="d.proverkina87@example.com"/>
+  <person surname="Отчётова" name="Наталья" patronymic="Сергеевна" birthDate="1957-10-28" birthPlace="г. Эталонск" phone="+7 000 898 33 59" email="n.otchetova@example.org"/>
+  <person surname="Эталонова" name="Ксения" patronymic="Олеговна" birthDate="1958-03-15" birthPlace="г. Новотестовск" phone="+7 000 189 04 67" email="k.etalonova@example.net"/>
+  <person surname="Образцова" name="Ольга" patronymic="Егоровна" birthDate="1982-02-03" birthPlace="с. Опытное" phone="+7 000 441 51 82" email="o.obraztsova98@example.org"/>
+  <person surname="Шаблонова" name="Наталья" patronymic="Андреевна" birthDate="1964-03-19" birthPlace="ст. Пробная" phone="+7 000 506 35 94" email="n.shablonova78@example.net"/>
+  <person surname="Образцова" name="Дарья" patronymic="Андреевна" birthDate="2002-12-29" birthPlace="г. Тестовск" phone="+7 000 347 15 42" email="d.obraztsova@example.net"/>
+  <person surname="Синтетиков" name="Тимур" patronymic="Михайлович" birthDate="1999-08-11" birthPlace="г. Новотестовск" phone="+7 000 505 93 57" email="t.sintetikov@example.net"/>
+  <person surname="Записев" name="Пётр" patronymic="Петрович" birthDate="1986-02-05" birthPlace="ст. Пробная" phone="+7 000 935 11 19" email="p.zapisev@example.net"/>
+  <person surname="Полева" name="Алина" patronymic="Михайловна" birthDate="1965-04-16" birthPlace="г. Образцовск" phone="+7 000 895 61 71" email="a.poleva75@example.org"/>
+  <person surname="Записева" name="Ксения" patronymic="Николаевна" birthDate="1986-04-02" birthPlace="г. Новотестовск" phone="+7 000 287 60 15" email="k.zapiseva37@example.com"/>
+  <person surname="Сводкин" name="Тимур" patronymic="Петрович" birthDate="1968-02-04" birthPlace="дер. Черновая" phone="+7 000 324 86 92" email="t.svodkin@example.com"/>
+  <person surname="Тестова" name="Анна" patronymic="Петровна" birthDate="2005-07-09" birthPlace="г. Примерск" phone="+7 000 686 08 07" email="a.testova94@example.org"/>
+  <person surname="Модельнов" name="Дмитрий" patronymic="Егорович" birthDate="1958-04-17" birthPlace="г. Эталонск" phone="+7 000 874 75 77" email="d.modelnov@example.org"/>
+  <person surname="Эталонов" name="Иван" patronymic="Дмитриевич" birthDate="1980-07-29" birthPlace="г. Эталонск" phone="+7 000 823 08 51" email="i.etalonov12@example.org"/>
+  <person surname="Архивова" name="Анна" patronymic="Романовна" birthDate="1986-06-11" birthPlace="г. Условный" phone="+7 000 807 51 64" email="a.arkhivova41@example.net"/>
+  <person surname="Демонстрова" name="Софья" patronymic="Егоровна" birthDate="1972-06-10" birthPlace="г. Образцовск" phone="+7 000 748 56 94" email="s.demonstrova@example.org"/>
+  <person surname="Столбцова" name="Вера" patronymic="Павловна" birthDate="1966-07-18" birthPlace="г. Условный" phone="+7 000 757 91 37" email="v.stolbtsova@example.com"/>
+  <person surname="Пробников" name="Павел" patronymic="Павлович" birthDate="1981-07-26" birthPlace="г. Эталонск" phone="+7 000 689 54 62" email="p.probnikov84@example.net"/>
+  <person surname="Пробников" name="Глеб" patronymic="Михайлович" birthDate="1969-01-19" birthPlace="пос. Шаблоново" phone="+7 000 207 16 99" email="g.probnikov97@example.com"/>
+  <person surname="Макетов" name="Роман" patronymic="Дмитриевич" birthDate="1960-05-11" birthPlace="с. Опытное" phone="+7 000 064 43 19" email="r.maketov@example.net"/>
+  <person surname="Шаблонов" name="Николай" patronymic="Николаевич" birthDate="1951-07-01" birthPlace="г. Примерск" phone="+7 000 754 12 78" email="n.shablonov@example.org"/>
+  <person surname="Условнова" name="Алина" patronymic="Павловна" birthDate="1977-07-14" birthPlace="г. Примерск" phone="+7 000 318 84 05" email="a.uslovnova53@example.net"/>
+  <person surname="Отчётова" name="Дарья" patronymic="Сергеевна" birthDate="1985-06-12" birthPlace="г. Условный" phone="+7 000 273 95 77" email="d.otchetova26@example.net"/>
+  <person surname="Проверкина" name="Дарья" patronymic="Романовна" birthDate="1978-12-25" birthPlace="с. Опытное" phone="+7 000 644 25 60" email="d.proverkina@example.com"/>
+  <person surname="Шаблонова" name="Ирина" patronymic="Сергеевна" birthDate="1963-05-01" birthPlace="пос. Шаблоново" phone="+7 000 659 12 52" email="i.shablonova94@example.com"/>
+  <person surname="Столбцова" name="Алина" patronymic="Павловна" birthDate="1992-06-24" birthPlace="с. Макетовка" phone="+7 000 586 70 17" email="a.stolbtsova86@example.org"/>
+  <person surname="Опытова" name="Вера" patronymic="Петровна" birthDate="1989-02-02" birthPlace="г. Тестовск" phone="+7 000 578 84 55" email="v.opytova2@example.com"/>
+  <person surname="Записев" name="Егор" patronymic="Романович" birthDate="1971-11-24" birthPlace="г. Эталонск" phone="+7 000 191 07 35" email="e.zapisev@example.com"/>
+  <person surname="Демонстрова" name="Ирина" patronymic="Дмитриевна" birthDate="1958-05-07" birthPlace="г. Выгрузинск" phone="+7 000 686 17 81" email="i.demonstrova@example.net"/>
+  <person surname="Синтетиков" name="Роман" patronymic="Романович" birthDate="1956-11-05" birthPlace="пос. Шаблоново" phone="+7 000 352 37 08" email="r.sintetikov64@example.com"/>
+  <person surname="Записев" name="Егор" patronymic="Андреевич" birthDate="1967-06-11" birthPlace="г. Тестовск" phone="+7 000 277 04 28" email="e.zapisev@example.com"/>
+</people>
