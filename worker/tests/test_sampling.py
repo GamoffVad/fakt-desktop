@@ -105,6 +105,25 @@ class SampleTests(TempDirTestCase):
             self.sample(self.tmp)
         self.assertEqual(ctx.exception.code, "io_error")
 
+    @unittest.skipUnless(os.name == "nt", "Windows sharing violation")
+    def test_locked_file(self):
+        import ctypes
+        from ctypes import wintypes
+        path = self.write_text("locked.csv", "a;b\n")
+        create = ctypes.windll.kernel32.CreateFileW
+        create.restype = wintypes.HANDLE
+        create.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+                           wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        generic_read, open_existing, no_sharing = 0x80000000, 3, 0
+        handle = create(path, generic_read, no_sharing, None, open_existing, 0x80, None)
+        self.assertNotEqual(handle, wintypes.HANDLE(-1).value)
+        try:
+            with self.assertRaises(WorkerError) as ctx:
+                self.sample(path)
+            self.assertEqual(ctx.exception.code, "file_locked")
+        finally:
+            ctypes.windll.kernel32.CloseHandle(handle)
+
     def test_long_path_prefix(self):
         path = self.write_text("p.txt", "a\n")
         if os.name == "nt":

@@ -1,0 +1,369 @@
+<UserControl x:Class="Fakt.Desktop.Views.ProcessingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls"
+             xmlns:b="clr-namespace:Fakt.Desktop.Behaviors">
+    <UserControl.Resources>
+        <!-- На узком окне нижние панели располагаются вертикально: сначала предпросмотр, затем анализ. -->
+        <Style x:Key="PreviewPanelPlacement" TargetType="Border" BasedOn="{StaticResource Panel.Card}">
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="Grid.Column" Value="0" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsCompact, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="Grid.ColumnSpan" Value="3" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="AnalysisPanelPlacement" TargetType="Border" BasedOn="{StaticResource Panel.Card}">
+            <Setter Property="Grid.Row" Value="0" />
+            <Setter Property="Grid.Column" Value="2" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsCompact, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="Grid.Row" Value="2" />
+                    <Setter Property="Grid.Column" Value="0" />
+                    <Setter Property="Grid.ColumnSpan" Value="3" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="MetricValue" TargetType="TextBlock" BasedOn="{StaticResource Text.Label}">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="{StaticResource Thickness.Page}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3*" MinHeight="220" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="2*" MinHeight="180" />
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок и сведения о том, куда отправляются данные -->
+        <DockPanel Margin="0,0,0,16">
+            <Border DockPanel.Dock="Right" MaxWidth="640" Margin="24,0,0,0" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Banner.Info}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ProviderIsExternal}" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource Brush.Status.WarningBackground}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource Brush.Status.WarningBorder}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <DockPanel>
+                    <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Cloud}" Size="18" Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,8,0" VerticalAlignment="Top" />
+                    <TextBlock Text="{Binding ProviderBanner}" TextWrapping="Wrap" Style="{StaticResource Text.Body}" />
+                </DockPanel>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource Text.Heading.Page}" Text="Обработка файлов" />
+                <TextBlock Style="{StaticResource Text.Secondary}" TextTrimming="CharacterEllipsis" Margin="0,4,0,0"
+                           Text="Структура — по первым строкам, лица и факты — моделью, результат — в SQL Server. Исходные файлы не изменяются."
+                           ToolTip="Поиск файлов в папке, определение табличной структуры по первым строкам, извлечение лиц и фактов моделью и сохранение в базу данных. Исходные файлы не изменяются и не удаляются." />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Источник -->
+        <Border Grid.Row="2" Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="320" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Папка" />
+                <DockPanel Grid.Row="1">
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Сканировать" ui:Ui.Icon="{StaticResource Icon.Refresh}"
+                            ui:Ui.IsBusy="{Binding ScanCommand.IsRunning}" Command="{Binding ScanCommand}" Margin="8,0,0,0"
+                            ToolTip="Рекурсивно найти файлы в папке и подпапках (содержимое не читается)" />
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Button.Primary}" Content="Выбрать папку" ui:Ui.Icon="{StaticResource Icon.FolderOpen}"
+                            Command="{Binding BrowseCommand}" Margin="8,0,0,0" />
+                    <TextBox Text="{Binding RootPath, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Например, D:\Данные\Выгрузки"
+                             b:EnterKey.Command="{Binding ScanCommand}" AutomationProperties.Name="Папка" />
+                </DockPanel>
+
+                <!-- Счётчики -->
+                <WrapPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom">
+                    <Border Style="{StaticResource Panel.Subtle}" Padding="12,6" Margin="0,0,8,0" MinWidth="112">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:Icon Data="{StaticResource Icon.File}" Size="22" Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,8,0" />
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Найдено" />
+                                <TextBlock Style="{StaticResource Text.Metric}" Text="{Binding FoundCount, Converter={StaticResource Number}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Panel.Subtle}" Padding="12,6" Margin="0,0,8,0" MinWidth="112">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:Icon Data="{StaticResource Icon.Table}" Size="22" Foreground="{DynamicResource Brush.Status.Success}" Margin="0,0,8,0" />
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Табличных" />
+                                <TextBlock Style="{StaticResource Text.Metric}" Text="{Binding TabularCount, Converter={StaticResource Number}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Panel.Subtle}" Padding="12,6" MinWidth="112">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:Icon Data="{StaticResource Icon.Warning}" Size="22" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" />
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Пропущено" />
+                                <TextBlock Style="{StaticResource Text.Metric}" Text="{Binding SkippedCount, Converter={StaticResource Number}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </WrapPanel>
+
+                <!-- Действия обработки -->
+                <DockPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="0,12,0,0" LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Button Style="{StaticResource Button.Primary}" Content="Обработка" ui:Ui.Icon="{StaticResource Icon.Play}"
+                                ui:Ui.IsBusy="{Binding IsAnalyzing}" Command="{Binding ProcessCommand}" Margin="0,0,8,0"
+                                ToolTip="Анализ структуры выбранных файлов, оценка запуска и извлечение фактов" />
+                        <Button Style="{StaticResource Button.Secondary}" Content="Пауза" ui:Ui.Icon="{StaticResource Icon.Pause}" Command="{Binding PauseCommand}" Margin="0,0,8,0"
+                                ToolTip="Не выдавать новые пакеты; начатые завершаются и сохраняются" />
+                        <Button Style="{StaticResource Button.Secondary}" Content="Продолжить" ui:Ui.Icon="{StaticResource Icon.Play}" Command="{Binding ResumeCommand}" Margin="0,0,8,0"
+                                ToolTip="Продолжить с подтверждённой границы обработки" />
+                        <Button Style="{StaticResource Button.Danger}" Content="Остановить" ui:Ui.Icon="{StaticResource Icon.Stop}" Command="{Binding StopCommand}" Margin="0,0,16,0" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding JobStatus}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                </DockPanel>
+            </Grid>
+        </Border>
+
+        <!-- Найденные файлы -->
+        <Border Grid.Row="3" Style="{StaticResource Panel.Card}">
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12" LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Heading.Section}" VerticalAlignment="Center">
+                        <Run Text="Найденные файлы" />
+                        <Run Text="{Binding FoundCount, Mode=OneWay, StringFormat=({0:N0})}" />
+                    </TextBlock>
+                    <CheckBox DockPanel.Dock="Right" Content="Показывать только табличные" IsChecked="{Binding ShowOnlyTabular}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource Text.Secondary}" Text="{Binding SelectionText}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource Text.Caption}" Text="{Binding ScanStatus}" VerticalAlignment="Center" Margin="16,0,0,0"
+                               TextTrimming="CharacterEllipsis" MaxWidth="520" ToolTip="{Binding ScanStatus}" />
+                </DockPanel>
+                <Expander DockPanel.Dock="Bottom" Header="Недоступные папки и пропущенные ссылки" Margin="0,8,0,0"
+                          Visibility="{Binding Issues.Count, Converter={StaticResource CountToVisibility}}">
+                    <ListBox ItemsSource="{Binding Issues}" MaxHeight="120" Style="{StaticResource ListBox.Plain}" />
+                </Expander>
+                <Grid>
+                    <DataGrid x:Name="FilesGrid" Style="{StaticResource DataGrid.Files}" ItemsSource="{Binding FilesView}" SelectedItem="{Binding CurrentFile}" FrozenColumnCount="2"
+                              AutomationProperties.Name="Найденные файлы">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="44" MinWidth="44" CanUserResize="False" CanUserSort="False">
+                                <DataGridTemplateColumn.Header>
+                                    <CheckBox Style="{StaticResource CheckBox.Cell}" IsThreeState="True"
+                                              IsChecked="{Binding DataContext.AllSelected, RelativeSource={RelativeSource AncestorType=DataGrid}, Mode=TwoWay}"
+                                              AutomationProperties.Name="Выбрать все видимые доступные файлы" ToolTip="Выбрать все видимые доступные файлы" />
+                                </DataGridTemplateColumn.Header>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Style="{StaticResource CheckBox.Cell}" IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                                  IsEnabled="{Binding CanSelect}" ToolTipService.ShowOnDisabled="True" ToolTip="{Binding SelectDisabledReason}"
+                                                  AutomationProperties.Name="{Binding Name, StringFormat=Включить {0} в обработку}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Имя файла" Width="2*" MinWidth="160" SortMemberPath="Name">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" ToolTip="{Binding FullPath}">
+                                            <ui:Icon Data="{StaticResource Icon.FileText}" Size="16" Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,8,0" />
+                                            <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding Name}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Относительный путь" Binding="{Binding RelativePath}" Width="2*" MinWidth="140" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Тип и размер" Binding="{Binding TypeSizeText}" SortMemberPath="Size" Width="120" MinWidth="120" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Изменён" Binding="{Binding LastWriteTime, StringFormat=dd.MM.yyyy HH:mm}" Width="142" MinWidth="142" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Код файла" Binding="{Binding FileCode}" Width="184" MinWidth="184" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTemplateColumn Header="Статус" Width="176" MinWidth="176" SortMemberPath="StatusText">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ui:StatusBadge Text="{Binding StatusText}" Tone="{Binding Tone}" HorizontalAlignment="Left" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Формат и структура" Binding="{Binding FormatText}" Width="2*" MinWidth="150" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Binding="{Binding CountsText}" Width="176" MinWidth="176" ElementStyle="{StaticResource Text.Cell.Numeric}">
+                                <DataGridTextColumn.Header>
+                                    <TextBlock Text="Записи" ToolTip="Прочитано / обработано / сохранено записей" />
+                                </DataGridTextColumn.Header>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Ошибки и причина" Width="3*" MinWidth="200" SortMemberPath="Errors">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding ErrorsText}" ToolTip="{Binding ErrorsText}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                        <DataGrid.InputBindings>
+                            <KeyBinding Modifiers="Control" Key="C" Command="{Binding CopyPathCommand}" CommandParameter="{Binding CurrentFile}" />
+                        </DataGrid.InputBindings>
+                    </DataGrid>
+                    <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding EmptyStateText}" TextWrapping="Wrap" TextAlignment="Center"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="560" IsHitTestVisible="False"
+                               Visibility="{Binding EmptyStateText, Converter={StaticResource NullToVisibility}}" />
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <GridSplitter Grid.Row="4" Style="{StaticResource GridSplitter.Horizontal}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                      AutomationProperties.Name="Изменить высоту таблицы файлов" />
+
+        <!-- Нижние панели: предпросмотр (42) и анализ (58) -->
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="42*" MinWidth="280" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="58*" MinWidth="320" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="RowDefinition">
+                            <Setter Property="Height" Value="0" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsCompact, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                    <Setter Property="Height" Value="16" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
+                <RowDefinition>
+                    <RowDefinition.Style>
+                        <Style TargetType="RowDefinition">
+                            <Setter Property="Height" Value="0" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DataContext.IsCompact, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                    <Setter Property="Height" Value="*" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RowDefinition.Style>
+                </RowDefinition>
+            </Grid.RowDefinitions>
+
+            <!-- Предпросмотр -->
+            <Border Style="{StaticResource PreviewPanelPlacement}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <TextBlock Style="{StaticResource Text.Heading.Section}" Text="{Binding Preview.Title, FallbackValue=Структура}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Preview.Subtitle, FallbackValue=Выберите файл в таблице для предпросмотра}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Text.Caption}" Text="{Binding Preview.InfoText}" TextWrapping="Wrap" Margin="0,8,0,0" />
+                    <Grid>
+                        <DataGrid Style="{StaticResource DataGrid.Preview}" ItemsSource="{Binding Preview.Rows}"
+                                  b:PreviewColumns.Columns="{Binding Preview.Columns}" AutoGenerateColumns="False"
+                                  Visibility="{Binding Preview.HasTable, Converter={StaticResource BoolToVisibility}, FallbackValue=Collapsed}"
+                                  AutomationProperties.Name="Предпросмотр записей" />
+                        <ListBox Style="{StaticResource ListBox.Plain}" ItemsSource="{Binding Preview.SampleLines}"
+                                 Visibility="{Binding Preview.HasSample, Converter={StaticResource BoolToVisibility}, FallbackValue=Collapsed}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto" AutomationProperties.Name="Первые строки файла">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource Text.Mono}" Text="{Binding}" TextWrapping="NoWrap" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </DockPanel>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Style="{StaticResource GridSplitter.Default}" HorizontalAlignment="Stretch"
+                          Visibility="{Binding DataContext.IsCompact, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InverseBoolToVisibility}}"
+                          AutomationProperties.Name="Изменить ширину панелей предпросмотра и анализа" />
+
+            <!-- Анализ структуры и ход обработки -->
+            <Border Style="{StaticResource AnalysisPanelPlacement}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Heading.Section}" Text="Анализ структуры и обработка" Margin="0,0,0,12" />
+                        <Grid Visibility="{Binding CurrentFile, Converter={StaticResource NullToVisibility}}">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <ui:StatusBadge Text="{Binding CurrentFile.StatusText}" Tone="{Binding CurrentFile.Tone}" Margin="0,0,12,0" />
+                                    <TextBlock Style="{StaticResource Text.Label}" Text="{Binding CurrentFile.FormatText}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                                </StackPanel>
+                                <TextBlock Style="{StaticResource Text.Body}" Text="{Binding CurrentFile.Message}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                           Visibility="{Binding CurrentFile.Message, Converter={StaticResource NullToVisibility}}" />
+                                <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding StructureMessages}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                           Visibility="{Binding StructureMessages, Converter={StaticResource NullToVisibility}}" />
+                                <Border Style="{StaticResource Banner.Info}" Margin="0,0,0,8" Visibility="{Binding Preview.SuggestedColumns, Converter={StaticResource NullToVisibility}}">
+                                    <DockPanel>
+                                        <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Применить" Command="{Binding ApplySuggestionCommand}" Margin="12,0,0,0" />
+                                        <TextBlock TextWrapping="Wrap" VerticalAlignment="Center">
+                                            <Run Text="Предложение по данным файла (не применяется без подтверждения): " />
+                                            <Run Text="{Binding Preview.SuggestedColumns, Mode=OneWay}" FontWeight="SemiBold" />
+                                        </TextBlock>
+                                    </DockPanel>
+                                </Border>
+                                <WrapPanel Margin="0,4,0,0">
+                                    <Button Style="{StaticResource Button.Secondary}" Content="Расширенный образец" ui:Ui.Icon="{StaticResource Icon.FileText}" Command="{Binding ExtendedSampleCommand}"
+                                            Margin="0,0,8,8" ToolTip="Отправить модели больше строк (по явному действию; по умолчанию образец не увеличивается)" />
+                                    <Button Style="{StaticResource Button.Secondary}" Content="Параметры вручную" ui:Ui.Icon="{StaticResource Icon.Edit}" Command="{Binding EditStructureCommand}"
+                                            Margin="0,0,8,8" ToolTip="Задать или исправить разделитель, заголовок, колонки, путь XML" />
+                                    <ComboBox x:Name="EncodingBox" ItemsSource="{Binding Encodings}" SelectedIndex="0" Width="150" Margin="0,0,8,8"
+                                              AutomationProperties.Name="Кодировка для повторного анализа" ToolTip="Кодировка для повторного анализа" />
+                                    <Button Style="{StaticResource Button.Secondary}" Content="Применить кодировку" Command="{Binding ChangeEncodingCommand}"
+                                            CommandParameter="{Binding SelectedItem, ElementName=EncodingBox}" Margin="0,0,8,8" />
+                                </WrapPanel>
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Style="{StaticResource Text.Secondary}" Text="Выберите файл в таблице, чтобы увидеть результат анализа."
+                                   Visibility="{Binding CurrentFile, Converter={StaticResource InverseNullToVisibility}}" Margin="0,0,0,8" />
+
+                        <Separator Style="{StaticResource Separator.Default}" Margin="0,8,0,12" />
+                        <TextBlock Style="{StaticResource Text.Label}" Margin="0,0,0,8">
+                            <Run Text="Ход обработки" />
+                            <Run Text="{Binding Metrics.JobId, Mode=OneWay, StringFormat=· задание {0}}" />
+                        </TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="32" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{StaticResource Text.Secondary}" Text="Записей прочитано" Margin="0,2" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource MetricValue}" Text="{Binding Metrics.RecordsRead, Converter={StaticResource Number}}" />
+                            <TextBlock Grid.Row="1" Style="{StaticResource Text.Secondary}" Text="Проанализировано и зафиксировано" Margin="0,2" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource MetricValue}" Text="{Binding Metrics.RecordsProcessed, Converter={StaticResource Number}}" />
+                            <TextBlock Grid.Row="2" Style="{StaticResource Text.Secondary}" Text="Сохранено наблюдений" Margin="0,2" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource MetricValue}" Text="{Binding Metrics.ObservationsSaved, Converter={StaticResource Number}}" />
+                            <TextBlock Grid.Row="3" Style="{StaticResource Text.Secondary}" Text="Записей с ошибками" Margin="0,2" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource MetricValue}" Text="{Binding Metrics.Errors, Converter={StaticResource Number}}" />
+                            <TextBlock Grid.Column="3" Style="{StaticResource Text.Secondary}" Text="Запросов к модели" Margin="0,2" />
+                            <TextBlock Grid.Column="4" Style="{StaticResource MetricValue}" Text="{Binding Metrics.Requests, Converter={StaticResource Number}}" />
+                            <TextBlock Grid.Row="1" Grid.Column="3" Style="{StaticResource Text.Secondary}" Text="Токены: вход / выход" Margin="0,2" />
+                            <TextBlock Grid.Row="1" Grid.Column="4" Style="{StaticResource MetricValue}" Text="{Binding Metrics.TokensText}" />
+                        </Grid>
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                   Text="Счётчики берутся из подтверждённых результатов записи в базу. Точность модели не гарантируется: сведения сохраняются с происхождением для проверки." />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

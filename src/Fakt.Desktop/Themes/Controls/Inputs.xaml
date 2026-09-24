@@ -14,12 +14,24 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
 
+    <!-- Token dictionaries referenced with StaticResource by this file (StaticResource does not
+         see sibling merged dictionaries, so every dictionary merges what it needs itself). -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../ArcticBlue.Primitives.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Metrics.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Typography.xaml"/>
+        <ResourceDictionary Source="../Icons.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <!-- ===================== TextBox ===================== -->
 
     <ControlTemplate x:Key="TextBox.Template" TargetType="{x:Type TextBox}">
         <Grid x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True">
+            <!-- Fill and outline are separate layers (no light seam at fractional DPI). -->
             <Border x:Name="Bd"
                     Background="{TemplateBinding Background}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="BdOutline"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
@@ -34,19 +46,24 @@
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
 
-            <Grid x:Name="ContentArea" Margin="{TemplateBinding Padding}">
+            <!--
+                No margin here: TextBox applies its Padding to the content host itself (a template
+                margin would double it). Placeholder: Padding + 2 DIP, where the text starts.
+            -->
+            <Grid x:Name="ContentArea">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="PlaceholderText"
-                           Margin="2,0,0,0"
-                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                           Foreground="{DynamicResource Brush.Text.Secondary}"
-                           Text="{Binding Path=(ui:Ui.Placeholder), RelativeSource={RelativeSource TemplatedParent}}"
-                           TextTrimming="CharacterEllipsis"
-                           IsHitTestVisible="False"
-                           Visibility="Collapsed"/>
+                <Border Padding="{TemplateBinding Padding}" IsHitTestVisible="False">
+                    <TextBlock x:Name="PlaceholderText"
+                               Margin="2,0,0,0"
+                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                               Foreground="{DynamicResource Brush.Text.Secondary}"
+                               Text="{Binding Path=(ui:Ui.Placeholder), RelativeSource={RelativeSource TemplatedParent}}"
+                               TextTrimming="CharacterEllipsis"
+                               Visibility="Collapsed"/>
+                </Border>
                 <ScrollViewer x:Name="PART_ContentHost"
                               Focusable="False"
                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -54,7 +71,7 @@
                               VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"/>
                 <ui:Icon x:Name="ErrorGlyph"
                          Grid.Column="1"
-                         Margin="8,0,0,0"
+                         Margin="0,0,12,0"
                          VerticalAlignment="Center"
                          Size="{StaticResource Size.Icon.Small}"
                          Data="{StaticResource Icon.Error}"
@@ -116,7 +133,7 @@
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
-                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
+                <Setter TargetName="BdOutline" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
                 <Setter TargetName="ErrorBorder" Property="Visibility" Value="Collapsed"/>
                 <Setter TargetName="ErrorGlyph" Property="Visibility" Value="Collapsed"/>
                 <Setter TargetName="PlaceholderText" Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
@@ -171,8 +188,11 @@
 
     <ControlTemplate x:Key="PasswordBox.Template" TargetType="{x:Type PasswordBox}">
         <Grid x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True">
+            <!-- Fill and outline are separate layers (no light seam at fractional DPI). -->
             <Border x:Name="Bd"
                     Background="{TemplateBinding Background}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="BdOutline"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
@@ -186,7 +206,8 @@
                     BorderBrush="{DynamicResource Brush.Status.Error}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
-            <Grid Margin="{TemplateBinding Padding}">
+            <!-- No margin: PasswordBox applies its Padding to the content host itself. -->
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -198,7 +219,7 @@
                               VerticalScrollBarVisibility="Hidden"/>
                 <ui:Icon x:Name="ErrorGlyph"
                          Grid.Column="1"
-                         Margin="8,0,0,0"
+                         Margin="0,0,12,0"
                          VerticalAlignment="Center"
                          Size="{StaticResource Size.Icon.Small}"
                          Data="{StaticResource Icon.Error}"
@@ -249,7 +270,7 @@
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
-                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
+                <Setter TargetName="BdOutline" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
                 <Setter TargetName="ErrorBorder" Property="Visibility" Value="Collapsed"/>
                 <Setter TargetName="ErrorGlyph" Property="Visibility" Value="Collapsed"/>
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
@@ -334,9 +355,13 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+            <!-- Fill and outline are separate layers (no light seam at fractional DPI). -->
             <Border x:Name="Bd"
                     Grid.ColumnSpan="2"
                     Background="{TemplateBinding Background}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="BdOutline"
+                    Grid.ColumnSpan="2"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
@@ -353,30 +378,33 @@
                     BorderThickness="{TemplateBinding BorderThickness}"
                     CornerRadius="{StaticResource Radius.Control}"/>
 
-            <ContentPresenter x:Name="ContentSite"
-                              Margin="{TemplateBinding Padding}"
-                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                              Content="{TemplateBinding SelectionBoxItem}"
-                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                              IsHitTestVisible="False"
-                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                <ContentPresenter.Resources>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                    </Style>
-                </ContentPresenter.Resources>
-            </ContentPresenter>
-            <TextBlock x:Name="PlaceholderText"
-                       Margin="{TemplateBinding Padding}"
-                       VerticalAlignment="Center"
-                       Foreground="{DynamicResource Brush.Text.Secondary}"
-                       Text="{Binding Path=(ui:Ui.Placeholder), RelativeSource={RelativeSource TemplatedParent}}"
-                       TextTrimming="CharacterEllipsis"
-                       IsHitTestVisible="False"
-                       Visibility="Collapsed"/>
+            <!-- Text starts at Padding + 2 DIP, like TextBox text (caret offset). -->
+            <Border Padding="{TemplateBinding Padding}" IsHitTestVisible="False">
+                <ContentPresenter x:Name="ContentSite"
+                                  Margin="2,0,0,0"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                  ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                    <ContentPresenter.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </ContentPresenter.Resources>
+                </ContentPresenter>
+            </Border>
+            <Border Padding="{TemplateBinding Padding}" IsHitTestVisible="False">
+                <TextBlock x:Name="PlaceholderText"
+                           Margin="2,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource Brush.Text.Secondary}"
+                           Text="{Binding Path=(ui:Ui.Placeholder), RelativeSource={RelativeSource TemplatedParent}}"
+                           TextTrimming="CharacterEllipsis"
+                           Visibility="Collapsed"/>
+            </Border>
             <TextBox x:Name="PART_EditableTextBox"
                      Margin="{TemplateBinding Padding}"
                      VerticalAlignment="Center"
@@ -495,7 +523,7 @@
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
-                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
+                <Setter TargetName="BdOutline" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
                 <Setter TargetName="ErrorBorder" Property="Visibility" Value="Collapsed"/>
                 <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
                 <Setter TargetName="PlaceholderText" Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
@@ -560,27 +588,39 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ComboBoxItem}">
-                    <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            CornerRadius="{StaticResource Radius.Small}"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True">
-                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="{x:Type TextBlock}">
-                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
-                    </Border>
+                    <Grid SnapsToDevicePixels="True">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{StaticResource Radius.Small}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Border>
+                        <!-- Non-colour selection cue (Selection alone is 1.25:1 against White). -->
+                        <Border x:Name="SelectionMarker"
+                                Width="3"
+                                Height="16"
+                                CornerRadius="1.5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource Brush.Action.Primary}"
+                                Visibility="Collapsed"/>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Background.Navigation}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Selection}"/>
+                            <Setter TargetName="SelectionMarker" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
@@ -606,6 +646,8 @@
                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                 <Border x:Name="Box"
                         Background="{TemplateBinding Background}"
+                        CornerRadius="{StaticResource Radius.Small}"/>
+                <Border x:Name="BoxOutline"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{StaticResource Radius.Small}"/>
@@ -618,7 +660,7 @@
                         Visibility="Collapsed"
                         Background="{DynamicResource Brush.Action.Primary}"
                         BorderBrush="{DynamicResource Brush.Action.Primary}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderThickness="0"
                         CornerRadius="{StaticResource Radius.Small}"/>
                 <Path x:Name="CheckGlyph"
                       Visibility="Collapsed"
@@ -698,13 +740,14 @@
                 <Setter TargetName="BoxChecked" Property="BorderBrush" Value="{DynamicResource Brush.Action.Hover}"/>
             </MultiTrigger>
             <Trigger Property="ui:Ui.HasError" Value="True">
-                <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Brush.Status.Error}"/>
+                <Setter TargetName="BoxOutline" Property="BorderBrush" Value="{DynamicResource Brush.Status.Error}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="Box" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
-                <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Foreground}"/>
+                <Setter TargetName="BoxOutline" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Foreground}"/>
                 <Setter TargetName="BoxChecked" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
                 <Setter TargetName="BoxChecked" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Foreground}"/>
+                <Setter TargetName="BoxChecked" Property="BorderThickness" Value="1"/>
                 <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource Brush.Disabled.Foreground}"/>
                 <Setter TargetName="IndeterminateGlyph" Property="Stroke" Value="{DynamicResource Brush.Disabled.Foreground}"/>
                 <Setter Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>

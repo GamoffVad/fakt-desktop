@@ -1,0 +1,139 @@
+<UserControl x:Class="Fakt.Desktop.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
+    <Grid Margin="{StaticResource Thickness.Page}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" MinHeight="160" />
+            <RowDefinition Height="16" />
+            <RowDefinition Height="*" MinHeight="200" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Margin="0,0,0,16">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Style="{StaticResource Button.Secondary}" Content="Обновить" ui:Ui.Icon="{StaticResource Icon.Refresh}" ui:Ui.IsBusy="{Binding IsLoading}"
+                        Command="{Binding RefreshCommand}" Margin="0,0,8,0" />
+                <Button Style="{StaticResource Button.Secondary}" Content="Пауза" ui:Ui.Icon="{StaticResource Icon.Pause}" Command="{Binding PauseCommand}" Margin="0,0,8,0" />
+                <Button Style="{StaticResource Button.Primary}" Content="Продолжить задание" ui:Ui.Icon="{StaticResource Icon.Play}" Command="{Binding ResumeCommand}"
+                        ToolTip="Продолжить с подтверждённой границы обработки (снимок параметров задания сохраняется)" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Style="{StaticResource Text.Heading.Page}" Text="История" />
+                <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                           Text="Запуски обработки, результаты по файлам и ошибки записей. Прерванное или приостановленное задание можно продолжить: уже сохранённые записи не дублируются." />
+            </StackPanel>
+        </DockPanel>
+
+        <StackPanel Grid.Row="1">
+            <Border Style="{StaticResource Banner.Error}" Margin="0,0,0,12" Visibility="{Binding Error, Converter={StaticResource NullToVisibility}}">
+                <TextBlock Text="{Binding Error}" TextWrapping="Wrap" />
+            </Border>
+            <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding Status}" Margin="0,0,0,8" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Border Grid.Row="2" Style="{StaticResource Panel.Card}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Heading.Section}" Text="Задания" Margin="0,0,0,12" />
+                <Grid>
+                    <DataGrid Style="{StaticResource DataGrid.Results}" ItemsSource="{Binding Jobs}" SelectedItem="{Binding SelectedJob}" FrozenColumnCount="2" AutomationProperties.Name="Задания">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="№" Binding="{Binding JobId}" Width="64" MinWidth="64" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTemplateColumn Header="Статус" Width="180" MinWidth="180" SortMemberPath="StatusText">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ui:StatusBadge Text="{Binding StatusText}" Tone="{Binding Tone, Converter={StaticResource Tone}}" HorizontalAlignment="Left" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Создано" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="130" MinWidth="130" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Завершено" Binding="{Binding FinishedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="130" MinWidth="130" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Автор" Binding="{Binding CreatedBy}" Width="*" MinWidth="120" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Модель" Binding="{Binding ModelText}" Width="*" MinWidth="140" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Файлов" Binding="{Binding FileCount}" Width="72" MinWidth="72" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Записей" Binding="{Binding RecordsProcessed, Converter={StaticResource Number}}" Width="96" MinWidth="96" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Наблюдений" Binding="{Binding ObservationsSaved, Converter={StaticResource Number}}" Width="106" MinWidth="106" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Без фактов" Binding="{Binding RecordsNoFacts, Converter={StaticResource Number}}" Width="96" MinWidth="96" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Ошибок" Binding="{Binding RecordsError, Converter={StaticResource Number}}" Width="80" MinWidth="80" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Запросов" Binding="{Binding Requests, Converter={StaticResource Number}}" Width="88" MinWidth="88" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Токены вход/выход" Binding="{Binding TokensText}" Width="150" MinWidth="150" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTemplateColumn Header="Итог" Width="2*" MinWidth="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding Summary}" ToolTip="{Binding Summary}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding EmptyStateText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                               TextWrapping="Wrap" IsHitTestVisible="False" Visibility="{Binding EmptyStateText, Converter={StaticResource NullToVisibility}}" />
+                </Grid>
+            </DockPanel>
+        </Border>
+
+        <GridSplitter Grid.Row="3" Style="{StaticResource GridSplitter.Horizontal}" HorizontalAlignment="Stretch" AutomationProperties.Name="Изменить высоту таблиц" />
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Border Style="{StaticResource Panel.Card}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Heading.Section}" Text="Файлы задания" Margin="0,0,0,12" />
+                    <DataGrid Style="{StaticResource DataGrid.Results}" ItemsSource="{Binding Files}" SelectedItem="{Binding SelectedFile}" AutomationProperties.Name="Файлы задания">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Файл" Binding="{Binding FileName}" Width="*" MinWidth="140" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Код файла" Binding="{Binding FileCode}" Width="180" MinWidth="180" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTemplateColumn Header="Статус" Width="170" MinWidth="170">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ui:StatusBadge Text="{Binding Status, Converter={StaticResource StatusText}}" Tone="{Binding Status, Converter={StaticResource Tone}}" HorizontalAlignment="Left" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Граница" Binding="{Binding CheckpointOrdinal, Converter={StaticResource Number}}" Width="90" MinWidth="90" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="С фактами" Binding="{Binding RecordsExtracted, Converter={StaticResource Number}}" Width="96" MinWidth="96" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Без фактов" Binding="{Binding RecordsNoFacts, Converter={StaticResource Number}}" Width="96" MinWidth="96" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Ошибок" Binding="{Binding RecordsError, Converter={StaticResource Number}}" Width="80" MinWidth="80" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Наблюдений" Binding="{Binding ObservationsSaved, Converter={StaticResource Number}}" Width="106" MinWidth="106" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTemplateColumn Header="Сообщение" Width="2*" MinWidth="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding LastError}" ToolTip="{Binding LastError}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+            <Border Grid.Column="2" Style="{StaticResource Panel.Card}">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Heading.Section}" Text="Ошибки записей" Margin="0,0,0,4" />
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Caption}" Text="Причины без содержимого записей; первые 500 по номеру записи." Margin="0,0,0,12" />
+                    <DataGrid Style="{StaticResource DataGrid.Results}" ItemsSource="{Binding Errors}" AutomationProperties.Name="Ошибки записей">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Запись" Binding="{Binding SourceRecordKey}" Width="80" MinWidth="80" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Строка" Binding="{Binding SourceLine}" Width="72" MinWidth="72" ElementStyle="{StaticResource Text.Cell.Numeric}" />
+                            <DataGridTextColumn Header="Этап" Binding="{Binding Stage}" Width="90" MinWidth="90" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTemplateColumn Header="Причина" Width="*" MinWidth="160">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Style="{StaticResource Text.Cell}" ToolTip="{Binding Message}">
+                                            <Run Text="{Binding ErrorCode, Mode=OneWay}" FontWeight="SemiBold" />
+                                            <Run Text="{Binding Message, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

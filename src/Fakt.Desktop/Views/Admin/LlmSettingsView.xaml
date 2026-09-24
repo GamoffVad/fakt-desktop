@@ -1,0 +1,300 @@
+<UserControl x:Class="Fakt.Desktop.Views.Admin.LlmSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls"
+             xmlns:b="clr-namespace:Fakt.Desktop.Behaviors">
+    <UserControl.Resources>
+        <Style x:Key="Section" TargetType="TextBlock" BasedOn="{StaticResource Text.Heading.Section}">
+            <Setter Property="Margin" Value="0,20,0,12" />
+        </Style>
+        <Style x:Key="Field" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,0,16,12" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="0,16,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Профили -->
+        <Border Style="{StaticResource Panel.Card}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Text.Heading.Section}" Text="Профили" Margin="0,0,0,12" />
+                <Button DockPanel.Dock="Bottom" Style="{StaticResource Button.Secondary}" Content="Новый профиль" ui:Ui.Icon="{StaticResource Icon.Plus}"
+                        Command="{Binding NewProfileCommand}" Margin="0,12,0,0" HorizontalAlignment="Stretch" />
+                <ListBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" AutomationProperties.Name="Профили LLM">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="4,6">
+                                <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelId, TargetNullValue='модель не выбрана'}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- Редактор профиля -->
+        <Border Grid.Column="2" Style="{StaticResource Panel.Card}">
+            <DockPanel>
+                <!-- Кнопки -->
+                <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                    <Button Style="{StaticResource Button.Secondary}" Content="Проверить соединение" ui:Ui.Icon="{StaticResource Icon.Plug}"
+                            ui:Ui.IsBusy="{Binding TestConnectionCommand.IsRunning}" Command="{Binding TestConnectionCommand}" Margin="0,0,8,8" />
+                    <Button Style="{StaticResource Button.Secondary}" Content="Загрузить модели" ui:Ui.Icon="{StaticResource Icon.Download}"
+                            ui:Ui.IsBusy="{Binding LoadModelsCommand.IsRunning}" Command="{Binding LoadModelsCommand}" Margin="0,0,8,8" />
+                    <Button Style="{StaticResource Button.Secondary}" Content="Тест извлечения" ui:Ui.Icon="{StaticResource Icon.Sparkle}"
+                            ui:Ui.IsBusy="{Binding TestExtractionCommand.IsRunning}" Command="{Binding TestExtractionCommand}" Margin="0,0,8,8"
+                            ToolTip="Запрос на синтетических данных: проверяет схему ответа, разделение ФИО, даты, телефоны и несколько лиц" />
+                    <Button Style="{StaticResource Button.Primary}" Content="Сохранить" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+                    <Button Style="{StaticResource Button.Secondary}" Content="Использовать для обработки" ui:Ui.Icon="{StaticResource Icon.Check}" Command="{Binding MakeActiveCommand}" Margin="0,0,8,8" />
+                    <Button Style="{StaticResource Button.Danger}" Content="Удалить профиль" ui:Ui.Icon="{StaticResource Icon.Trash}" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
+                </WrapPanel>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" IsEnabled="True">
+                    <StackPanel Margin="0,0,12,0">
+                        <!-- Сообщения -->
+                        <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,12" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
+                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+                        </Border>
+                        <Border Style="{StaticResource Banner.Warning}" Margin="0,0,0,12" Visibility="{Binding DataNotice, Converter={StaticResource NullToVisibility}}">
+                            <DockPanel>
+                                <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Cloud}" Size="18" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" VerticalAlignment="Top" />
+                                <TextBlock Text="{Binding DataNotice}" TextWrapping="Wrap" />
+                            </DockPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource Text.Heading.Section}" Text="Подключение" Margin="0,0,0,12" />
+                        <Grid IsEnabled="{Binding CanEdit}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Название профиля" />
+                                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Название профиля" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Провайдер" />
+                                <ComboBox ItemsSource="{Binding Providers}" DisplayMemberPath="DisplayName" SelectedValuePath="Id" SelectedValue="{Binding ProviderId}"
+                                          AutomationProperties.Name="Провайдер" />
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Base URL / endpoint" />
+                            <TextBox Text="{Binding BaseUrl, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Base URL" />
+                        </StackPanel>
+                        <Border Style="{StaticResource Banner.Warning}" Margin="0,0,16,12" Visibility="{Binding KeyBindingWarning, Converter={StaticResource NullToVisibility}}">
+                            <TextBlock Text="{Binding KeyBindingWarning}" TextWrapping="Wrap" />
+                        </Border>
+                        <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="API-ключ" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Удалить ключ" Command="{Binding ClearKeyCommand}" Margin="8,0,0,0" />
+                                <PasswordBox b:PasswordBinding.Value="{Binding ApiKey, Mode=TwoWay}" AutomationProperties.Name="API-ключ" />
+                            </DockPanel>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding KeyHint}" TextWrapping="Wrap" Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <!-- Поля конкретного API -->
+                        <ItemsControl ItemsSource="{Binding Fields}" IsEnabled="{Binding CanEdit}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="2" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,16,12">
+                                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="{Binding Label}" />
+                                        <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Value}" AutomationProperties.Name="{Binding Label}"
+                                                  Visibility="{Binding IsChoice, Converter={StaticResource BoolToVisibility}}" />
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Label}"
+                                                 Visibility="{Binding IsChoice, Converter={StaticResource InverseBoolToVisibility}}" />
+                                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Help}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                                   Visibility="{Binding Help, Converter={StaticResource NullToVisibility}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ProviderNotes}" TextWrapping="Wrap" Margin="0,0,16,0"
+                                   Visibility="{Binding ProviderNotes, Converter={StaticResource NullToVisibility}}" />
+
+                        <!-- Модель -->
+                        <TextBlock Style="{StaticResource Section}" Text="{Binding ModelLabel}" />
+                        <Grid IsEnabled="{Binding CanEdit}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Поиск в списке моделей" />
+                                <TextBox Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Фильтр по названию или ID" AutomationProperties.Name="Фильтр моделей" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Модели, доступные учётной записи" />
+                                <ComboBox ItemsSource="{Binding ModelsView}" SelectedItem="{Binding SelectedModel}" AutomationProperties.Name="Список моделей" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelsStatus}" TextWrapping="Wrap" Margin="0,0,16,8"
+                                   Visibility="{Binding ModelsStatus, Converter={StaticResource NullToVisibility}}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelListingNote}" TextWrapping="Wrap" Margin="0,0,16,8"
+                                   Visibility="{Binding ModelListingNote, Converter={StaticResource NullToVisibility}}" />
+                        <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Точный model ID (можно ввести вручную)" />
+                            <TextBox Text="{Binding ModelId, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Model ID" />
+                            <CheckBox Content="Model ID введён вручную (список моделей недоступен или не содержит нужную)" IsChecked="{Binding ManualModel}" Margin="0,6,0,0" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding CapabilitiesText}" TextWrapping="Wrap" Margin="0,0,16,0" />
+
+                        <!-- Ограничения -->
+                        <TextBlock Style="{StaticResource Section}" Text="Запросы и ограничения" />
+                        <UniformGrid Columns="3" IsEnabled="{Binding CanEdit}">
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тайм-аут, с" />
+                                <TextBox Text="{Binding TimeoutSeconds, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Макс. объём ответа, токенов" />
+                                <TextBox Text="{Binding MaxOutputTokens, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Одновременных запросов" />
+                                <TextBox Text="{Binding MaxConcurrent, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Запросов в минуту (0 — без предела)" />
+                                <TextBox Text="{Binding RequestsPerMinute, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Токенов в минуту (0 — без предела)" />
+                                <TextBox Text="{Binding TokensPerMinute, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Записей в пакете" />
+                                <TextBox Text="{Binding BatchRows, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел входных токенов запроса" />
+                                <TextBox Text="{Binding MaxInputTokens, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Температура (пусто — не отправлять)" />
+                                <TextBox Text="{Binding Temperature, UpdateSourceTrigger=PropertyChanged}" ToolTip="Отправляется, только если поддержка подтверждена тестом" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Структурированный ответ" />
+                                <ComboBox ItemsSource="{Binding OutputModes}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding OutputMode}" />
+                            </StackPanel>
+                        </UniformGrid>
+
+                        <!-- Заголовки -->
+                        <TextBlock Style="{StaticResource Section}" Text="Дополнительные заголовки HTTP" />
+                        <ItemsControl ItemsSource="{Binding Headers}" IsEnabled="{Binding CanEdit}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,16,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="220" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Имя заголовка" AutomationProperties.Name="Имя заголовка" />
+                                        <TextBox Grid.Column="2" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Значение"
+                                                 Visibility="{Binding IsSecret, Converter={StaticResource InverseBoolToVisibility}}" AutomationProperties.Name="Значение заголовка" />
+                                        <PasswordBox Grid.Column="2" b:PasswordBinding.Value="{Binding Value, Mode=TwoWay}"
+                                                     Visibility="{Binding IsSecret, Converter={StaticResource BoolToVisibility}}" AutomationProperties.Name="Секретное значение заголовка" />
+                                        <CheckBox Grid.Column="3" Content="Секрет" IsChecked="{Binding IsSecret}" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                        <Button Grid.Column="4" Style="{StaticResource Button.Icon}" ui:Ui.Icon="{StaticResource Icon.Trash}" Margin="8,0,0,0" ToolTip="Удалить заголовок"
+                                                AutomationProperties.Name="Удалить заголовок"
+                                                Command="{Binding DataContext.RemoveHeaderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Style="{StaticResource Button.Ghost}" Content="Добавить заголовок" ui:Ui.Icon="{StaticResource Icon.Plus}" Command="{Binding AddHeaderCommand}" HorizontalAlignment="Left" />
+
+                        <!-- Тарифы -->
+                        <TextBlock Style="{StaticResource Section}" Text="Тарифы для оценки стоимости (необязательно)" />
+                        <UniformGrid Columns="3" IsEnabled="{Binding CanEdit}">
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Вход, за 1 млн токенов" />
+                                <TextBox Text="{Binding PriceIn, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Выход, за 1 млн токенов" />
+                                <TextBox Text="{Binding PriceOut, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Валюта" />
+                                <TextBox Text="{Binding PriceCurrency, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тариф проверен на дату (ДД.ММ.ГГГГ)" />
+                                <TextBox Text="{Binding PriceDate, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Источник тарифа" />
+                                <TextBox Text="{Binding PriceSource, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </UniformGrid>
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,16,0"
+                                   Text="Без тарифов с датой проверки стоимость запуска не рассчитывается. Встроенных «актуальных» цен в приложении нет." />
+
+                        <!-- Результат теста -->
+                        <StackPanel Visibility="{Binding TestResult, Converter={StaticResource NullToVisibility}}">
+                            <TextBlock Style="{StaticResource Section}" Text="Результат теста извлечения" />
+                            <ItemsControl ItemsSource="{Binding TestResult.Checks}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="0,2">
+                                            <ui:StatusBadge DockPanel.Dock="Left" Margin="0,0,8,0" VerticalAlignment="Top">
+                                                <ui:StatusBadge.Style>
+                                                    <Style TargetType="ui:StatusBadge" BasedOn="{StaticResource StatusBadge.Default}">
+                                                        <Setter Property="Text" Value="Не пройдено" />
+                                                        <Setter Property="Tone" Value="Error" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Passed}" Value="True">
+                                                                <Setter Property="Text" Value="Пройдено" />
+                                                                <Setter Property="Tone" Value="Success" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </ui:StatusBadge.Style>
+                                            </ui:StatusBadge>
+                                            <StackPanel>
+                                                <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Title}" TextWrapping="Wrap" />
+                                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Details}" TextWrapping="Wrap"
+                                                           Visibility="{Binding Details, Converter={StaticResource NullToVisibility}}" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Expander Header="Журнал проверки режимов и ответ модели (синтетические данные)" Margin="0,8,16,0">
+                                <StackPanel Margin="0,8,0,0">
+                                    <ItemsControl ItemsSource="{Binding TestResult.ProbeLog}" Focusable="False">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding StringFormat=• {0}}" TextWrapping="Wrap" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <TextBox Style="{StaticResource TextBox.Multiline}" Text="{Binding TestResult.ResponseJson, Mode=OneWay}" IsReadOnly="True"
+                                             FontFamily="{StaticResource Font.Mono}" MaxHeight="320" Margin="0,8,0,0" TextWrapping="NoWrap"
+                                             HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+                                </StackPanel>
+                            </Expander>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

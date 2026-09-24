@@ -5,18 +5,21 @@ namespace Fakt.Infrastructure.Settings;
 
 /// <summary>
 /// Расположение данных приложения. Переменная окружения FAKT_CONFIG_DIR (или аргумент --config-dir)
-/// переопределяет общий каталог — для тестов и переносного режима.
+/// переопределяет общий каталог — для тестов и переносного режима; данные пользователя тогда хранятся
+/// в его подкаталоге «user», если FAKT_USER_DIR не задан явно.
 /// </summary>
 public sealed class AppPaths
 {
     public AppPaths(string machineDirectory = null, string userDirectory = null)
     {
-        MachineDirectory = machineDirectory ??
-                           Environment.GetEnvironmentVariable("FAKT_CONFIG_DIR") ??
+        var overridden = machineDirectory ?? Environment.GetEnvironmentVariable("FAKT_CONFIG_DIR");
+        MachineDirectory = overridden ??
                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "FAKT");
         UserDirectory = userDirectory ??
                         Environment.GetEnvironmentVariable("FAKT_USER_DIR") ??
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FAKT");
+                        (overridden != null
+                            ? Path.Combine(overridden, "user")
+                            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FAKT"));
     }
 
     /// <summary>Общие настройки компьютера: %ProgramData%\FAKT.</summary>

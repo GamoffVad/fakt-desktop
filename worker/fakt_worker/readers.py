@@ -88,7 +88,7 @@ class Reader(object):
         if isinstance(exc, WorkerError):
             error = exc
         elif isinstance(exc, OSError):
-            error = map_os_error(exc)
+            error = map_os_error(exc, reading=True)
         else:
             log.error("reader %s failed: %s", self.id, format_traceback(exc))
             error = WorkerError(INTERNAL_ERROR, "Внутренняя ошибка при чтении файла",
@@ -196,7 +196,7 @@ def open_reader(args):
         try:
             stream, canonical = open_stream(raw, eff)
         except OSError as exc:
-            raise map_os_error(exc)
+            raise map_os_error(exc, reading=True)
         eff = dict(eff, encoding=canonical)
         parser = create_parser(stream, eff, chunk_size=chunk_size)
         _NEXT_ID[0] += 1

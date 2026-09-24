@@ -1,0 +1,69 @@
+<UserControl x:Class="Fakt.Desktop.Views.LogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
+    <Grid Margin="{StaticResource Thickness.Page}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Margin="0,0,0,16">
+            <TextBlock Style="{StaticResource Text.Heading.Page}" Text="Журнал" />
+            <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                       Text="Технические события: подключения, запросы к модели, ошибки формата и записи. Ключи, пароли и содержимое записей в журнал не пишутся; номера телефонов, счетов и адреса почты маскируются." />
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+            <StackPanel>
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Button.Ghost}" Content="Открыть папку журнала" ui:Ui.Icon="{StaticResource Icon.FolderOpen}" Command="{Binding OpenFolderCommand}" Margin="8,0,0,0" />
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Обновить" ui:Ui.Icon="{StaticResource Icon.Refresh}" Command="{Binding RefreshCommand}" Margin="8,0,0,0" />
+                    <CheckBox DockPanel.Dock="Right" Content="Показывать подробный журнал" IsChecked="{Binding IncludeVerbose}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                    <ComboBox DockPanel.Dock="Left" Width="240" ItemsSource="{Binding Levels}" SelectedItem="{Binding LevelFilter}" AutomationProperties.Name="Уровень" Margin="0,0,8,0" />
+                    <TextBox Text="{Binding TextFilter, UpdateSourceTrigger=PropertyChanged, Delay=300}" ui:Ui.Placeholder="Фильтр по тексту, событию, заданию, коду ошибки…" AutomationProperties.Name="Фильтр журнала" />
+                </DockPanel>
+                <DockPanel Margin="0,12,0,0">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Visibility="{Binding CanManageDiagnostics, Converter={StaticResource BoolToVisibility}}">
+                        <Button Style="{StaticResource Button.Secondary}" Content="Подробно на 1 ч" Command="{Binding EnableVerboseCommand}" CommandParameter="1" Margin="8,0,0,0" />
+                        <Button Style="{StaticResource Button.Secondary}" Content="на 24 ч" Command="{Binding EnableVerboseCommand}" CommandParameter="24" Margin="8,0,0,0" />
+                        <Button Style="{StaticResource Button.Secondary}" Content="Выключить" Command="{Binding DisableVerboseCommand}" Margin="8,0,0,0" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding VerboseText}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                </DockPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource Panel.Card}">
+            <DataGrid Style="{StaticResource DataGrid.Results}" ItemsSource="{Binding EntriesView}" AutomationProperties.Name="События журнала">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Время" Binding="{Binding Time, StringFormat=dd.MM.yyyy HH:mm:ss}" Width="150" MinWidth="150" ElementStyle="{StaticResource Text.Cell}" />
+                    <DataGridTemplateColumn Header="Уровень" Width="150" MinWidth="150" SortMemberPath="LevelText">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ui:StatusBadge Text="{Binding LevelText}" Tone="{Binding Tone, Converter={StaticResource Tone}}" HorizontalAlignment="Left" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Категория" Binding="{Binding CategoryText}" Width="120" MinWidth="120" ElementStyle="{StaticResource Text.Cell}" />
+                    <DataGridTextColumn Header="Событие" Binding="{Binding Event}" Width="170" MinWidth="170" ElementStyle="{StaticResource Text.Cell}" />
+                    <DataGridTemplateColumn Header="Сообщение" Width="3*" MinWidth="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding Message}" ToolTip="{Binding Message}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Контекст" Width="2*" MinWidth="160">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource Text.Cell}" Text="{Binding Context}" ToolTip="{Binding Context}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

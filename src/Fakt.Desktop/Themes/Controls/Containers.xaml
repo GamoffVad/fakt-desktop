@@ -7,6 +7,15 @@
                     xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
 
+    <!-- Token dictionaries referenced with StaticResource by this file (StaticResource does not
+         see sibling merged dictionaries, so every dictionary merges what it needs itself). -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../ArcticBlue.Primitives.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Metrics.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Typography.xaml"/>
+        <ResourceDictionary Source="../Icons.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <!-- ===================== Window ===================== -->
 
     <!-- Apply explicitly to windows: Style="{StaticResource Window.Default}". -->

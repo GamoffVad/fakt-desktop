@@ -9,10 +9,11 @@
             </ResourceDictionary>
         </Application.Resources>
 
-    Order matters: primitives → semantic brushes → metrics → typography → icons → control styles.
-    Later dictionaries reference earlier keys with StaticResource, which is resolved through the
-    Application resources at first use - so load this dictionary into Application.Resources
-    (not into a Window). Implicit styles live here; there is no Themes/Generic.xaml.
+    Order: primitives → semantic brushes → metrics → typography → icons → control styles.
+    StaticResource does not see sibling merged dictionaries, therefore each control dictionary
+    also merges the token dictionaries it references (small, values are created lazily).
+    Implicit styles live here; there is no Themes/Generic.xaml. Brushes are consumed with
+    DynamicResource, sizes/radii/geometries with StaticResource.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">

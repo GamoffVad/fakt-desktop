@@ -58,11 +58,14 @@ def to_value(value):
     return str(value)
 
 
+_CANONICAL_ENCODER = json.JSONEncoder(ensure_ascii=False, separators=(",", ":"))
+
+
 def canonical_json(columns, values):
     # type: (List[str], List[Optional[str]]) -> bytes
-    """Compact JSON array of [column, value] pairs, UTF-8 (§6)."""
-    return json.dumps(list(zip(columns, values)), ensure_ascii=False,
-                      separators=(",", ":")).encode("utf-8")
+    """Compact JSON array of [column, value] pairs, UTF-8 (§6); identical to
+    ``json.dumps(pairs, ensure_ascii=False, separators=(",", ":"))``."""
+    return _CANONICAL_ENCODER.encode(list(zip(columns, values))).encode("utf-8")
 
 
 def record_hash(columns, values):

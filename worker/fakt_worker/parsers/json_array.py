@@ -105,7 +105,8 @@ class JsonArrayParser(BaseParser):
             raise WorkerError(RECORD_TOO_LARGE, "Элемент JSON-массива больше 16 MiB: чтение "
                               "остановлено", {"element": self.record_count + 1})
         self._pos = start
-        self._fill(max(READ_CHARS, pending))
+        # double the pending part, but never buffer more than the element limit
+        self._fill(min(max(READ_CHARS, pending), MAX_RECORD_CHARS + 1 - pending))
 
     def records(self):
         # type: () -> Iterator[Record]

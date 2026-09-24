@@ -1,0 +1,25 @@
+<UserControl x:Class="Fakt.Desktop.Views.Dialogs.HelpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <TextBlock Style="{StaticResource Text.Body}" TextWrapping="Wrap" Margin="0,0,0,12"
+                   Text="FAKT извлекает сведения о лицах и фактах из текстовых файлов. Выберите папку, отметьте файлы и нажмите «Обработка»: структура определяется моделью по первым строкам файла, записи читает Python/Pandas, лица и факты извлекает выбранная LLM, результат сохраняется в SQL Server и доступен на странице «Поиск»." />
+        <TextBlock Style="{StaticResource Text.Label}" Text="Клавиши" Margin="0,4,0,4" />
+        <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" Margin="0,0,0,12"
+                   Text="Ctrl+1…5 — разделы · F1 — справка · Enter — выполнить поиск или открыть карточку · Esc — закрыть карточку или диалог" />
+        <TextBlock Style="{StaticResource Text.Label}" Text="Данные и безопасность" Margin="0,4,0,4" />
+        <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" Margin="0,0,0,12"
+                   Text="Исходные файлы не изменяются и не удаляются. Ключи API и пароль SQL хранятся в DPAPI. В журнал не записываются ключи, полные номера счетов и телефонов и тексты строк, пока не включена подробная диагностика." />
+        <TextBlock Style="{StaticResource Text.Label}" Text="О программе" Margin="0,4,0,4" />
+        <TextBlock Style="{StaticResource Text.Mono}" Text="{Binding Version, Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap">
+            <Run Text="TLS: " /><Run Text="{Binding Tls, Mode=OneWay}" />
+        </TextBlock>
+        <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap">
+            <Run Text="Настройки: " /><Run Text="{Binding DataFolder, Mode=OneWay}" />
+        </TextBlock>
+        <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap">
+            <Run Text="Журнал: " /><Run Text="{Binding LogFolder, Mode=OneWay}" />
+        </TextBlock>
+    </StackPanel>
+</UserControl>

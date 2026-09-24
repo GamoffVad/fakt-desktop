@@ -1,0 +1,70 @@
+<UserControl x:Class="Fakt.Desktop.Views.Dialogs.EstimateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
+    <UserControl.Resources>
+        <Style x:Key="Key" TargetType="TextBlock" BasedOn="{StaticResource Text.Secondary}">
+            <Setter Property="Margin" Value="0,0,16,8" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+        <Style x:Key="Value" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel>
+        <Border Style="{StaticResource Banner.Warning}" Margin="0,0,0,16" Visibility="{Binding IsExternal, Converter={StaticResource BoolToVisibility}}">
+            <DockPanel>
+                <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Cloud}" Size="18" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" VerticalAlignment="Top" />
+                <TextBlock TextWrapping="Wrap" Text="Записи файлов будут отправлены внешнему провайдеру LLM по сети. Убедитесь, что это допустимо для этих данных." />
+            </DockPanel>
+        </Border>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource Key}" Text="Файлы" />
+            <TextBlock Grid.Column="1" Style="{StaticResource Value}" Text="{Binding FilesText, Mode=OneWay}" />
+            <TextBlock Grid.Row="1" Style="{StaticResource Key}" Text="Модель" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding ModelText, Mode=OneWay}" />
+            <TextBlock Grid.Row="2" Style="{StaticResource Key}" Text="Записей" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding RecordsText, Mode=OneWay}" />
+            <TextBlock Grid.Row="3" Style="{StaticResource Key}" Text="Запросов к модели" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding RequestsText, Mode=OneWay}" />
+            <TextBlock Grid.Row="4" Style="{StaticResource Key}" Text="Токенов" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding TokensText, Mode=OneWay}" />
+            <TextBlock Grid.Row="5" Style="{StaticResource Key}" Text="Длительность" />
+            <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding DurationText, Mode=OneWay}" />
+            <TextBlock Grid.Row="6" Style="{StaticResource Key}" Text="Стоимость" />
+            <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding CostText, Mode=OneWay}" />
+            <TextBlock Grid.Row="7" Style="{StaticResource Key}" Text="Бюджет" />
+            <TextBlock Grid.Row="7" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding BudgetText, Mode=OneWay}" />
+        </Grid>
+        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding SampleText, Mode=OneWay}" TextWrapping="Wrap" Margin="0,4,0,12"
+                   Visibility="{Binding SampleText, Converter={StaticResource NullToVisibility}}" />
+        <Border Style="{StaticResource Banner.Warning}" Margin="0,0,0,12" Visibility="{Binding WarningsText, Converter={StaticResource NullToVisibility}}">
+            <TextBlock Text="{Binding WarningsText, Mode=OneWay}" TextWrapping="Wrap" />
+        </Border>
+        <Expander Header="Допущения оценки">
+            <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding AssumptionsText, Mode=OneWay}" TextWrapping="Wrap" Margin="0,8,0,0" />
+        </Expander>
+        <DockPanel Margin="0,16,0,0">
+            <Button DockPanel.Dock="Left" Style="{StaticResource Button.Secondary}" Content="Измерить на образце" ui:Ui.Icon="{StaticResource Icon.Sparkle}"
+                    ui:Ui.IsBusy="{Binding MeasureCommand.IsRunning}" Command="{Binding MeasureCommand}" Margin="0,0,12,0"
+                    ToolTip="Один пакет записей предпросмотра отправляется модели, чтобы измерить фактические токены и время ответа" />
+            <TextBlock Style="{StaticResource Text.Error}" Text="{Binding MeasureError}" TextWrapping="Wrap" VerticalAlignment="Center"
+                       Visibility="{Binding MeasureError, Converter={StaticResource NullToVisibility}}" />
+        </DockPanel>
+    </StackPanel>
+</UserControl>

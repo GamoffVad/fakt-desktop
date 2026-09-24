@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from . import binary_detect, encoding_detect, readers, sampling
 from .parsers import NEWLINE, create_parser
 from .parsers.xml_stream import declared_encoding
-from .protocol import WorkerError, arg_int, arg_obj, arg_path, stat_file
+from .protocol import INTERNAL_ERROR, WorkerError, arg_int, arg_obj, arg_path, stat_file
 from .records import Record
 from .structure import (auto_column, dedupe_columns, issue, normalize, normalize_header_name)
 
@@ -132,6 +132,8 @@ class Validation(object):
             parser = create_parser(stream, eff, chunk_size=min(self.max_records, 1000),
                                    fragment=not self.eof, collect=True)
         except WorkerError as exc:
+            if exc.code == INTERNAL_ERROR:
+                raise  # an internal failure is a protocol error, not a structure issue
             self.error("decode_failed", exc.message)
             return
         self.parser = parser
@@ -145,6 +147,8 @@ class Validation(object):
                     break
             self.eof_reached = exhausted and self.eof
         except WorkerError as exc:
+            if exc.code == INTERNAL_ERROR:
+                raise
             self.error("decode_failed", exc.message)
         finally:
             iterator.close()

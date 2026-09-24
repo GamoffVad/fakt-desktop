@@ -1,0 +1,34 @@
+<UserControl x:Class="Fakt.Desktop.Views.Admin.AdminView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:admin="clr-namespace:Fakt.Desktop.Views.Admin">
+    <Grid Margin="{StaticResource Thickness.Page}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,16">
+            <TextBlock Style="{StaticResource Text.Heading.Page}" Text="Администрирование" />
+            <TextBlock Style="{StaticResource Text.Secondary}" TextWrapping="Wrap" Margin="0,4,0,0"
+                       Text="Подключение к LLM и базе данных, параметры обработки и роли доступа. Ключи и пароли хранятся в защищённом хранилище Windows (DPAPI) и не записываются в файлы настроек и журнал." />
+        </StackPanel>
+        <Border Grid.Row="1" Style="{StaticResource Banner.Info}" Margin="0,0,0,16" Visibility="{Binding ReadOnlyNotice, Converter={StaticResource NullToVisibility}}">
+            <TextBlock Text="{Binding ReadOnlyNotice}" TextWrapping="Wrap" />
+        </Border>
+        <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedTab}">
+            <TabItem Header="LLM">
+                <admin:LlmSettingsView DataContext="{Binding Llm}" />
+            </TabItem>
+            <TabItem Header="База данных">
+                <admin:DatabaseSettingsView DataContext="{Binding Database}" />
+            </TabItem>
+            <TabItem Header="Обработка">
+                <admin:ProcessingSettingsView DataContext="{Binding Processing}" />
+            </TabItem>
+            <TabItem Header="Доступ">
+                <admin:AccessSettingsView DataContext="{Binding Access}" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

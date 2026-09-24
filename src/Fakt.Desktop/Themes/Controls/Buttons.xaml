@@ -3,7 +3,9 @@
 
     One template (Button.Template) serves every variant. State colours are component tokens
     (Button.*.Background / Button.*.Border) resolved with DynamicResource from the variant's
-    Style.Resources, which alias the semantic brushes. States are template-local layers:
+    Style.Resources. Each component brush uses the same primitive as the semantic brush named
+    in its comment (.NET Framework BAML cannot alias a resource with <StaticResource x:Key/>
+    inside a deferred dictionary). States are template-local layers:
         Base (Normal) < HoverLayer (fades 120 ms) < PressedLayer < DisabledLayer.
     Disabled covers everything, so it blocks hover/pressed. Keyboard focus is a separate 2 DIP
     frame drawn 2 DIP outside the control by FocusVisualStyle (no size change).
@@ -15,7 +17,18 @@
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
+                    xmlns:ui="clr-namespace:Fakt.Desktop.Controls"
+                    mc:Ignorable="po">
+
+    <!-- Token dictionaries referenced with StaticResource by this file (StaticResource does not
+         see sibling merged dictionaries, so every dictionary merges what it needs itself). -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../ArcticBlue.Semantic.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Metrics.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Typography.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     <!-- ===================== Focus visuals ===================== -->
 
@@ -70,29 +83,26 @@
 
     <ControlTemplate x:Key="Button.Template" TargetType="{x:Type ButtonBase}">
         <Grid x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True">
-            <Border x:Name="Base"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{StaticResource Radius.Control}"/>
-            <Border x:Name="HoverLayer"
-                    Opacity="0"
-                    Background="{DynamicResource Button.Hover.Background}"
-                    BorderBrush="{DynamicResource Button.Hover.Border}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{StaticResource Radius.Control}"/>
-            <Border x:Name="PressedLayer"
-                    Opacity="0"
-                    Background="{DynamicResource Button.Pressed.Background}"
-                    BorderBrush="{DynamicResource Button.Pressed.Border}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{StaticResource Radius.Control}"/>
-            <Border x:Name="DisabledLayer"
-                    Visibility="Collapsed"
-                    Background="{DynamicResource Button.Disabled.Background}"
-                    BorderBrush="{DynamicResource Button.Disabled.Border}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{StaticResource Radius.Control}"/>
+            <!--
+                Each state layer = full-size fill + outline drawn on top of it. (A single Border insets
+                its background by the border width, which leaves a light seam at 125/150/175 % DPI.)
+            -->
+            <Grid x:Name="BaseLayer">
+                <Border Background="{TemplateBinding Background}" CornerRadius="{StaticResource Radius.Control}"/>
+                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"/>
+            </Grid>
+            <Grid x:Name="HoverLayer" Opacity="0">
+                <Border Background="{DynamicResource Button.Hover.Background}" CornerRadius="{StaticResource Radius.Control}"/>
+                <Border BorderBrush="{DynamicResource Button.Hover.Border}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"/>
+            </Grid>
+            <Grid x:Name="PressedLayer" Opacity="0">
+                <Border Background="{DynamicResource Button.Pressed.Background}" CornerRadius="{StaticResource Radius.Control}"/>
+                <Border BorderBrush="{DynamicResource Button.Pressed.Border}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"/>
+            </Grid>
+            <Grid x:Name="DisabledLayer" Visibility="Collapsed">
+                <Border Background="{DynamicResource Button.Disabled.Background}" CornerRadius="{StaticResource Radius.Control}"/>
+                <Border BorderBrush="{DynamicResource Button.Disabled.Border}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{StaticResource Radius.Control}"/>
+            </Grid>
 
             <Grid x:Name="ContentHost"
                   Margin="{TemplateBinding Padding}"
@@ -200,12 +210,12 @@
 
     <Style x:Key="Button.Base" TargetType="{x:Type ButtonBase}">
         <Style.Resources>
-            <StaticResource x:Key="Button.Hover.Background" ResourceKey="Brush.Background.Subtle"/>
-            <StaticResource x:Key="Button.Hover.Border" ResourceKey="Brush.Border.Input"/>
-            <StaticResource x:Key="Button.Pressed.Background" ResourceKey="Brush.Selection"/>
-            <StaticResource x:Key="Button.Pressed.Border" ResourceKey="Brush.Border.Input"/>
-            <StaticResource x:Key="Button.Disabled.Background" ResourceKey="Brush.Disabled.Background"/>
-            <StaticResource x:Key="Button.Disabled.Border" ResourceKey="Brush.Disabled.Background"/>
+            <SolidColorBrush x:Key="Button.Hover.Background" Color="{StaticResource Color.Blue.50}" po:Freeze="True"/> <!-- = Brush.Background.Subtle -->
+            <SolidColorBrush x:Key="Button.Hover.Border" Color="{StaticResource Color.Slate.400}" po:Freeze="True"/> <!-- = Brush.Border.Input -->
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="{StaticResource Color.Blue.200}" po:Freeze="True"/> <!-- = Brush.Selection -->
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="{StaticResource Color.Slate.400}" po:Freeze="True"/> <!-- = Brush.Border.Input -->
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
         </Style.Resources>
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusVisual.Control}"/>
@@ -228,12 +238,12 @@
     <!-- Main action («Импортировать», «Выбрать папку»): Ocean fill, white text. -->
     <Style x:Key="Button.Primary" TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource Button.Base}">
         <Style.Resources>
-            <StaticResource x:Key="Button.Hover.Background" ResourceKey="Brush.Action.Hover"/>
-            <StaticResource x:Key="Button.Hover.Border" ResourceKey="Brush.Action.Hover"/>
-            <StaticResource x:Key="Button.Pressed.Background" ResourceKey="Brush.Action.Pressed"/>
-            <StaticResource x:Key="Button.Pressed.Border" ResourceKey="Brush.Action.Pressed"/>
-            <StaticResource x:Key="Button.Disabled.Background" ResourceKey="Brush.Disabled.Background"/>
-            <StaticResource x:Key="Button.Disabled.Border" ResourceKey="Brush.Disabled.Background"/>
+            <SolidColorBrush x:Key="Button.Hover.Background" Color="{StaticResource Color.Ocean.700}" po:Freeze="True"/> <!-- = Brush.Action.Hover -->
+            <SolidColorBrush x:Key="Button.Hover.Border" Color="{StaticResource Color.Ocean.700}" po:Freeze="True"/> <!-- = Brush.Action.Hover -->
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="{StaticResource Color.Ocean.800}" po:Freeze="True"/> <!-- = Brush.Action.Pressed -->
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="{StaticResource Color.Ocean.800}" po:Freeze="True"/> <!-- = Brush.Action.Pressed -->
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
         </Style.Resources>
         <Setter Property="Background" Value="{DynamicResource Brush.Action.Primary}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brush.Action.Primary}"/>
@@ -243,12 +253,12 @@
     <!-- Secondary action («Проверить»): white, Border.Input outline, Navy text. -->
     <Style x:Key="Button.Secondary" TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource Button.Base}">
         <Style.Resources>
-            <StaticResource x:Key="Button.Hover.Background" ResourceKey="Brush.Background.Subtle"/>
-            <StaticResource x:Key="Button.Hover.Border" ResourceKey="Brush.Border.Input"/>
-            <StaticResource x:Key="Button.Pressed.Background" ResourceKey="Brush.Selection"/>
-            <StaticResource x:Key="Button.Pressed.Border" ResourceKey="Brush.Border.Input"/>
-            <StaticResource x:Key="Button.Disabled.Background" ResourceKey="Brush.Disabled.Background"/>
-            <StaticResource x:Key="Button.Disabled.Border" ResourceKey="Brush.Disabled.Background"/>
+            <SolidColorBrush x:Key="Button.Hover.Background" Color="{StaticResource Color.Blue.50}" po:Freeze="True"/> <!-- = Brush.Background.Subtle -->
+            <SolidColorBrush x:Key="Button.Hover.Border" Color="{StaticResource Color.Slate.400}" po:Freeze="True"/> <!-- = Brush.Border.Input -->
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="{StaticResource Color.Blue.200}" po:Freeze="True"/> <!-- = Brush.Selection -->
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="{StaticResource Color.Slate.400}" po:Freeze="True"/> <!-- = Brush.Border.Input -->
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
         </Style.Resources>
         <Setter Property="Background" Value="{DynamicResource Brush.Background.Surface}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Input}"/>
@@ -262,12 +272,12 @@
     -->
     <Style x:Key="Button.Ghost" TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource Button.Base}">
         <Style.Resources>
-            <StaticResource x:Key="Button.Hover.Background" ResourceKey="Brush.Background.Navigation"/>
-            <StaticResource x:Key="Button.Hover.Border" ResourceKey="Brush.Background.Navigation"/>
-            <StaticResource x:Key="Button.Pressed.Background" ResourceKey="Brush.Selection"/>
-            <StaticResource x:Key="Button.Pressed.Border" ResourceKey="Brush.Selection"/>
-            <SolidColorBrush x:Key="Button.Disabled.Background" Color="Transparent"/>
-            <SolidColorBrush x:Key="Button.Disabled.Border" Color="Transparent"/>
+            <SolidColorBrush x:Key="Button.Hover.Background" Color="{StaticResource Color.Blue.100}" po:Freeze="True"/> <!-- = Brush.Background.Navigation -->
+            <SolidColorBrush x:Key="Button.Hover.Border" Color="{StaticResource Color.Blue.100}" po:Freeze="True"/> <!-- = Brush.Background.Navigation -->
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="{StaticResource Color.Blue.200}" po:Freeze="True"/> <!-- = Brush.Selection -->
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="{StaticResource Color.Blue.200}" po:Freeze="True"/> <!-- = Brush.Selection -->
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="Transparent" po:Freeze="True"/>
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="Transparent" po:Freeze="True"/>
         </Style.Resources>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -285,12 +295,12 @@
     <!-- Destructive / stopping action («Остановить»): secondary look with Red.700 text and icon. -->
     <Style x:Key="Button.Danger" TargetType="{x:Type ButtonBase}" BasedOn="{StaticResource Button.Base}">
         <Style.Resources>
-            <StaticResource x:Key="Button.Hover.Background" ResourceKey="Brush.Status.ErrorBackground"/>
-            <StaticResource x:Key="Button.Hover.Border" ResourceKey="Brush.Border.Input"/>
-            <StaticResource x:Key="Button.Pressed.Background" ResourceKey="Brush.Status.ErrorBackgroundStrong"/>
-            <StaticResource x:Key="Button.Pressed.Border" ResourceKey="Brush.Status.Error"/>
-            <StaticResource x:Key="Button.Disabled.Background" ResourceKey="Brush.Disabled.Background"/>
-            <StaticResource x:Key="Button.Disabled.Border" ResourceKey="Brush.Disabled.Background"/>
+            <SolidColorBrush x:Key="Button.Hover.Background" Color="{StaticResource Color.Red.50}" po:Freeze="True"/> <!-- = Brush.Status.ErrorBackground -->
+            <SolidColorBrush x:Key="Button.Hover.Border" Color="{StaticResource Color.Slate.400}" po:Freeze="True"/> <!-- = Brush.Border.Input -->
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="{StaticResource Color.Red.100}" po:Freeze="True"/> <!-- = Brush.Status.ErrorBackgroundStrong -->
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="{StaticResource Color.Red.700}" po:Freeze="True"/> <!-- = Brush.Status.Error -->
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="{StaticResource Color.Slate.200}" po:Freeze="True"/> <!-- = Brush.Disabled.Background -->
         </Style.Resources>
         <Setter Property="Background" Value="{DynamicResource Brush.Background.Surface}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border.Input}"/>

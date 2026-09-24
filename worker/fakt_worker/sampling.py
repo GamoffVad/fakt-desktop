@@ -17,7 +17,7 @@ def read_prefix(path, max_bytes):
         data = fh.read(max_bytes)
         eof = len(data) < max_bytes or not fh.read(1)
     except OSError as exc:
-        raise map_os_error(exc)
+        raise map_os_error(exc, reading=True)
     finally:
         fh.close()
     return data, eof

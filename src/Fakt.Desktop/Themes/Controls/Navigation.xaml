@@ -13,6 +13,12 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
 
+    <!-- Token dictionaries referenced with StaticResource by this file (StaticResource does not
+         see sibling merged dictionaries, so every dictionary merges what it needs itself). -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Buttons.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <ControlTemplate x:Key="Navigation.Item.Template" TargetType="{x:Type RadioButton}">
         <Grid x:Name="Root" Background="Transparent" SnapsToDevicePixels="True" UseLayoutRounding="True">
             <Border x:Name="Base"

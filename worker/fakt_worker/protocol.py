@@ -127,13 +127,18 @@ def arg_path(args, name="path"):
     return path
 
 
-def map_os_error(exc):
-    # type: (OSError) -> WorkerError
-    """Map an OSError to a protocol error (never includes file contents)."""
+def map_os_error(exc, reading=False):
+    # type: (OSError, bool) -> WorkerError
+    """Map an OSError to a protocol error (never includes file contents).
+
+    ``reading=True`` means the file was already opened successfully: a
+    permission error while reading is then a byte-range lock held by another
+    process (ERROR_LOCK_VIOLATION, reported by the C runtime as EACCES)."""
     winerror = getattr(exc, "winerror", None)
     err_no = getattr(exc, "errno", None)
     details = {"errno": err_no, "winerror": winerror}
-    if winerror in _WIN_LOCKED:
+    if winerror in _WIN_LOCKED or (reading and (isinstance(exc, PermissionError)
+                                                or err_no == errno.EACCES)):
         return WorkerError(FILE_LOCKED, "Файл заблокирован другим процессом", details)
     if isinstance(exc, FileNotFoundError) or err_no in (errno.ENOENT, errno.ENOTDIR) \
             or winerror in _WIN_NOT_FOUND:
@@ -172,11 +177,57 @@ def format_traceback(exc):
     return "%s (message omitted)\n%s" % (type(exc).__name__, "".join(frames).rstrip())
 
 
+try:  # Windows: open through CreateFileW to keep the Windows error code
+    import ctypes  # type: ignore
+    import msvcrt  # type: ignore
+    from ctypes import wintypes  # type: ignore
+
+    _kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    _CreateFileW = _kernel32.CreateFileW
+    _CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+                             wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+    _CreateFileW.restype = wintypes.HANDLE
+    _CloseHandle = _kernel32.CloseHandle
+    _CloseHandle.argtypes = [wintypes.HANDLE]
+    _CloseHandle.restype = wintypes.BOOL
+except (ImportError, AttributeError, OSError):  # pragma: no cover - not Windows
+    ctypes = None
+    msvcrt = None
+
+_GENERIC_READ = 0x80000000
+_FILE_SHARE_READ_WRITE = 0x00000001 | 0x00000002  # like the C runtime's open()
+_OPEN_EXISTING = 3
+_FILE_FLAGS = 0x00000080 | 0x08000000  # FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN
+_INVALID_HANDLE_VALUE = (1 << (8 * (ctypes.sizeof(ctypes.c_void_p) if ctypes else 8))) - 1
+
+
+def _open_windows(path):
+    """``open(path, "rb")`` via CreateFileW: the C runtime turns a sharing
+    violation into a plain EACCES, CreateFileW keeps winerror 32.
+
+    ``_winapi.CreateFile`` is not used: in Python 3.8 it calls the ANSI
+    ``CreateFileA`` with UTF-8 bytes, so any non-ASCII (e.g. Cyrillic) file name
+    is not found. ``ctypes`` calls the wide-character ``CreateFileW`` directly."""
+    handle = _CreateFileW(path, _GENERIC_READ, _FILE_SHARE_READ_WRITE, None,
+                          _OPEN_EXISTING, _FILE_FLAGS, None)
+    if handle is None or handle == _INVALID_HANDLE_VALUE or handle == -1:
+        error = ctypes.get_last_error()
+        raise OSError(None, ctypes.FormatError(error).strip(), path, error)
+    try:
+        fd = msvcrt.open_osfhandle(handle, os.O_RDONLY | getattr(os, "O_BINARY", 0))
+    except BaseException:
+        _CloseHandle(handle)
+        raise
+    return os.fdopen(fd, "rb")
+
+
 def open_binary(path):
     """Open a file for binary reading with protocol error mapping."""
     try:
+        if ctypes is not None and msvcrt is not None:
+            return _open_windows(path)
         return open(path, "rb")
     except OSError as exc:
         raise map_os_error(exc)
-    except ValueError:
+    except (ValueError, TypeError):
         raise _bad("path", "некорректный путь")

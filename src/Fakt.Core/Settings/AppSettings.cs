@@ -57,6 +57,12 @@ public sealed class DatabaseSettings
 
     public string UserName { get; set; }
 
+    /// <summary>
+    /// Адрес сервера и имя входа, для которых сохранён пароль SQL (см. <see cref="CredentialTarget"/>). Пароль не
+    /// отправляется другому серверу или от имени другого входа: после их изменения его нужно ввести заново.
+    /// </summary>
+    public string PasswordBoundTo { get; set; }
+
     public SqlEncryptMode Encrypt { get; set; } = SqlEncryptMode.Mandatory;
 
     /// <summary>
@@ -87,6 +93,25 @@ public sealed class DatabaseSettings
     public string EffectiveAuxiliarySchema => string.IsNullOrWhiteSpace(AuxiliarySchema) ? Schema : AuxiliarySchema;
 
     public bool IsConfigured => !string.IsNullOrWhiteSpace(Server) && !string.IsNullOrWhiteSpace(Database);
+
+    /// <summary>Нормализованная пара «адрес сервера | имя входа» для привязки сохранённого пароля SQL.</summary>
+    public string CredentialTarget()
+    {
+        var address = (Server ?? string.Empty).Trim();
+        if (!string.IsNullOrWhiteSpace(Instance))
+        {
+            address += "\\" + Instance.Trim();
+        }
+
+        if (Port.HasValue && Port.Value > 0)
+        {
+            address += "," + Port.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        return (address + "|" + (UserName ?? string.Empty).Trim()).ToLowerInvariant();
+    }
+
+    public bool PasswordMatchesTarget => string.Equals(PasswordBoundTo, CredentialTarget(), StringComparison.Ordinal);
 }
 
 /// <summary>Имена столбцов двух основных таблиц. Значения по умолчанию соответствуют заданию.</summary>

@@ -1,0 +1,17 @@
+# Закреплённые зависимости Python worker для Python 3.8.10 (cp38, win_amd64).
+# Версии выбраны по совместимости с Windows 7 (см. docs/COMPATIBILITY.md). Хеши — из PyPI (проверено 24.09.2026).
+# Автоматическое обновление до последних версий не выполняется: сборка ставит только эти файлы (--require-hashes).
+numpy==1.23.5 \
+    --hash=sha256:ca51fcfcc5f9354c45f400059e88bc09215fb71a48d3768fb80e357f3b457e1e
+pandas==2.0.3 \
+    --hash=sha256:69d7f3884c95da3a31ef82b7618af5710dba95bb885ffab339aad925c3e8ce78
+python-dateutil==2.9.0.post0 \
+    --hash=sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427
+six==1.17.0 \
+    --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274
+pytz==2026.4 \
+    --hash=sha256:9d514388fbc89ca0833203464272ac485b8828568ab73532f5020f17e892a0ff
+tzdata==2026.4 \
+    --hash=sha256:c2169a8b0a7a5e9674da5a135ccdfb2b3e671b333ed9fed17b41f73c34476e81
+defusedxml==0.7.1 \
+    --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61

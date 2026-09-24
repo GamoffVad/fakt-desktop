@@ -9,6 +9,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
 
+    <!-- Token dictionaries referenced with StaticResource by this file (StaticResource does not
+         see sibling merged dictionaries, so every dictionary merges what it needs itself). -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../ArcticBlue.Metrics.xaml"/>
+        <ResourceDictionary Source="../ArcticBlue.Typography.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <Style x:Key="StatusBadge.Default" TargetType="{x:Type ui:StatusBadge}">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="IsTabStop" Value="False"/>
@@ -29,28 +36,31 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ui:StatusBadge}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource Radius.Badge}"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True">
-                        <Grid VerticalAlignment="Center">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <ui:Icon x:Name="Glyph"
-                                     Margin="0,0,4,0"
-                                     Size="{StaticResource Size.Icon.Badge}"
-                                     Data="{TemplateBinding Icon}"/>
-                            <TextBlock x:Name="Label"
-                                       Grid.Column="1"
-                                       VerticalAlignment="Center"
-                                       Text="{TemplateBinding Text}"
-                                       TextTrimming="CharacterEllipsis"/>
-                        </Grid>
-                    </Border>
+                    <Grid SnapsToDevicePixels="True" UseLayoutRounding="True">
+                        <!-- Fill and outline as separate layers (no light seam at fractional DPI). -->
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="{StaticResource Radius.Badge}"/>
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{StaticResource Radius.Badge}"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <ui:Icon x:Name="Glyph"
+                                         Margin="0,0,4,0"
+                                         Size="{StaticResource Size.Icon.Badge}"
+                                         Data="{TemplateBinding Icon}"/>
+                                <TextBlock x:Name="Label"
+                                           Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           Text="{TemplateBinding Text}"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Icon" Value="{x:Null}">
                             <Setter TargetName="Glyph" Property="Visibility" Value="Collapsed"/>

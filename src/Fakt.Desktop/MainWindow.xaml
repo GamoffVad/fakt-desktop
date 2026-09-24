@@ -1,0 +1,101 @@
+<Window x:Class="Fakt.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:Fakt.Desktop.Controls"
+        xmlns:vm="clr-namespace:Fakt.Desktop.ViewModels"
+        Title="FAKT — поиск лиц и извлечение фактов"
+        Width="1440" Height="900" MinWidth="1024" MinHeight="720"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource Window.Default}"
+        Icon="Assets/fakt.ico"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display"
+        ui:Ui.IsCompact="{Binding IsCompact}"
+        SizeChanged="OnSizeChanged"
+        Closing="OnClosing">
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="D1" Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:PageKey.Processing}" />
+        <KeyBinding Modifiers="Control" Key="D2" Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:PageKey.Search}" />
+        <KeyBinding Modifiers="Control" Key="D3" Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:PageKey.History}" />
+        <KeyBinding Modifiers="Control" Key="D4" Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:PageKey.Admin}" />
+        <KeyBinding Modifiers="Control" Key="D5" Command="{Binding NavigateCommand}" CommandParameter="{x:Static vm:PageKey.Log}" />
+        <KeyBinding Key="F1" Command="{Binding HelpCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition>
+                <ColumnDefinition.Style>
+                    <Style TargetType="ColumnDefinition">
+                        <Setter Property="Width" Value="216" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCompact}" Value="True">
+                                <Setter Property="Width" Value="64" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Шапка продукта -->
+        <Border Grid.ColumnSpan="2" MinHeight="{StaticResource Size.Header}" Background="{DynamicResource Brush.Background.Surface}" BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,0,0,1">
+            <DockPanel Margin="16,0,16,0" LastChildFill="False">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ui:Icon Data="{StaticResource Icon.BrandMark}" IsFilled="True" Size="34" Foreground="{DynamicResource Brush.Text.Primary}" Margin="0,0,12,0" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Text.Display.Brand}" Text="FAKT" LineHeight="30" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="Поиск лиц и извлечение фактов" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0" ToolTip="Учётная запись Windows и роль FAKT">
+                        <ui:Icon Data="{StaticResource Icon.User}" Size="18" Foreground="{DynamicResource Brush.Text.Secondary}" Margin="0,0,8,0" />
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.Secondary}">
+                            <Run Text="{Binding UserName, Mode=OneWay}" />
+                            <Run Text=" · " />
+                            <Run Text="{Binding RoleTitle, Mode=OneWay}" FontWeight="SemiBold" />
+                        </TextBlock>
+                    </StackPanel>
+                    <Button Style="{StaticResource Navigation.HeaderButton}" ui:Ui.Icon="{StaticResource Icon.Settings}" Content="Администрирование"
+                            Command="{Binding OpenAdminCommand}" AutomationProperties.Name="Администрирование" Margin="0,0,8,0" />
+                    <Button Style="{StaticResource Navigation.HeaderButton}" ui:Ui.Icon="{StaticResource Icon.Help}" Content="Справка"
+                            Command="{Binding HelpCommand}" AutomationProperties.Name="Справка" ToolTip="Справка (F1)" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Боковая навигация -->
+        <Border Grid.Row="1" Background="{DynamicResource Brush.Background.Navigation}" BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,0,1,0">
+            <DockPanel Margin="8,12,8,12">
+                <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Text.Caption}" Text="{Binding AppVersion}" Margin="8,0,0,0"
+                           Visibility="{Binding IsCompact, Converter={StaticResource InverseBoolToVisibility}}" />
+                <StackPanel KeyboardNavigation.TabNavigation="Once" KeyboardNavigation.DirectionalNavigation="Cycle">
+                    <RadioButton Style="{StaticResource Navigation.Item}" GroupName="nav" Content="Обработка" ui:Ui.Icon="{StaticResource Icon.Table}"
+                                 AutomationProperties.Name="Обработка" ToolTip="Обработка (Ctrl+1)" Margin="0,0,0,4"
+                                 IsChecked="{Binding CurrentKey, Converter={StaticResource EqualityToBool}, ConverterParameter=Processing}" />
+                    <RadioButton Style="{StaticResource Navigation.Item}" GroupName="nav" Content="Поиск" ui:Ui.Icon="{StaticResource Icon.Search}"
+                                 AutomationProperties.Name="Поиск" ToolTip="Поиск (Ctrl+2)" Margin="0,0,0,4"
+                                 IsChecked="{Binding CurrentKey, Converter={StaticResource EqualityToBool}, ConverterParameter=Search}" />
+                    <RadioButton Style="{StaticResource Navigation.Item}" GroupName="nav" Content="История" ui:Ui.Icon="{StaticResource Icon.History}"
+                                 AutomationProperties.Name="История" ToolTip="История (Ctrl+3)" Margin="0,0,0,4"
+                                 IsChecked="{Binding CurrentKey, Converter={StaticResource EqualityToBool}, ConverterParameter=History}" />
+                    <RadioButton Style="{StaticResource Navigation.Item}" GroupName="nav" Content="Администрирование" ui:Ui.Icon="{StaticResource Icon.Settings}"
+                                 AutomationProperties.Name="Администрирование" ToolTip="Администрирование (Ctrl+4)" Margin="0,0,0,4"
+                                 IsChecked="{Binding CurrentKey, Converter={StaticResource EqualityToBool}, ConverterParameter=Admin}" />
+                    <RadioButton Style="{StaticResource Navigation.Item}" GroupName="nav" Content="Журнал" ui:Ui.Icon="{StaticResource Icon.Log}"
+                                 AutomationProperties.Name="Журнал" ToolTip="Журнал (Ctrl+5)"
+                                 IsChecked="{Binding CurrentKey, Converter={StaticResource EqualityToBool}, ConverterParameter=Log}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Рабочая область -->
+        <ContentControl Grid.Row="1" Grid.Column="1" Content="{Binding CurrentPage}" Focusable="False" />
+    </Grid>
+</Window>

@@ -1,0 +1,53 @@
+<Window x:Class="Fakt.Desktop.Views.Dialogs.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:Fakt.Desktop.Controls"
+        Title="{Binding Title}"
+        Width="{Binding Width}"
+        MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        Background="{DynamicResource Brush.Background.Surface}"
+        Foreground="{DynamicResource Brush.Text.Primary}"
+        FontFamily="{DynamicResource Font.Primary}"
+        FontSize="{DynamicResource FontSize.Body}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{DynamicResource Text.Heading.Section}" Text="{Binding Title}" TextWrapping="Wrap" Margin="0,0,0,12" />
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+            <ContentControl Content="{Binding}" Focusable="False" />
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+            <Button x:Name="SecondaryButton" Style="{DynamicResource Button.Secondary}" Content="{Binding SecondaryText}" IsCancel="True"
+                    Margin="0,0,12,0" MinWidth="112" Click="OnSecondary">
+                <Button.Visibility>
+                    <Binding Path="SecondaryText" Converter="{StaticResource NullToVisibility}" />
+                </Button.Visibility>
+            </Button>
+            <Button x:Name="PrimaryButton" Content="{Binding PrimaryText}" MinWidth="112" IsEnabled="{Binding CanConfirm}" Click="OnPrimary">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource Button.Primary}">
+                        <Setter Property="IsDefault" Value="True" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDanger}" Value="True">
+                                <Setter Property="IsDefault" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

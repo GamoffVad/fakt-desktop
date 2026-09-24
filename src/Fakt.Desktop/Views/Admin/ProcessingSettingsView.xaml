@@ -1,0 +1,118 @@
+<UserControl x:Class="Fakt.Desktop.Views.Admin.ProcessingSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Fakt.Desktop.Controls">
+    <UserControl.Resources>
+        <Style x:Key="Field" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,0,16,12" />
+        </Style>
+        <Style x:Key="CardTitle" TargetType="TextBlock" BasedOn="{StaticResource Text.Heading.Section}">
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,16,0,0">
+        <StackPanel Margin="0,0,12,16" IsEnabled="{Binding CanEdit}">
+            <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,16" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+
+            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Поиск файлов" />
+                    <CheckBox Content="Искать во вложенных папках" IsChecked="{Binding RecursiveScan}" Margin="0,0,0,8" />
+                    <CheckBox Content="Включать скрытые и системные файлы" IsChecked="{Binding IncludeHidden}" Margin="0,0,0,8" />
+                    <CheckBox Content="Переходить по символическим ссылкам и junction (циклы обнаруживаются по идентификатору файла)" IsChecked="{Binding FollowReparsePoints}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Определение структуры" />
+                    <UniformGrid Columns="3">
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Строк в образце для модели" />
+                            <TextBox Text="{Binding SampleLines, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел образца, КиБ" />
+                            <TextBox Text="{Binding SampleMaxKb, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Записей в предпросмотре" />
+                            <TextBox Text="{Binding PreviewRecords, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Строк в расширенном образце" />
+                            <TextBox Text="{Binding ExtendedLines, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел расширенного образца, КиБ" />
+                            <TextBox Text="{Binding ExtendedMaxKb, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Подтверждать, если запросов структуры больше" />
+                            <TextBox Text="{Binding ConfirmAbove, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </UniformGrid>
+                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                               Text="По умолчанию модели отправляются первые 5 строк файла. Расширенный образец используется, только если по первым строкам структура не определяется, и только после подтверждения." />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Чтение, запись и ограничения" />
+                    <UniformGrid Columns="3">
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Записей в chunk Pandas" />
+                            <TextBox Text="{Binding ChunkSize, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Строк в SQL-пакете" />
+                            <TextBox Text="{Binding SqlBatchSize, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел очереди, пакетов" />
+                            <TextBox Text="{Binding QueueCapacity, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Попыток на запрос к LLM" />
+                            <TextBox Text="{Binding MaxAttempts, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел запросов задания (0 — нет)" />
+                            <TextBox Text="{Binding BudgetRequests, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <StackPanel Style="{StaticResource Field}">
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Предел токенов задания (0 — нет)" />
+                            <TextBox Text="{Binding BudgetTokens, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </UniformGrid>
+                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                               Text="При достижении предела запросов или токенов задание приостанавливается с сохранением прогресса; продолжить можно после подтверждения." />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Python worker" />
+                    <StackPanel Style="{StaticResource Field}">
+                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Путь к python.exe (пусто — встроенный worker\python)" />
+                        <TextBox Text="{Binding PythonPath, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}" />
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource Field}">
+                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Каталог кода worker (пусто — рядом с приложением)" />
+                        <TextBox Text="{Binding WorkerDirectory, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,0,12"
+                               Text="Worker запускается без аргументов с секретами; ключи и пароли ему не передаются. Поддерживаемая сборка: Python 3.8.10 x64, pandas 2.0.3, numpy 1.23.5 (Windows 7 SP1)." />
+                    <Button Style="{StaticResource Button.Secondary}" Content="Проверить worker" ui:Ui.Icon="{StaticResource Icon.Play}" HorizontalAlignment="Left"
+                            ui:Ui.IsBusy="{Binding ProbeCommand.IsRunning}" Command="{Binding ProbeCommand}" />
+                </StackPanel>
+            </Border>
+
+            <Button Style="{StaticResource Button.Primary}" Content="Сохранить параметры обработки" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" HorizontalAlignment="Left" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
