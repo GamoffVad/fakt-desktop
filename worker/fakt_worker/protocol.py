@@ -162,6 +162,16 @@ def stat_file(path):
     return st
 
 
+def format_traceback(exc):
+    # type: (BaseException) -> str
+    """Exception type and stack frames WITHOUT the exception message: the
+    message of a library exception might quote file contents, and stderr
+    must not contain record values."""
+    import traceback
+    frames = traceback.format_list(traceback.extract_tb(exc.__traceback__))
+    return "%s (message omitted)\n%s" % (type(exc).__name__, "".join(frames).rstrip())
+
+
 def open_binary(path):
     """Open a file for binary reading with protocol error mapping."""
     try:

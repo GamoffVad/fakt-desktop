@@ -205,6 +205,12 @@ public sealed class UsageDelta
 /// <summary>Непрерывный по порядковым номерам набор результатов, фиксируемый одной короткой транзакцией вместе с checkpoint.</summary>
 public sealed class CommitUnit
 {
+    /// <summary>
+    /// Идентификатор фиксации. Повтор той же фиксации (сбой после COMMIT до получения подтверждения)
+    /// распознаётся по нему и не изменяет данные и счётчики.
+    /// </summary>
+    public Guid CommitId { get; set; } = Guid.NewGuid();
+
     public long JobId { get; set; }
     public long JobFileId { get; set; }
     public long SourceFileId { get; set; }
@@ -221,6 +227,9 @@ public sealed class CommitUnit
 
 public sealed class CommitResult
 {
+    /// <summary>Фиксация с этим CommitId уже была выполнена ранее; данные не изменялись.</summary>
+    public bool Duplicate { get; set; }
+
     public int ObservationsInserted { get; set; }
     public int RowsRegistered { get; set; }
     public int RowsAlreadyPresent { get; set; }

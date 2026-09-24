@@ -1,0 +1,32 @@
+<!--
+    FAKT · Arctic Blue theme (DESIGN.md). Merge once, in App.xaml:
+
+        <Application.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="Themes/ArcticBlue.xaml"/>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Application.Resources>
+
+    Order matters: primitives → semantic brushes → metrics → typography → icons → control styles.
+    Later dictionaries reference earlier keys with StaticResource, which is resolved through the
+    Application resources at first use - so load this dictionary into Application.Resources
+    (not into a Window). Implicit styles live here; there is no Themes/Generic.xaml.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ArcticBlue.Primitives.xaml"/>
+        <ResourceDictionary Source="ArcticBlue.Semantic.xaml"/>
+        <ResourceDictionary Source="ArcticBlue.Metrics.xaml"/>
+        <ResourceDictionary Source="ArcticBlue.Typography.xaml"/>
+        <ResourceDictionary Source="Icons.xaml"/>
+        <ResourceDictionary Source="Controls/Buttons.xaml"/>
+        <ResourceDictionary Source="Controls/Inputs.xaml"/>
+        <ResourceDictionary Source="Controls/DataGrid.xaml"/>
+        <ResourceDictionary Source="Controls/Navigation.xaml"/>
+        <ResourceDictionary Source="Controls/StatusBadge.xaml"/>
+        <ResourceDictionary Source="Controls/Containers.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>
