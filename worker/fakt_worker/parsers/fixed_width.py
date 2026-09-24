@@ -15,12 +15,16 @@ _STRIP = "\r\n\t "
 
 
 def colspecs(widths):
-    # type: (List[int]) -> List[Tuple[int, int]]
-    specs = []
+    # type: (List[int]) -> List[Tuple[int, Any]]
+    """Half-open column ranges. The last column is open-ended: text to the right of
+    the declared width is kept in it instead of being silently dropped."""
+    specs = []  # type: List[Tuple[int, Any]]
     start = 0
     for width in widths:
         specs.append((start, start + width))
         start += width
+    if specs:
+        specs[-1] = (specs[-1][0], None)
     return specs
 
 

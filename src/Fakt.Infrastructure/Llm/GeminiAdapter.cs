@@ -268,6 +268,14 @@ public sealed class GeminiAdapter : LlmAdapterBase
             result["items"] = ToOpenApiSchema(items);
         }
 
+        foreach (var limit in new[] { "minItems", "maxItems" })
+        {
+            if (schema[limit] != null)
+            {
+                result[limit] = schema[limit].DeepClone();
+            }
+        }
+
         return result;
     }
 }

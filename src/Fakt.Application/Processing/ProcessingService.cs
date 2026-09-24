@@ -270,6 +270,7 @@ public sealed class JobSession
             JobId = JobId,
             ProcessedAtUtc = DateTime.UtcNow,
             Limits = _limits,
+            InferredColumnNames = prepared.Structure?.HasInferredColumnNames == true,
         };
         var llm = new ResilientLlmClient(_service.Registry.Get(_runtime.Profile.ProviderId), _runtime,
             new RetryPolicy { MaxAttempts = _snapshot.Processing.MaxAttemptsPerRequest }, _budget, _service.Logger)
@@ -398,6 +399,14 @@ public sealed class ProcessingService
         }
 
         var password = _settings.SqlPassword(database);
+
+        // Базы, указанной в настройках, нет на сервере — она создаётся автоматически вместе со схемой FAKT.
+        var provision = await _databaseAdmin.EnsureDatabaseAsync(database, password, _authorization.CurrentUserName, cancellationToken).ConfigureAwait(false);
+        if (!provision.Success)
+        {
+            throw new InvalidOperationException(provision.Message);
+        }
+
         var report = await _databaseAdmin.InspectAsync(database, password, cancellationToken).ConfigureAwait(false);
         if (!report.CanProcess)
         {

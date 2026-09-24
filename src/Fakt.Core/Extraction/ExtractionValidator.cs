@@ -27,6 +27,9 @@ public sealed class BatchValidationResult
 
     public List<string> DuplicateIds { get; } = new();
 
+    /// <summary>Записи пакета, для которых модель не вернула ни одного результата.</summary>
+    public List<string> MissingIds { get; } = new();
+
     public List<string> Warnings { get; } = new();
 }
 
@@ -95,6 +98,13 @@ public sealed class ExtractionValidator
             {
                 result.RetryOrdinals.Add(record.Ordinal);
             }
+        }
+
+        var missing = batch.Where(r => !seen.ContainsKey(r.SourceRowId)).Select(r => r.SourceRowId).ToList();
+        if (missing.Count > 0)
+        {
+            result.MissingIds.AddRange(missing);
+            result.Warnings.Add($"Модель не вернула результатов для {missing.Count} из {batch.Count} записей ({string.Join(", ", missing.Take(10))}{(missing.Count > 10 ? ", …" : string.Empty)}); они будут запрошены повторно.");
         }
 
         if (result.UnknownIds.Count > 0)
@@ -443,6 +453,13 @@ public sealed class ExtractionValidator
             }
 
             var value = fact.Value.Trim();
+            var corrected = FactTypeCorrection.Correct(type, value, fact.SourceColumn);
+            if (corrected != type)
+            {
+                target.Warnings.Add($"Тип факта уточнён по формату значения: «{FactTypes.Title(type)}» → «{FactTypes.Title(corrected)}».");
+                type = corrected;
+            }
+
             if (value.Length > 4000)
             {
                 target.Rejected.Add(new RejectedCandidate { Kind = "fact", Name = type, Value = Cap(value, 200), Reason = "Значение факта длиннее 4000 символов" });

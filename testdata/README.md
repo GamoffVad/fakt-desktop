@@ -64,6 +64,7 @@ python tools/testdata/generate_testdata.py --cleanup-scan-edge D:\tmp\fakt-scan-
 | `structured/txt/dos_cp866_semicolon.txt` | delimited «;» | cp866 | 20 | Табличный | Однобайтовая кириллица cp866: проверка эвристики кодировки и ручного исправления. |
 | `structured/txt/excel_unicode_export.txt` | delimited «\t» | utf-16-le + BOM | 30 | Табличный | «Текст Юникод» в стиле Excel: UTF-16 LE с BOM, табуляция, CRLF. |
 | `structured/txt/no_header_comma.txt` | delimited «,» | utf-8 | 30 | Табличный | CSV без заголовка: смысл колонок определяется по значениям. |
+| `structured/txt/no_header_mixed.txt` | delimited «;» | utf-8 | 20 | Табличный | Без заголовка: номер записи, ФИО одной колонкой, дата и место рождения, телефон в разных форматах, ИНН, счёт (иногда с ведущими нулями), госномер — назначение колонок определяется моделью по значениям. |
 | `structured/txt/registry_fixed_width.txt` | fixed_width | utf-8 | 40 | Табличный | TXT фиксированной ширины без разделителей: ширины 20/14/20/12/20/24 символов, хвостовые пробелы строк обрезаны. |
 | `structured/xml/license_preamble_records.xml` | xml | utf-8 | 30 | Требует настройки | Первые 5 строк — декларация и комментарий: записей в образце нет. Ожидается insufficient_sample; после расширенного образца — путь /export/records/record. |
 | `structured/xml/people_attributes_cp1251.xml` | xml | windows-1251 | 35 | Табличный | XML в windows-1251 (объявлено в декларации), запись — один элемент с атрибутами на строку. |

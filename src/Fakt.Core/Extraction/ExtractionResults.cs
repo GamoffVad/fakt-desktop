@@ -188,6 +188,9 @@ public sealed class ExtractionContext
     public string ProviderId { get; set; }
     public string ModelId { get; set; }
     public string PromptVersion { get; set; } = Prompts.FactsPromptVersion;
+
+    /// <summary>У файла нет заголовка: имена колонок подобраны при определении структуры, смысл значений определяет модель.</summary>
+    public bool InferredColumnNames { get; set; }
     public string ExtractionVersion { get; set; }
     public long? JobId { get; set; }
     public DateTime ProcessedAtUtc { get; set; } = DateTime.UtcNow;

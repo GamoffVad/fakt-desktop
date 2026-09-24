@@ -212,7 +212,7 @@ public sealed class LlmProfileService
                     SystemPrompt = Prompts.FactsSystem,
                     UserContent = Prompts.FactsUser(records),
                     SchemaName = JsonSchemas.ExtractionSchemaName,
-                    Schema = JsonSchemas.Extraction(),
+                    Schema = JsonSchemas.Extraction(records.Count),
                     MaxOutputTokens = Math.Max(profile.MaxOutputTokens, 2048),
                     Temperature = temperature,
                     Mode = mode,

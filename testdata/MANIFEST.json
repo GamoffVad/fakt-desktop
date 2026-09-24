@@ -637,6 +637,23 @@
       "line_terminator": "crlf"
     },
     {
+      "path": "structured/txt/no_header_mixed.txt",
+      "size_bytes": 3153,
+      "category": "structured",
+      "format": "delimited",
+      "delimiter": ";",
+      "has_header": false,
+      "skip_rows": 0,
+      "records": 20,
+      "expected_classification": "structured",
+      "expected_status": "Табличный",
+      "expected_file": "_expected/structured/txt/no_header_mixed.txt.expected.jsonl",
+      "notes": "Без заголовка: номер записи, ФИО одной колонкой, дата и место рождения, телефон в разных форматах, ИНН, счёт (иногда с ведущими нулями), госномер — назначение колонок определяется моделью по значениям.",
+      "encoding": "utf-8",
+      "bom": false,
+      "line_terminator": "crlf"
+    },
+    {
       "path": "structured/txt/registry_fixed_width.txt",
       "size_bytes": 5507,
       "category": "structured",

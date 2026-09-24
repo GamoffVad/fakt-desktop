@@ -150,8 +150,33 @@ public sealed class SchemaReport
     public bool CanSearch => Connected && SearchBlockers.Count == 0;
 }
 
+/// <summary>Результат проверки наличия базы данных, указанной в настройках.</summary>
+public sealed class DatabaseProvisionResult
+{
+    /// <summary>База уже существовала — она не изменялась.</summary>
+    public bool Existed { get; set; }
+
+    /// <summary>Базы не было, и она создана автоматически.</summary>
+    public bool Created { get; set; }
+
+    /// <summary>Миграции, применённые к только что созданной базе.</summary>
+    public List<string> AppliedMigrations { get; } = new();
+
+    public bool Success { get; set; } = true;
+
+    public string Message { get; set; }
+
+    public ErrorCategory ErrorCategory { get; set; }
+}
+
 public interface IDatabaseAdmin
 {
+    /// <summary>
+    /// Если базы с указанным в настройках именем нет на сервере, создать её (CREATE DATABASE) и применить к новой
+    /// пустой базе все миграции. Существующая база не изменяется: для неё миграции применяются только явно.
+    /// </summary>
+    Task<DatabaseProvisionResult> EnsureDatabaseAsync(DatabaseSettings settings, string sqlPassword, string appliedBy, CancellationToken cancellationToken);
+
     Task<SchemaReport> InspectAsync(DatabaseSettings settings, string sqlPassword, CancellationToken cancellationToken);
 
     Task<MigrationResult> ApplyMigrationAsync(DatabaseSettings settings, string sqlPassword, string migrationId, string appliedBy, CancellationToken cancellationToken);

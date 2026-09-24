@@ -86,9 +86,9 @@ public sealed class BatchExtractor
         var request = new LlmJsonRequest
         {
             SystemPrompt = Prompts.FactsSystem,
-            UserContent = Prompts.FactsUser(records),
+            UserContent = Prompts.FactsUser(records, _context.InferredColumnNames),
             SchemaName = JsonSchemas.ExtractionSchemaName,
-            Schema = JsonSchemas.Extraction(),
+            Schema = JsonSchemas.Extraction(records.Count),
             MaxOutputTokens = _llm.Config.Profile.MaxOutputTokens,
             Temperature = _llm.Config.Profile.Temperature,
             Mode = Mode,
@@ -146,6 +146,7 @@ public sealed class BatchExtractor
                 e.ProviderRequestId = response.RequestId;
                 e.Category = ErrorCategory.ModelResponse;
             });
+            LogRawResponse(response, records, "invalid_response");
             if (round < MaxRetryRounds)
             {
                 await SplitOrRetryAsync(records, results, round + 1, cancellationToken).ConfigureAwait(false);
@@ -173,7 +174,18 @@ public sealed class BatchExtractor
                 e.Stage = "validation";
                 e.Count = validation.RetryOrdinals.Count;
                 e.ProviderRequestId = response.RequestId;
+                e.Data = new Dictionary<string, object>
+                {
+                    ["batch_records"] = records.Count,
+                    ["output_tokens"] = response.OutputTokens,
+                    ["round"] = round,
+                };
             });
+        }
+
+        if (validation.RetryOrdinals.Count > 0)
+        {
+            LogRawResponse(response, records, "retry");
         }
 
         if (validation.RetryOrdinals.Count > 0)
@@ -222,6 +234,29 @@ public sealed class BatchExtractor
         await ExtractIntoAsync(records.Take(half).ToList(), results, round, cancellationToken).ConfigureAwait(false);
         await ExtractIntoAsync(records.Skip(half).ToList(), results, round, cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Сырой ответ модели — только в подробном режиме диагностики (включается администратором на ограниченный срок
+    /// и пишется в отдельный подробный журнал): ответ содержит данные записей.
+    /// </summary>
+    private void LogRawResponse(LlmResponse response, IReadOnlyList<SourceRecord> records, string reason)
+    {
+        _logger.Debug("extraction.raw_response", $"Ответ модели для диагностики ({reason})", e =>
+        {
+            e.Stage = "validation";
+            e.ProviderRequestId = response.RequestId;
+            e.Data = new Dictionary<string, object>
+            {
+                ["reason"] = reason,
+                ["ids"] = string.Join(",", records.Select(r => r.SourceRowId)),
+                ["output_tokens"] = response.OutputTokens,
+                ["finish"] = response.FinishReason.ToString(),
+                ["response"] = response.Text == null ? null : response.Text.Length <= RawResponseLimit ? response.Text : response.Text.Substring(0, RawResponseLimit) + "…",
+            };
+        });
+    }
+
+    private const int RawResponseLimit = 60000;
 
     private static string Shorten(string text) => text == null ? null : text.Length <= 300 ? text : text.Substring(0, 300) + "…";
 }

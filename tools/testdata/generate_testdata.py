@@ -516,6 +516,31 @@ def gen_no_header(out):
                    expected_file=expected, notes="CSV без заголовка: смысл колонок определяется по значениям.")
 
 
+def gen_no_header_mixed(out):
+    """Без заголовка и с «неудобным» порядком: номер записи, ФИО одной строкой, дата и место рождения,
+    телефон, ИНН, счёт, госномер. Смысл каждой колонки модель определяет по значениям."""
+    rel = "structured/txt/no_header_mixed.txt"
+    rng = rng_for(rel)
+    rows, truth = [], []
+    styles = ["intl_dash", "trunk_paren", "intl_compact"]
+    for i in range(1, 21):
+        p = make_person(rng)
+        city = rng.choice(CITIES)
+        phone = fmt_phone(rand_phone10(rng), styles[i % len(styles)])
+        inn, account, plate = rand_inn(rng), rand_account(rng, i % 4 == 0), rand_plate(rng)
+        rows.append(["Р-%06d" % (1000 + i), fio(p), d_dmy(p["birth"]), city, phone, inn, account, plate])
+        facts = [fact("phone", phone), fact("inn", inn), fact("bank_account", account), fact("license_plate", plate)]
+        truth.append({"ordinal": i, "persons": [truth_person(p, True, city, True, facts)], "unassigned_facts": []})
+    expected = out.write_expected(rel, truth)
+    out.write_text(rel, csv_text(rows, ";"), "utf-8", newline="\r\n",
+                   category="structured", format="delimited", delimiter=";", has_header=False, skip_rows=0,
+                   records=20, expected_classification="structured", expected_status="Табличный",
+                   expected_file=expected,
+                   notes="Без заголовка: номер записи, ФИО одной колонкой, дата и место рождения, телефон в разных "
+                         "форматах, ИНН, счёт (иногда с ведущими нулями), госномер — назначение колонок определяется "
+                         "моделью по значениям.")
+
+
 def gen_xml_namespaces(out):
     rel = "structured/xml/persons_namespaces.xml"
     rng = rng_for(rel)
@@ -1539,7 +1564,7 @@ def write_manifest(out):
 
 GENERATORS = [
     gen_clients_utf8_semicolon, gen_employees_multiline, gen_contacts_cp1251, gen_vehicles_tsv,
-    gen_bank_pipe_preamble, gen_fixed_width, gen_no_header, gen_xml_namespaces, gen_xml_preamble,
+    gen_bank_pipe_preamble, gen_fixed_width, gen_no_header, gen_no_header_mixed, gen_xml_namespaces, gen_xml_preamble,
     gen_xml_attributes_cp1251, gen_jsonl, gen_json_array, gen_utf16_excel, gen_two_persons,
     gen_ambiguous_dates, gen_facts_without_names, gen_prompt_injection, gen_long_values, gen_leading_zeros,
     gen_repeated_phones, gen_single_byte_cyrillic, gen_structure_change, gen_corrupted, gen_duplicates,

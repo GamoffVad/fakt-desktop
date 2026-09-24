@@ -28,7 +28,7 @@
                 <StackPanel>
                     <TextBlock Style="{StaticResource CardTitle}" Text="Подключение к SQL Server" />
                     <TextBlock Style="{StaticResource CardIntro}"
-                               Text="Приложение работает с этой базой: регистрирует исходные файлы в SourceFiles, сохраняет лица и факты в PersonFacts и выполняет по ним поиск. Существующие таблицы не удаляются и не пересоздаются; изменения схемы — только явными миграциями ниже." />
+                               Text="Приложение работает с этой базой: регистрирует исходные файлы в SourceFiles, сохраняет лица и факты в PersonFacts и выполняет по ним поиск. Существующие таблицы не удаляются и не пересоздаются; схема существующей базы меняется только явными миграциями ниже." />
 
                     <Grid IsEnabled="{Binding CanEdit}">
                         <Grid.ColumnDefinitions>
@@ -52,6 +52,8 @@
                     <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
                         <TextBlock Style="{StaticResource Text.FieldLabel}" Text="База данных" />
                         <TextBox Text="{Binding Database, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="База данных" />
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,0"
+                                   Text="Если базы с таким именем нет на сервере, она создаётся автоматически при сохранении или проверке соединения — сразу со схемой FAKT (нужно право CREATE DATABASE). Существующая база не изменяется." />
                     </StackPanel>
 
                     <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Проверка подлинности" />

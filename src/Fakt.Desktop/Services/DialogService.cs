@@ -83,8 +83,24 @@ public interface IDialogService
 
 public sealed class DialogService : IDialogService
 {
-    private static Window Owner =>
-        System.Windows.Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive) ?? System.Windows.Application.Current?.MainWindow;
+    /// <summary>
+    /// Видимое окно-владелец: активное или главное. До появления главного окна (первый запуск, отказ в доступе)
+    /// владельца нет — диалог центрируется на экране.
+    /// </summary>
+    private static Window Owner
+    {
+        get
+        {
+            var application = System.Windows.Application.Current;
+            if (application == null)
+            {
+                return null;
+            }
+
+            var active = application.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive && w.IsVisible);
+            return active ?? (application.MainWindow != null && application.MainWindow.IsVisible ? application.MainWindow : null);
+        }
+    }
 
     public void Show(string title, string message, MessageKind kind = MessageKind.Info, string details = null)
     {
@@ -110,10 +126,18 @@ public sealed class DialogService : IDialogService
         var result = false;
         UiThread.Invoke(() =>
         {
-            var window = new DialogWindow { DataContext = viewModel, Owner = Owner };
-            if (window.Owner == null)
+            // Владелец определяется до создания диалога: первое созданное окно WPF само становится
+            // Application.MainWindow, и диалог не должен назначить владельцем самого себя.
+            var owner = Owner;
+            var window = new DialogWindow { DataContext = viewModel };
+            if (owner != null && !ReferenceEquals(owner, window))
+            {
+                window.Owner = owner;
+            }
+            else
             {
                 window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                window.ShowInTaskbar = true;
             }
 
             result = window.ShowDialog() == true;

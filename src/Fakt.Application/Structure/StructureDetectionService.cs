@@ -178,7 +178,20 @@ public sealed class StructureDetectionService
             return result;
         }
 
-        await ValidateWithParserAsync(file, check.Normalized, worker, settings, result, cancellationToken).ConfigureAwait(false);
+        var effective = check.Normalized;
+        if (effective.Format == StructureDescriptor.FormatFixedWidth && effective.FixedWidths?.Count > 1)
+        {
+            // Модель определила фиксированную ширину; границы колонок выравниваются по образцу (±3 символа).
+            var refined = FixedWidthRefiner.Refine(effective.FixedWidths, (sample.Lines ?? new List<string>()).Skip(effective.SkipRows ?? 0), out var changed);
+            if (changed)
+            {
+                result.Warnings.Add($"Ширины колонок уточнены по выравниванию строк образца: {string.Join(", ", effective.FixedWidths)} → {string.Join(", ", refined)}.");
+                effective = effective.Clone();
+                effective.FixedWidths = refined;
+            }
+        }
+
+        await ValidateWithParserAsync(file, effective, worker, settings, result, cancellationToken).ConfigureAwait(false);
         result.Elapsed = stopwatch.Elapsed;
         return result;
     }

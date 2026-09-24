@@ -441,11 +441,29 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         MessageKind = MessageKind.Info;
         var settings = Build();
         var password = !IsSqlAuth ? null : string.IsNullOrEmpty(Password) ? _services.Settings.SqlPassword(settings) : Password;
+
+        // Базы с указанным именем нет на сервере — создаётся автоматически вместе со схемой FAKT (нужно право CREATE DATABASE).
+        DatabaseProvisionResult provision = null;
+        if (CanManage)
+        {
+            Message = "Проверка наличия базы данных…";
+            provision = await Task.Run(() => _services.Database.EnsureDatabaseAsync(settings, password ?? string.Empty, cancellationToken), cancellationToken);
+        }
+
+        Message = "Проверка соединения и схемы…";
         var report = await Task.Run(() => _services.Database.InspectAsync(settings, password ?? string.Empty, cancellationToken), cancellationToken);
         ApplyReport(report);
-        Message = !report.Connected ? report.ConnectionError
+        if (provision != null && !provision.Success && (!report.Connected || provision.Created))
+        {
+            Message = provision.Message;
+            MessageKind = MessageKind.Error;
+            return;
+        }
+
+        var status = !report.Connected ? report.ConnectionError
             : report.CanProcess && report.CanSearch ? "Соединение установлено, схема совместима."
             : "Соединение установлено; есть различия схемы — см. список ниже.";
+        Message = provision?.Created == true ? provision.Message + " " + status : status;
         MessageKind = !report.Connected ? MessageKind.Error : report.CanProcess && report.CanSearch ? MessageKind.Success : MessageKind.Warning;
     }
 
@@ -498,6 +516,12 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
             HasSavedPassword = settings.Authentication == SqlAuthMode.Sql && SafeExists();
             Message = "Настройки подключения сохранены. Пароль хранится в защищённом хранилище (DPAPI).";
             MessageKind = MessageKind.Success;
+
+            // Сразу после сохранения — проверка соединения; отсутствующая база при этом создаётся автоматически.
+            if (TestCommand.CanExecute(null))
+            {
+                TestCommand.Execute(null);
+            }
         }
         catch (Exception ex) when (ex is ArgumentException || ex is AccessDeniedException)
         {

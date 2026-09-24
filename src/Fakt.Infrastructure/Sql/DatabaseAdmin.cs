@@ -27,9 +27,131 @@ public sealed class DatabaseAdmin : IDatabaseAdmin
     private const string HistoryTable = "FaktSchemaMigrations";
     private readonly IAppLogger _logger;
 
+    private static readonly HashSet<string> SystemDatabases = new(StringComparer.OrdinalIgnoreCase) { "master", "model", "msdb", "tempdb", "distribution" };
+
     public DatabaseAdmin(IAppLogger logger)
     {
         _logger = logger ?? NullLogger.Instance;
+    }
+
+    public async Task<DatabaseProvisionResult> EnsureDatabaseAsync(DatabaseSettings settings, string sqlPassword, string appliedBy, CancellationToken cancellationToken)
+    {
+        var result = new DatabaseProvisionResult();
+        var name = settings.Database?.Trim();
+        if (string.IsNullOrEmpty(name) || name.Length > SqlNames.MaxIdentifierLength || name.Any(char.IsControl))
+        {
+            return Failed(result, ErrorCategory.Configuration, "Недопустимое имя базы данных: от 1 до 128 символов, без управляющих символов.");
+        }
+
+        if (SystemDatabases.Contains(name))
+        {
+            result.Existed = true;
+            return result;
+        }
+
+        // Наличие проверяется из master с теми же сервером, учётными данными и параметрами шифрования.
+        var master = Newtonsoft.Json.JsonConvert.DeserializeObject<DatabaseSettings>(Newtonsoft.Json.JsonConvert.SerializeObject(settings));
+        master.Database = "master";
+        SqlConnectionFactory factory;
+        try
+        {
+            factory = new SqlConnectionFactory(master, sqlPassword);
+        }
+        catch (ArgumentException ex)
+        {
+            return Failed(result, ErrorCategory.Configuration, ex.Message);
+        }
+
+        try
+        {
+            using var connection = await factory.OpenAsync(cancellationToken).ConfigureAwait(false);
+            if (await DatabaseExistsAsync(factory, connection, name, cancellationToken).ConfigureAwait(false))
+            {
+                result.Existed = true;
+                return result;
+            }
+
+            // Имя базы нельзя передать параметром в CREATE DATABASE — только экранированный идентификатор.
+            using (var create = factory.Command(connection, $"CREATE DATABASE {SqlNames.Quote(name)};", timeoutSeconds: Math.Max(factory.CommandTimeout, 300)))
+            {
+                await create.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            await WaitOnlineAsync(factory, connection, name, cancellationToken).ConfigureAwait(false);
+        }
+        catch (SqlException ex) when (ex.Number == 1801)
+        {
+            // База появилась одновременно (другой экземпляр приложения) или не видна по правам метаданных.
+            result.Existed = true;
+            return result;
+        }
+        catch (Exception ex) when (ex is SqlException || ex is InvalidOperationException)
+        {
+            var (category, message) = SqlConnectionFactory.Describe(ex);
+            if (ex is SqlException sql && (sql.Number == 262 || sql.Number == 5133 || sql.Number == 1802))
+            {
+                category = ErrorCategory.Access;
+                message = $"База данных «{name}» не найдена на сервере, и создать её не удалось: у учётной записи нет права CREATE DATABASE " +
+                          "или сервер не может создать файлы базы. Создайте базу вручную или выдайте роль dbcreator. " + sql.Message;
+            }
+
+            _logger.Error("db.create", $"Не удалось проверить или создать базу данных {name}", category, ex);
+            return Failed(result, category, message);
+        }
+
+        result.Created = true;
+        _logger.Info("db.created", $"База данных {name} не найдена и создана автоматически", e => e.User = appliedBy);
+
+        // Новая пустая база: в ней нет существующих таблиц и данных, поэтому схема FAKT создаётся сразу всеми миграциями.
+        foreach (var migration in MigrationCatalog.All)
+        {
+            var applied = await ApplyMigrationAsync(settings, sqlPassword, migration.Id, appliedBy, cancellationToken).ConfigureAwait(false);
+            if (!applied.Success)
+            {
+                return Failed(result, ErrorCategory.Configuration,
+                    $"База данных «{name}» создана автоматически, но схема создана не полностью: {applied.Message} Остальные миграции можно применить явно в разделе «Миграции схемы».");
+            }
+
+            result.AppliedMigrations.Add(migration.Id);
+        }
+
+        result.Message = $"База данных «{name}» не найдена на сервере и создана автоматически; схема FAKT создана (миграции {result.AppliedMigrations.First()}–{result.AppliedMigrations.Last()}).";
+        return result;
+    }
+
+    private static DatabaseProvisionResult Failed(DatabaseProvisionResult result, ErrorCategory category, string message)
+    {
+        result.Success = false;
+        result.ErrorCategory = category;
+        result.Message = message;
+        return result;
+    }
+
+    private static async Task<bool> DatabaseExistsAsync(SqlConnectionFactory factory, SqlConnection connection, string name, CancellationToken cancellationToken)
+    {
+        using var command = factory.Command(connection, "SELECT DB_ID(@name);");
+        command.Parameters.Add("@name", SqlDbType.NVarChar, SqlNames.MaxIdentifierLength).Value = name;
+        var id = await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+        return id != null && id != DBNull.Value;
+    }
+
+    private static async Task WaitOnlineAsync(SqlConnectionFactory factory, SqlConnection connection, string name, CancellationToken cancellationToken)
+    {
+        for (var attempt = 0; attempt < 120; attempt++)
+        {
+            using (var command = factory.Command(connection, "SELECT state_desc FROM sys.databases WHERE name = @name;"))
+            {
+                command.Parameters.Add("@name", SqlDbType.NVarChar, SqlNames.MaxIdentifierLength).Value = name;
+                if (string.Equals(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string, "ONLINE", StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            await Task.Delay(250, cancellationToken).ConfigureAwait(false);
+        }
+
+        throw new InvalidOperationException($"База данных «{name}» создана, но не перешла в состояние ONLINE за 30 секунд.");
     }
 
     public async Task<SchemaReport> InspectAsync(DatabaseSettings settings, string sqlPassword, CancellationToken cancellationToken)

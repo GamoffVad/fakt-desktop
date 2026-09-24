@@ -34,7 +34,12 @@ public static class JsonSchemas
             ("reason", Str(false)));
     }
 
-    public static JObject Extraction()
+    /// <param name="rowCount">
+    /// Число записей в запросе: при значении больше нуля массив rows ограничивается ровно этим числом элементов
+    /// (minItems = maxItems), чтобы strict-режим не позволял модели оборвать ответ после первых записей.
+    /// Схема зависит только от числа записей и переиспользуется провайдером между пакетами одного размера.
+    /// </param>
+    public static JObject Extraction(int rowCount = 0)
     {
         var fieldEnum = MainFields.All.ToArray();
         JObject Fact() => Obj(
@@ -64,7 +69,14 @@ public static class JsonSchemas
             ("status", Enum(false, "extracted", "no_facts")),
             ("persons", Arr(person, false)),
             ("unassigned_facts", Arr(Fact(), false)));
-        return Obj(("rows", Arr(row, false)));
+        var rows = Arr(row, false);
+        if (rowCount > 0)
+        {
+            rows["minItems"] = rowCount;
+            rows["maxItems"] = rowCount;
+        }
+
+        return Obj(("rows", rows));
     }
 
     private static JObject Obj(params (string Name, JObject Schema)[] properties)

@@ -28,6 +28,23 @@ public sealed class DatabaseService
         _logger = logger ?? NullLogger.Instance;
     }
 
+    /// <summary>
+    /// Автоматическое создание базы, указанной в настройках, если её нет на сервере (со схемой FAKT).
+    /// Существующая база не изменяется.
+    /// </summary>
+    public async Task<DatabaseProvisionResult> EnsureDatabaseAsync(DatabaseSettings settings, string passwordOrNull, CancellationToken cancellationToken)
+    {
+        _authorization.Demand(Permission.ManageDatabase);
+        var password = passwordOrNull ?? _settings.SqlPassword(settings);
+        var result = await _admin.EnsureDatabaseAsync(settings, password, _authorization.CurrentUserName, cancellationToken).ConfigureAwait(false);
+        if (result.Created)
+        {
+            _logger.Info("db.provisioned", result.Message, e => e.User = _authorization.CurrentUserName);
+        }
+
+        return result;
+    }
+
     /// <summary>Проверка произвольных (ещё не сохранённых) настроек — для кнопки «Проверить соединение».</summary>
     public Task<SchemaReport> InspectAsync(DatabaseSettings settings, string passwordOrNull, CancellationToken cancellationToken)
     {

@@ -178,7 +178,13 @@ public sealed class EstimationService
 
         var sample = preview.Rows.Where(r => r.Values != null).Take(Math.Max(1, records)).Select(r => new SourceRecord(r.Ordinal, r.Line, r.Line,
             r.Values.Select((v, i) => new KeyValuePair<string, string>(i < preview.Columns.Count ? preview.Columns[i] : "c" + i, v)).ToList(), null, null, null)).ToList();
-        var extractor = new BatchExtractor(llm, new ExtractionContext { ProviderId = llm.Config.Profile.ProviderId, ModelId = llm.Config.Profile.ModelId, ExtractionVersion = "estimate" },
+        var extractor = new BatchExtractor(llm, new ExtractionContext
+            {
+                ProviderId = llm.Config.Profile.ProviderId,
+                ModelId = llm.Config.Profile.ModelId,
+                ExtractionVersion = "estimate",
+                InferredColumnNames = input.Detection?.Structure?.HasInferredColumnNames == true,
+            },
             new TokenEstimator(), new AdaptiveBatchSize(sample.Count), null) { Mode = mode };
         var before = (llm.Budget.InputTokens, llm.Budget.OutputTokens);
         var stopwatch = Stopwatch.StartNew();

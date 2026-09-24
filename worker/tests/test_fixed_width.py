@@ -63,6 +63,10 @@ class FixedWidthTests(TempDirTestCase):
         result = self.validate(path, fw_structure())
         self.assertTrue(result["ok"], result["errors"])
         self.assertIn("data_beyond_last_column", [w["code"] for w in result["warnings"]])
+        # Nothing is dropped silently: the tail stays in the last column.
+        records, _ = read_all(path, result["effective_structure"])
+        self.assertEqual([r["values"][-1] for r in records],
+                         [row[-1].ljust(WIDTHS[-1]) + "  ХВОСТ" for row in ROWS])
         clean = self.write_text("c.txt", "\n".join(fixed_line(r) + "   " for r in ROWS) + "\n")
         result = self.validate(clean, fw_structure())
         self.assertNotIn("data_beyond_last_column", [w["code"] for w in result["warnings"]])

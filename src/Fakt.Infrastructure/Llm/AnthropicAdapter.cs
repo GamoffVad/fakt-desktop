@@ -123,7 +123,7 @@ public sealed class AnthropicAdapter : LlmAdapterBase
             case StructuredOutputMode.JsonSchema:
                 body["output_config"] = new JObject
                 {
-                    ["format"] = new JObject { ["type"] = "json_schema", ["schema"] = request.Schema },
+                    ["format"] = new JObject { ["type"] = "json_schema", ["schema"] = WithoutArrayLimits(request.Schema) },
                 };
                 break;
             case StructuredOutputMode.ToolCall:
@@ -133,7 +133,7 @@ public sealed class AnthropicAdapter : LlmAdapterBase
                     {
                         ["name"] = request.SchemaName,
                         ["description"] = "Return the result as the input of this tool.",
-                        ["input_schema"] = request.Schema,
+                        ["input_schema"] = WithoutArrayLimits(request.Schema),
                         ["strict"] = true,
                     },
                 };
@@ -199,5 +199,26 @@ public sealed class AnthropicAdapter : LlmAdapterBase
 
         response.Text = text.ToString();
         return response;
+    }
+
+    /// <summary>
+    /// Structured outputs Anthropic поддерживает не все ограничения массивов (minItems/maxItems больше 1 отклоняются),
+    /// поэтому число записей в ответе задаётся только текстом запроса.
+    /// </summary>
+    internal static JObject WithoutArrayLimits(JObject schema)
+    {
+        if (schema == null)
+        {
+            return null;
+        }
+
+        var copy = (JObject)schema.DeepClone();
+        foreach (var node in copy.DescendantsAndSelf().OfType<JObject>().ToList())
+        {
+            node.Remove("minItems");
+            node.Remove("maxItems");
+        }
+
+        return copy;
     }
 }

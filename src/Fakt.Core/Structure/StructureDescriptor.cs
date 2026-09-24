@@ -68,6 +68,13 @@ public sealed class StructureDescriptor
     [JsonProperty("reason")]
     public string Reason { get; set; }
 
+    /// <summary>
+    /// Табличный текст без строки заголовка: имена колонок подобраны моделью по значениям (или сгенерированы),
+    /// а не взяты из файла.
+    /// </summary>
+    [JsonIgnore]
+    public bool HasInferredColumnNames => (Format == FormatDelimited || Format == FormatFixedWidth) && HasHeader != true;
+
     public StructureDescriptor Clone()
     {
         return JsonConvert.DeserializeObject<StructureDescriptor>(JsonConvert.SerializeObject(this));

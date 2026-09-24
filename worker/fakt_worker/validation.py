@@ -248,8 +248,9 @@ class Validation(object):
         for line in lines[1 if eff["has_header"] else 0:]:
             body = line.rstrip("\r\n")
             if len(body) > total and body[total:].strip():
-                self.warning("data_beyond_last_column", "Есть данные правее последней колонки "
-                             "(после позиции %d)" % total)
+                self.warning("data_beyond_last_column", "Есть данные правее заявленной ширины "
+                             "последней колонки (после позиции %d); они не отбрасываются, а "
+                             "читаются в последнюю колонку" % total)
                 break
 
     def check_xml(self):
