@@ -38,8 +38,9 @@ public static class StructureContractValidator
     public const int MaxSkipRows = 1000;
     public const int MaxFixedWidth = 100000;
 
-    private static readonly Regex XmlPathPattern = new(@"^/?([A-Za-z_][\w\-.]*:)?[A-Za-z_][\w\-.]*(/([A-Za-z_][\w\-.]*:)?[A-Za-z_][\w\-.]*)*$", RegexOptions.CultureInvariant);
-    private static readonly Regex NcNamePattern = new(@"^[A-Za-z_][\w\-.]*$", RegexOptions.CultureInvariant);
+    // Имена XML могут начинаться с любой буквы Unicode («/Файл/Документ» в выгрузках на русском языке) или «_».
+    private static readonly Regex XmlPathPattern = new(@"^/?([\p{L}_][\w\-.]*:)?[\p{L}_][\w\-.]*(/([\p{L}_][\w\-.]*:)?[\p{L}_][\w\-.]*)*$", RegexOptions.CultureInvariant);
+    private static readonly Regex NcNamePattern = new(@"^[\p{L}_][\w\-.]*$", RegexOptions.CultureInvariant);
 
     public static StructureCheckResult Validate(StructureDescriptor input, string detectedEncoding)
     {
@@ -345,7 +346,7 @@ public static class StructureContractValidator
         }
 
         var normalized = new List<string>(s.Columns.Count);
-        var seen = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var renamed = false;
         for (var i = 0; i < s.Columns.Count; i++)
         {
@@ -362,18 +363,17 @@ public static class StructureContractValidator
                 warnings.Add($"Имя колонки {i + 1} длиннее {MaxColumnNameLength} символов и сокращено для отображения.");
             }
 
-            if (seen.TryGetValue(name, out var count))
+            // «X», «X (2)», «X (3)»… до первого свободного имени, как в worker (dedupe_columns): новое имя
+            // не должно совпасть ни с исходным, ни с уже присвоенным (регистр не различается).
+            var candidate = name;
+            for (var number = 2; used.Contains(candidate); number++)
             {
-                seen[name] = count + 1;
-                name = $"{name} ({count + 1})";
+                candidate = $"{name} ({number})";
                 renamed = true;
             }
-            else
-            {
-                seen[name] = 1;
-            }
 
-            normalized.Add(name);
+            used.Add(candidate);
+            normalized.Add(candidate);
         }
 
         if (renamed)
