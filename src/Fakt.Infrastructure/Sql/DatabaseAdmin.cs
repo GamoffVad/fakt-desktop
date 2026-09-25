@@ -102,10 +102,24 @@ public sealed class DatabaseAdmin : IDatabaseAdmin
         result.Created = true;
         _logger.Info("db.created", $"База данных {name} не найдена и создана автоматически", e => e.User = appliedBy);
 
+        // Пулы соединений могли запомнить неудачные попытки открыть ещё не существовавшую базу.
+        SqlConnection.ClearAllPools();
+
         // Новая пустая база: в ней нет существующих таблиц и данных, поэтому схема FAKT создаётся сразу всеми миграциями.
         foreach (var migration in MigrationCatalog.All)
         {
-            var applied = await ApplyMigrationAsync(settings, sqlPassword, migration.Id, appliedBy, cancellationToken).ConfigureAwait(false);
+            MigrationResult applied;
+            try
+            {
+                applied = await ApplyMigrationAsync(settings, sqlPassword, migration.Id, appliedBy, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is SqlException || ex is InvalidOperationException)
+            {
+                var (category, message) = SqlConnectionFactory.Describe(ex);
+                _logger.Error("db.migration", $"Миграция {migration.Id} не применена к новой базе {name}", category, ex);
+                applied = new MigrationResult { Success = false, Message = $"Миграция {migration.Id} не применена: {message}" };
+            }
+
             if (!applied.Success)
             {
                 return Failed(result, ErrorCategory.Configuration,

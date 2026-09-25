@@ -48,7 +48,7 @@ public sealed class AppServices : IDisposable
     public SearchService Search { get; private set; }
     public HistoryService History { get; private set; }
     public DatabaseService Database { get; private set; }
-    public IDialogService Dialogs { get; private set; }
+    public IDialogService Dialogs { get; internal set; }
     public string TlsMode { get; private set; }
 
     public static AppServices Create(string configDirectory)

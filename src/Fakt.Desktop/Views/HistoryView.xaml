@@ -47,8 +47,8 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Создано" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="130" MinWidth="130" ElementStyle="{StaticResource Text.Cell}" />
-                            <DataGridTextColumn Header="Завершено" Binding="{Binding FinishedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="130" MinWidth="130" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Создано" Binding="{Binding CreatedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="142" MinWidth="142" ElementStyle="{StaticResource Text.Cell}" />
+                            <DataGridTextColumn Header="Завершено" Binding="{Binding FinishedAt, StringFormat=dd.MM.yyyy HH:mm}" Width="142" MinWidth="142" ElementStyle="{StaticResource Text.Cell}" />
                             <DataGridTextColumn Header="Автор" Binding="{Binding CreatedBy}" Width="*" MinWidth="120" ElementStyle="{StaticResource Text.Cell}" />
                             <DataGridTextColumn Header="Модель" Binding="{Binding ModelText}" Width="*" MinWidth="140" ElementStyle="{StaticResource Text.Cell}" />
                             <DataGridTextColumn Header="Файлов" Binding="{Binding FileCount}" Width="72" MinWidth="72" ElementStyle="{StaticResource Text.Cell.Numeric}" />

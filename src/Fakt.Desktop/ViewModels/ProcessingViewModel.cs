@@ -518,12 +518,12 @@ public sealed class ProcessingViewModel : ObservableObject
             {
                 file.Status = FileStatus.Error;
                 file.Message = ex.KindText;
-                throw new InvalidOperationException(ex.KindText + ": " + ex.Message, ex);
+                throw new InvalidOperationException(ex.UserMessage, ex);
             }
             catch (LlmException ex)
             {
                 file.Status = FileStatus.Error;
-                file.Message = ex.KindText + ": " + ex.Message;
+                file.Message = ex.UserMessage;
             }
 
             done++;

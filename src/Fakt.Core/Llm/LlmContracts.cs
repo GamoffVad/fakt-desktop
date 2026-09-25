@@ -150,6 +150,11 @@ public sealed class LlmException : Exception
         Kind == LlmErrorKind.Configuration || Kind == LlmErrorKind.QuotaExceeded || Kind == LlmErrorKind.NotSupported;
 
     public string KindText => LlmErrorText.Describe(Kind);
+
+    /// <summary>Текст для интерфейса: вид ошибки и подробности без повтора, если сообщение уже начинается с вида.</summary>
+    public string UserMessage =>
+        string.IsNullOrWhiteSpace(Message) ? KindText :
+        Message.StartsWith(KindText, StringComparison.OrdinalIgnoreCase) ? Message : KindText + ": " + Message;
 }
 
 public static class LlmErrorText

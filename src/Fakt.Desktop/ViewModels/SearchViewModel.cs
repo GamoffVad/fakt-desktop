@@ -467,6 +467,9 @@ public sealed class NameValue
 
     public string Name { get; }
     public string Value { get; }
+
+    /// <summary>Значение для показа: пустое поле отображается прочерком, чтобы не выглядеть как незаполненный ввод.</summary>
+    public string DisplayValue => string.IsNullOrWhiteSpace(Value) ? "—" : Value;
 }
 
 /// <summary>
@@ -509,14 +512,16 @@ public sealed class ObservationCardViewModel : ObservableObject
     public string Title { get; private set; }
     public string IdentityText { get; private set; }
     public string KindText { get; private set; }
-    public List<NameValue> MainFields { get; } = new();
-    public List<FactGroupViewModel> FactGroups { get; } = new();
-    public List<NameValue> Unresolved { get; } = new();
-    public List<string> Warnings { get; } = new();
-    public List<NameValue> Rejected { get; } = new();
-    public List<NameValue> Provenance { get; } = new();
-    public List<NameValue> PersonFactsColumns { get; } = new();
-    public List<NameValue> SourceFilesColumns { get; } = new();
+    // Списки заполняются после появления карточки на экране; List<T> не сообщает о добавлении элементов,
+    // поэтому по завершении загрузки свойства получают новые экземпляры (см. LoadAsync).
+    public List<NameValue> MainFields { get; private set; } = new();
+    public List<FactGroupViewModel> FactGroups { get; private set; } = new();
+    public List<NameValue> Unresolved { get; private set; } = new();
+    public List<string> Warnings { get; private set; } = new();
+    public List<NameValue> Rejected { get; private set; } = new();
+    public List<NameValue> Provenance { get; private set; } = new();
+    public List<NameValue> PersonFactsColumns { get; private set; } = new();
+    public List<NameValue> SourceFilesColumns { get; private set; } = new();
     public string SourcePath { get; private set; }
 
     public string Json { get => _json; private set => SetProperty(ref _json, value); }
@@ -545,6 +550,14 @@ public sealed class ObservationCardViewModel : ObservableObject
         }
         finally
         {
+            MainFields = MainFields.ToList();
+            FactGroups = FactGroups.ToList();
+            Unresolved = Unresolved.ToList();
+            Warnings = Warnings.ToList();
+            Rejected = Rejected.ToList();
+            Provenance = Provenance.ToList();
+            PersonFactsColumns = PersonFactsColumns.ToList();
+            SourceFilesColumns = SourceFilesColumns.ToList();
             IsLoading = false;
             OnPropertiesChanged(nameof(Title), nameof(IdentityText), nameof(KindText), nameof(MainFields), nameof(FactGroups), nameof(Unresolved),
                 nameof(Warnings), nameof(Rejected), nameof(Provenance), nameof(PersonFactsColumns), nameof(SourceFilesColumns), nameof(SourcePath),

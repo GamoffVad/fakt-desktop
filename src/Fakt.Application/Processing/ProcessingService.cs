@@ -56,7 +56,7 @@ public sealed class JobSession
     private JobControl _control = new();
 
     internal JobSession(ProcessingService service, IStorage storage, LlmRuntimeConfig runtime, StructuredOutputMode mode, JobSnapshot snapshot,
-        IEnumerable<JobFileInput> files, FieldLimits limits, long jobId)
+        IEnumerable<JobFileInput> files, FieldLimits limits, long jobId, BudgetTracker budget = null)
     {
         _service = service;
         _storage = storage;
@@ -67,7 +67,7 @@ public sealed class JobSession
         _limits = limits;
         JobId = jobId;
         _batchSize = new AdaptiveBatchSize(runtime.Profile.BatchRows);
-        _budget = new BudgetTracker(snapshot.Processing.BudgetMaxRequests, snapshot.Processing.BudgetMaxTokens);
+        _budget = budget ?? new BudgetTracker(snapshot.Processing.BudgetMaxRequests, snapshot.Processing.BudgetMaxTokens);
     }
 
     public long JobId { get; }
@@ -110,7 +110,20 @@ public sealed class JobSession
         Status = JobStatus.Running;
         StatusMessage = null;
         StateChanged?.Invoke(this);
-        await _storage.Jobs.UpdateJobAsync(JobId, JobStatus.Running, null, CancellationToken.None).ConfigureAwait(false);
+        try
+        {
+            await _storage.Jobs.UpdateJobAsync(JobId, JobStatus.Running, null, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // Нет соединения с базой: задание не запускается и не остаётся «выполняющимся» в приложении.
+            IsRunning = false;
+            Status = JobStatus.Failed;
+            StatusMessage = "Нет соединения с базой данных, задание не запущено: " + ex.Message + " Повторите попытку после восстановления соединения.";
+            _service.Logger.Error("job.start_failed", ex.Message, ErrorCategory.Connection, ex, e => e.JobId = JobId);
+            StateChanged?.Invoke(this);
+            return Status;
+        }
 
         var anyErrors = false;
         var finalStatus = JobStatus.Completed;
@@ -165,7 +178,7 @@ public sealed class JobSession
         catch (Exception ex)
         {
             finalStatus = JobStatus.Failed;
-            finalMessage = ex.Message;
+            finalMessage = ex.Message + " Задание можно продолжить на странице «История» после устранения причины.";
             _service.Logger.Error("job.failed", ex.Message, ErrorCategory.Internal, ex, e => e.JobId = JobId);
         }
         finally
@@ -175,7 +188,17 @@ public sealed class JobSession
 
         Status = finalStatus;
         StatusMessage = finalMessage ?? Status.ToText();
-        await _storage.Jobs.UpdateJobAsync(JobId, Status, Summary(), CancellationToken.None).ConfigureAwait(false);
+        try
+        {
+            await _storage.Jobs.UpdateJobAsync(JobId, Status, Summary(), CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // База недоступна: итог не сохранён. В базе задание останется «выполняющимся» и на странице «История»
+            // будет помечено прерванным; продолжение — после восстановления соединения.
+            StatusMessage += " Состояние задания не сохранено в базе данных: " + ex.Message;
+            _service.Logger.Error("job.status_not_saved", ex.Message, ErrorCategory.Connection, ex, e => e.JobId = JobId);
+        }
         _service.Logger.Info("job.finished", $"Задание {JobId}: {Status.ToText()}", e =>
         {
             e.JobId = JobId;
@@ -605,7 +628,10 @@ public sealed class ProcessingService
             throw new InvalidOperationException("В задании не осталось файлов, которые можно продолжить (все завершены, изменены или удалены).");
         }
 
-        var session = new JobSession(this, storage, frozen, snapshot.Llm.OutputMode, snapshot, inputs, report.Limits, jobId);
+        // Бюджет — на всё задание: уже израсходованное учитывается; пределы — из текущих настроек, чтобы после
+        // остановки по пределу его можно было поднять в «Администрирование → Обработка» и продолжить.
+        var budget = new BudgetTracker(settings.Processing.BudgetMaxRequests, settings.Processing.BudgetMaxTokens, job.Requests, job.InputTokens, job.OutputTokens);
+        var session = new JobSession(this, storage, frozen, snapshot.Llm.OutputMode, snapshot, inputs, report.Limits, jobId, budget);
         foreach (var file in prepared)
         {
             session.RegisterPrepared(file);

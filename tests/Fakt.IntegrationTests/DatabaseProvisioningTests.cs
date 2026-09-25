@@ -59,6 +59,34 @@ public sealed class DatabaseProvisioningTests : IClassFixture<SqlServerFixture>
     }
 
     [Fact]
+    public async Task CreationSucceedsAfterFailedAttemptToOpenTheMissingDatabase()
+    {
+        // В приложении к ещё не созданной базе успевают обратиться страницы «История» или «Поиск»; неудачная попытка
+        // не должна блокировать последующее создание базы и применение миграций (пул соединений SqlClient).
+        var name = "FaktIT_retry_" + Guid.NewGuid().ToString("N").Substring(0, 10);
+        var settings = _sql.NewSettings();
+        settings.Database = name;
+        var admin = new DatabaseAdmin(null);
+        try
+        {
+            var before = await admin.InspectAsync(settings, null, CancellationToken.None);
+            Assert.False(before.Connected);
+
+            var result = await admin.EnsureDatabaseAsync(settings, null, "integration-test", CancellationToken.None);
+
+            Assert.True(result.Success, result.Message);
+            Assert.True(result.Created);
+            Assert.Equal(MigrationCatalog.All.Count, result.AppliedMigrations.Count);
+            var after = await admin.InspectAsync(settings, null, CancellationToken.None);
+            Assert.True(after.CanProcess && after.CanSearch, after.ConnectionError ?? string.Join("; ", after.ProcessingBlockers.Concat(after.SearchBlockers)));
+        }
+        finally
+        {
+            await DropAsync(name);
+        }
+    }
+
+    [Fact]
     public async Task ExistingDatabaseIsLeftUnchanged()
     {
         // База фикстуры существует, но таблиц FAKT в ней нет: автоматические миграции к ней не применяются.

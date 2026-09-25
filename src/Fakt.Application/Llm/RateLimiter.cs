@@ -89,12 +89,15 @@ public sealed class BudgetTracker
     private long _inputTokens;
     private long _outputTokens;
 
-    public BudgetTracker(long maxRequests, long maxTokens, long alreadyUsedRequests = 0, long alreadyUsedTokens = 0)
+    /// <param name="alreadyUsedTokens">Уже израсходованные входные токены (или все токены, если выходные не известны отдельно).</param>
+    /// <param name="alreadyUsedOutputTokens">Уже израсходованные выходные токены (продолжение задания).</param>
+    public BudgetTracker(long maxRequests, long maxTokens, long alreadyUsedRequests = 0, long alreadyUsedTokens = 0, long alreadyUsedOutputTokens = 0)
     {
         _maxRequests = Math.Max(0, maxRequests);
         _maxTokens = Math.Max(0, maxTokens);
-        _requests = alreadyUsedRequests;
-        _inputTokens = alreadyUsedTokens;
+        _requests = Math.Max(0, alreadyUsedRequests);
+        _inputTokens = Math.Max(0, alreadyUsedTokens);
+        _outputTokens = Math.Max(0, alreadyUsedOutputTokens);
     }
 
     public long Requests => Interlocked.Read(ref _requests);
@@ -107,12 +110,12 @@ public sealed class BudgetTracker
     {
         if (_maxRequests > 0 && Requests >= _maxRequests)
         {
-            throw new BudgetExceededException($"Достигнут предел запросов задания ({_maxRequests}). Обработка поставлена на паузу; увеличьте предел в «Администрирование → Обработка» или продолжите позже.");
+            throw new BudgetExceededException($"Достигнут предел запросов задания ({_maxRequests}). Обработка поставлена на паузу; чтобы продолжить, увеличьте предел в «Администрирование → Обработка» и продолжите задание на странице «История».");
         }
 
         if (_maxTokens > 0 && InputTokens + OutputTokens >= _maxTokens)
         {
-            throw new BudgetExceededException($"Достигнут предел токенов задания ({_maxTokens}). Обработка поставлена на паузу.");
+            throw new BudgetExceededException($"Достигнут предел токенов задания ({_maxTokens}). Обработка поставлена на паузу; чтобы продолжить, увеличьте предел в «Администрирование → Обработка» и продолжите задание на странице «История».");
         }
     }
 

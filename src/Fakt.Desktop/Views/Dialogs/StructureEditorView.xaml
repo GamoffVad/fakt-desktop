@@ -22,7 +22,7 @@
         <UniformGrid Columns="3">
             <StackPanel Style="{StaticResource Field}">
                 <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Формат" />
-                <ComboBox ItemsSource="{Binding Formats}" SelectedItem="{Binding Format}" AutomationProperties.Name="Формат" />
+                <ComboBox ItemsSource="{Binding Formats}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Format}" AutomationProperties.Name="Формат" />
             </StackPanel>
             <StackPanel Style="{StaticResource Field}">
                 <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Кодировка" />

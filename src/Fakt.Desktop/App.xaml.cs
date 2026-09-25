@@ -44,6 +44,12 @@ public partial class App : System.Windows.Application
                 case "--snapshot-search":
                     (snapshots ??= new SnapshotOptions()).SearchText = e.Args[i + 1];
                     break;
+                case "--snapshot-db":
+                    (snapshots ??= new SnapshotOptions()).Database = e.Args[i + 1];
+                    break;
+                case "--snapshot-process":
+                    (snapshots ??= new SnapshotOptions()).ProcessFolder = e.Args[i + 1];
+                    break;
             }
         }
 

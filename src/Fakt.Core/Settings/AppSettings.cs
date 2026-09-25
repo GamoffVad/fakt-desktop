@@ -179,7 +179,7 @@ public sealed class ProcessingSettings
     public int SqlBatchSize { get; set; } = 500;
 
     /// <summary>Предел пакетов в очередях конвейера (чтение → LLM → проверка → SQL).</summary>
-    public int QueueCapacity { get; set; } = 8;
+    public int QueueCapacity { get; set; } = 32;
 
     public int MaxAttemptsPerRequest { get; set; } = 6;
 

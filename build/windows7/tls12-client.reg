@@ -1,0 +1,19 @@
+Windows Registry Editor Version 5.00
+
+; FAKT: enable TLS 1.2 for client connections on Windows 7 SP1 (SChannel).
+; Required for encrypted SQL Server connections (System.Data.SqlClient uses the OS SChannel)
+; and for HTTPS requests to LLM servers. Restart the computer after importing.
+; Source: https://learn.microsoft.com/troubleshoot/sql/database-engine/connect/tls-1-2-support-microsoft-sql-server
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client]
+"DisabledByDefault"=dword:00000000
+"Enabled"=dword:00000001
+
+; .NET Framework 4.x: use OS default protocols and strong cryptography.
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319]
+"SystemDefaultTlsVersions"=dword:00000001
+"SchUseStrongCrypto"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319]
+"SystemDefaultTlsVersions"=dword:00000001
+"SchUseStrongCrypto"=dword:00000001

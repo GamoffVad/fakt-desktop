@@ -38,7 +38,7 @@
         <Border Grid.Row="2" Style="{StaticResource Panel.Card}">
             <DataGrid Style="{StaticResource DataGrid.Results}" ItemsSource="{Binding EntriesView}" AutomationProperties.Name="События журнала">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Время" Binding="{Binding Time, StringFormat=dd.MM.yyyy HH:mm:ss}" Width="150" MinWidth="150" ElementStyle="{StaticResource Text.Cell}" />
+                    <DataGridTextColumn Header="Время" Binding="{Binding Time, StringFormat=dd.MM.yyyy HH:mm:ss}" Width="172" MinWidth="172" ElementStyle="{StaticResource Text.Cell}" />
                     <DataGridTemplateColumn Header="Уровень" Width="150" MinWidth="150" SortMemberPath="LevelText">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

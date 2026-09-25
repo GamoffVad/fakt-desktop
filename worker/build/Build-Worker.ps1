@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Воспроизводимая сборка поставляемого Python worker FAKT: Python 3.8.10 embeddable (x64) + закреплённые колёса.
 
@@ -17,11 +17,19 @@
 
 .PARAMETER HostPython
   Python машины сборки для pip download/install (по умолчанию python из PATH).
+
+.PARAMETER Wheelhouse
+  Папка с заранее скачанными колёсами — сборка без доступа к сети. Подготовка на машине с интернетом:
+    python -m pip download --only-binary=:all: --no-deps --require-hashes --platform win_amd64 `
+      --python-version 3.8 --implementation cp --abi cp38 -r worker\requirements.txt -d wheelhouse
+  Архив python-3.8.10-embed-amd64.zip для офлайн-сборки кладётся в worker\build\cache.
 #>
 [CmdletBinding()]
 param(
     [string]$Output = (Join-Path $PSScriptRoot 'out'),
     [string]$HostPython = 'python',
+    # Папка с заранее скачанными колёсами (pip download ...): сборка без обращения к сети (--no-index).
+    [string]$Wheelhouse,
     [switch]$SkipTests
 )
 
@@ -66,12 +74,19 @@ Set-Content -Path $pth -Encoding ASCII -Value @('python38.zip', '.', 'Lib\site-p
 $sitePackages = Join-Path $pythonDir 'Lib\site-packages'
 New-Item -ItemType Directory -Force $sitePackages | Out-Null
 Write-Host 'Установка закреплённых колёс (только по SHA-256)…'
+$sourceArgs = if ($Wheelhouse) {
+    if (-not (Test-Path $Wheelhouse)) { throw "Папка колёс не найдена: $Wheelhouse" }
+    Write-Host "Источник колёс: $Wheelhouse (без сети)"
+    @('--no-index', '--find-links', $Wheelhouse)
+} else {
+    @('--cache-dir', (Join-Path $cache 'pip'))
+}
 & $HostPython -m pip install `
     --disable-pip-version-check --no-input `
     --target $sitePackages `
     --platform win_amd64 --python-version 3.8 --implementation cp --abi cp38 `
     --only-binary=:all: --no-deps --require-hashes `
-    --cache-dir (Join-Path $cache 'pip') `
+    @sourceArgs `
     -r (Join-Path $workerRoot 'requirements.txt')
 if ($LASTEXITCODE -ne 0) { throw "pip install завершился с кодом $LASTEXITCODE" }
 

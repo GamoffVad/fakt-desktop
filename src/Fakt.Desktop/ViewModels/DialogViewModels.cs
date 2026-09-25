@@ -153,7 +153,14 @@ public sealed class StructureEditorViewModel : DialogViewModel
         SampleLines = file.Detection?.Sample?.Lines?.ToList() ?? new List<string>();
     }
 
-    public IReadOnlyList<string> Formats { get; } = new[] { StructureDescriptor.FormatDelimited, StructureDescriptor.FormatFixedWidth, StructureDescriptor.FormatXml, StructureDescriptor.FormatJsonl, StructureDescriptor.FormatJsonArray };
+    public IReadOnlyList<KeyValuePair<string, string>> Formats { get; } = new[]
+    {
+        new KeyValuePair<string, string>(StructureDescriptor.FormatDelimited, "Текст с разделителем (CSV, TSV, TXT)"),
+        new KeyValuePair<string, string>(StructureDescriptor.FormatFixedWidth, "Фиксированная ширина колонок"),
+        new KeyValuePair<string, string>(StructureDescriptor.FormatXml, "XML с повторяющимися записями"),
+        new KeyValuePair<string, string>(StructureDescriptor.FormatJsonl, "JSON Lines (объект в строке)"),
+        new KeyValuePair<string, string>(StructureDescriptor.FormatJsonArray, "Массив JSON"),
+    };
     public IReadOnlyList<string> Encodings { get; } = EncodingNames.Supported.Where(e => e != "utf-8-sig").ToList();
     public List<string> SampleLines { get; }
 

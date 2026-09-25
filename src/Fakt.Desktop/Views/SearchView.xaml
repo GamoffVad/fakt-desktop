@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding Name}" TextWrapping="Wrap" Margin="0,0,12,0" />
-                <TextBox Grid.Column="1" Style="{StaticResource TextBox.Compact}" Text="{Binding Value, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
+                <TextBox Grid.Column="1" Style="{StaticResource TextBox.Compact}" Text="{Binding DisplayValue, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
                          Background="Transparent" Padding="0" TextWrapping="Wrap" AutomationProperties.Name="{Binding Name}" />
             </Grid>
         </DataTemplate>
@@ -156,7 +156,7 @@
                 <DockPanel>
                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12" LastChildFill="False">
                         <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Heading.Section}" Text="Результаты" VerticalAlignment="Center" />
-                        <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Secondary}" Text="{Binding CountText}" VerticalAlignment="Center" Margin="16,0,0,0" />
+                        <TextBlock DockPanel.Dock="Left" Style="{StaticResource Text.Secondary}" Text="{Binding CountText}" VerticalAlignment="Center" Margin="16,0,16,0" />
                         <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Следующая" ui:Ui.Icon="{StaticResource Icon.ChevronRight}" Command="{Binding NextPageCommand}" Margin="8,0,0,0" />
                         <TextBlock DockPanel.Dock="Right" Style="{StaticResource Text.Label}" Text="{Binding PageText}" VerticalAlignment="Center" Margin="8,0,0,0" />
                         <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Предыдущая" ui:Ui.Icon="{StaticResource Icon.ChevronLeft}" Command="{Binding PrevPageCommand}" />

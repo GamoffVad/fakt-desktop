@@ -84,6 +84,10 @@ public sealed class SqlConnectionFactory
             PersistSecurityInfo = false,
             MultipleActiveResultSets = false,
             Pooling = true,
+
+            // По умолчанию для локального SQL Server пул после неудачного входа несколько секунд возвращает
+            // запомненную ошибку: исправленные настройки или только что созданная база «не работали бы» сразу.
+            PoolBlockingPeriod = PoolBlockingPeriod.NeverBlock,
         };
 
         if (settings.Authentication == SqlAuthMode.Windows)

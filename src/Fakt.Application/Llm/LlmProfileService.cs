@@ -175,7 +175,7 @@ public sealed class LlmProfileService
                 }
                 catch (LlmException ex)
                 {
-                    result.Message = ex.KindText + ": " + ex.Message;
+                    result.Message = ex.UserMessage;
                 }
 
                 break;
@@ -263,7 +263,7 @@ public sealed class LlmProfileService
                 }
                 catch (LlmException ex)
                 {
-                    result.Message = ex.KindText + ": " + ex.Message;
+                    result.Message = ex.UserMessage;
                     result.ProbeLog.Add(result.Message);
                     result.Elapsed = stopwatch.Elapsed;
                     return result;

@@ -89,7 +89,7 @@ public sealed class PipelineOptions
 {
     public int ChunkSize { get; set; } = 5000;
     public int SqlBatchSize { get; set; } = 500;
-    public int QueueCapacity { get; set; } = 8;
+    public int QueueCapacity { get; set; } = 32;
     public int MaxInputTokens { get; set; } = 6000;
     public int SqlRetryAttempts { get; set; } = 5;
 }
@@ -182,9 +182,17 @@ public sealed class FilePipeline
             var readerDone = false;
             using var pauseWatcher = new Timer(_ =>
             {
-                if (_control.PauseRequested && !_dispatch.IsCancellationRequested)
+                // Timer.Dispose не ждёт выполняющийся обратный вызов: источник отмены может быть уже освобождён,
+                // а необработанное исключение в обратном вызове таймера завершило бы процесс.
+                try
                 {
-                    _dispatch.Cancel();
+                    if (_control.PauseRequested && !_dispatch.IsCancellationRequested)
+                    {
+                        _dispatch.Cancel();
+                    }
+                }
+                catch (ObjectDisposedException)
+                {
                 }
             }, null, 200, 200);
 
@@ -588,7 +596,7 @@ public sealed class FilePipeline
                 WorkerException { IsFileChanged: true } =>
                     "Файл изменён после начала обработки: продолжение со старой позиции невозможно. Запустите обработку заново — будет создана новая версия источника.",
                 WorkerException worker => "Ошибка чтения файла: " + worker.Message,
-                LlmException llm => llm.KindText + ": " + llm.Message,
+                LlmException llm => llm.UserMessage,
                 _ => _failure.Message,
             };
             return new FilePipelineResult { Outcome = _failureOutcome ?? PipelineOutcome.Failed, Message = message, Progress = progress };
