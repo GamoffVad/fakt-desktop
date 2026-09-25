@@ -87,7 +87,10 @@ $request = '{"v":1,"id":"1","cmd":"hello","args":{}}' + "`n" + '{"v":1,"id":"2",
 $hello = ($request | & $python -I -X utf8 -u (Join-Path $workerDst 'fakt_worker_main.py') | Select-Object -First 1) | ConvertFrom-Json
 if (-not $hello.ok) { throw 'Worker из папки выпуска не ответил на hello.' }
 
-$version = (Get-Item (Join-Path $app 'FAKT.exe')).VersionInfo.ProductVersion
+# ProductVersion содержит и коммит сборки («1.0.0+<commit>»): версия — для имени архива, коммит — в манифест.
+$informational = (Get-Item (Join-Path $app 'FAKT.exe')).VersionInfo.ProductVersion
+$version = $informational.Split('+')[0]
+$commit = if ($informational.Contains('+')) { $informational.Split('+')[1] } else { $null }
 $files = Get-ChildItem $app -Recurse -File | Sort-Object FullName | ForEach-Object {
     [ordered]@{
         path = $_.FullName.Substring($app.Length + 1)
@@ -98,6 +101,7 @@ $files = Get-ChildItem $app -Recurse -File | Sort-Object FullName | ForEach-Obje
 $manifest = [ordered]@{
     product = 'FAKT'
     version = $version
+    commit = $commit
     built_at_utc = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     framework = '.NET Framework 4.8 (x64)'
     worker = [ordered]@{ python = $hello.result.python_version; pandas = $hello.result.pandas_version; numpy = $hello.result.numpy_version; defusedxml = $hello.result.defusedxml_version }
