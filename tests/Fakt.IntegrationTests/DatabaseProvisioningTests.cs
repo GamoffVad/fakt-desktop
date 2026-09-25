@@ -113,6 +113,34 @@ public sealed class DatabaseProvisioningTests : IClassFixture<SqlServerFixture>
     }
 
     [Fact]
+    public async Task SettingsSavedByOldVersionForLocalServerConnectAfterMigration()
+    {
+        // Настройки прежней версии: сервер «.», обязательное шифрование, сертификат проверяется. К локальному SQL Server
+        // с самоподписанным сертификатом так подключиться нельзя; после загрузки настроек соединение работает.
+        var name = "FaktIT_migr_" + Guid.NewGuid().ToString("N").Substring(0, 8);
+        var old = new AppSettings { SchemaVersion = 1 };
+        old.Database.Server = ".";
+        old.Database.Database = name;
+        old.Database.Encrypt = SqlEncryptMode.Mandatory;
+        old.Database.TrustServerCertificate = false;
+        var admin = new DatabaseAdmin(null);
+        try
+        {
+            var settings = Fakt.Application.Settings.SettingsService.WithDefaults(old).Database;
+            Assert.False(settings.TrustServerCertificate);
+
+            var result = await admin.EnsureDatabaseAsync(settings, null, "integration-test", CancellationToken.None);
+            Assert.True(result.Success, result.Message);
+            var report = await admin.InspectAsync(settings, null, CancellationToken.None);
+            Assert.True(report.Connected, report.ConnectionError);
+        }
+        finally
+        {
+            await DropAsync(name);
+        }
+    }
+
+    [Fact]
     public async Task ExistingDatabaseIsLeftUnchanged()
     {
         // База фикстуры существует, но таблиц FAKT в ней нет: автоматические миграции к ней не применяются.

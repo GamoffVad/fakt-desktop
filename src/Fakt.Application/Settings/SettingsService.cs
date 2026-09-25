@@ -56,6 +56,19 @@ public sealed class SettingsService
             db.TrustServerCertificate = defaults.TrustServerCertificate;
         }
 
+        // Версия 1 по умолчанию требовала шифрование и для локального сервера: SQL Server с самоподписанным
+        // сертификатом такое подключение отклоняет. Соединение с локальным сервером не выходит за пределы
+        // компьютера, поэтому ранее сохранённое требование снимается один раз (проверка сертификата не отключается).
+        if (settings.SchemaVersion < 2)
+        {
+            if (DatabaseSettings.IsLocalServer(db.Server) && db.Encrypt == SqlEncryptMode.Mandatory && !db.TrustServerCertificate)
+            {
+                db.Encrypt = SqlEncryptMode.Optional;
+            }
+
+            settings.SchemaVersion = 2;
+        }
+
         settings.Processing ??= new ProcessingSettings();
         return settings;
     }

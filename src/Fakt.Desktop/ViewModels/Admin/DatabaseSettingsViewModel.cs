@@ -159,9 +159,16 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
             }
 
             // Сетевой сервер: данные пойдут по сети — шифрование включается автоматически (его можно отключить явно).
-            if (wasLocal && !string.IsNullOrWhiteSpace(value) && !DatabaseSettings.IsLocalServer(value) && !EncryptMandatory)
+            // Локальный сервер: соединение не выходит за пределы компьютера, а самоподписанный сертификат локального
+            // SQL Server не проходит проверку — обязательное шифрование снимается (проверка сертификата не отключается).
+            var isLocal = DatabaseSettings.IsLocalServer(value);
+            if (wasLocal && !string.IsNullOrWhiteSpace(value) && !isLocal && !EncryptMandatory)
             {
                 EncryptMandatory = true;
+            }
+            else if (!wasLocal && isLocal && EncryptMandatory && !TrustServerCertificate)
+            {
+                EncryptMandatory = false;
             }
 
             OnPropertiesChanged(nameof(SecurityWarning), nameof(LocalConnectionNote));
@@ -498,16 +505,29 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         ApplyReport(report);
         if (provision != null && !provision.Success && (!report.Connected || provision.Created))
         {
-            Message = provision.Message;
+            Message = WithCertificateHint(provision.Message);
             MessageKind = MessageKind.Error;
             return;
         }
 
-        var status = !report.Connected ? report.ConnectionError
+        var status = !report.Connected ? WithCertificateHint(report.ConnectionError)
             : report.CanProcess && report.CanSearch ? "Соединение установлено, схема совместима."
             : "Соединение установлено; есть различия схемы — см. список ниже.";
         Message = provision?.Created == true ? provision.Message + " " + status : status;
         MessageKind = !report.Connected ? MessageKind.Error : report.CanProcess && report.CanSearch ? MessageKind.Success : MessageKind.Warning;
+    }
+
+    /// <summary>Ошибка недоверенного сертификата при подключении к локальному серверу — подсказка, что сделать.</summary>
+    private string WithCertificateHint(string error)
+    {
+        if (string.IsNullOrEmpty(error) || !EncryptMandatory || !DatabaseSettings.IsLocalServer(Server) ||
+            (error.IndexOf("сертификат", StringComparison.OrdinalIgnoreCase) < 0 && error.IndexOf("certificate", StringComparison.OrdinalIgnoreCase) < 0))
+        {
+            return error;
+        }
+
+        return "Локальный SQL Server использует самоподписанный сертификат, которому Windows не доверяет. Снимите отметку «Шифровать соединение» " +
+               "(или нажмите «Значения по умолчанию»): соединение с сервером этого компьютера не выходит в сеть. " + error;
     }
 
     private void ApplyReport(SchemaReport report)

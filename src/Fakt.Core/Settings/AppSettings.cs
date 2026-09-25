@@ -7,7 +7,10 @@ namespace Fakt.Core.Settings;
 /// <summary>Общие настройки компьютера (без секретов): %ProgramData%\FAKT\settings.json.</summary>
 public sealed class AppSettings
 {
-    public int SchemaVersion { get; set; } = 1;
+    /// <summary>Текущая версия формата настроек; см. SettingsService.WithDefaults.</summary>
+    public const int CurrentSchemaVersion = 2;
+
+    public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
     public List<LlmProfile> LlmProfiles { get; set; } = new();
 

@@ -91,6 +91,29 @@ public sealed class SettingsDefaultsTests
         Assert.Equal(SqlEncryptMode.Mandatory, settings.Database.Encrypt);
     }
 
+    [Theory]
+    [InlineData(1, ".", false, SqlEncryptMode.Optional)]           // старая версия: локальный сервер — шифрование снимается
+    [InlineData(1, "localhost", false, SqlEncryptMode.Optional)]
+    [InlineData(1, "sql01.corp.local", false, SqlEncryptMode.Mandatory)] // сетевой сервер не меняется
+    [InlineData(1, ".", true, SqlEncryptMode.Mandatory)]           // явное доверие сертификату — выбор пользователя
+    [InlineData(2, ".", false, SqlEncryptMode.Mandatory)]          // текущая версия: выбор пользователя сохраняется
+    public void OldLocalEncryptionRequirementIsMigratedOnce(int version, string server, bool trust, SqlEncryptMode expected)
+    {
+        var settings = new AppSettings { SchemaVersion = version };
+        settings.Database.Server = server;
+        settings.Database.Database = "fff";
+        settings.Database.Encrypt = SqlEncryptMode.Mandatory;
+        settings.Database.TrustServerCertificate = trust;
+
+        SettingsService.WithDefaults(settings);
+
+        Assert.Equal(expected, settings.Database.Encrypt);
+        Assert.Equal(trust, settings.Database.TrustServerCertificate);
+        Assert.Equal(server, settings.Database.Server);
+        Assert.Equal("fff", settings.Database.Database);
+        Assert.Equal(AppSettings.CurrentSchemaVersion, settings.SchemaVersion);
+    }
+
     [Fact]
     public void MissingSectionsAreRestored()
     {
