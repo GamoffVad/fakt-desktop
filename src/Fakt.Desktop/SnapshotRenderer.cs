@@ -92,6 +92,7 @@ internal static class SnapshotRenderer
     {
         var output = Path.GetFullPath(options.OutputDirectory);
         Directory.CreateDirectory(output);
+        _snapshotOutput = output;
         var log = new List<string>();
 
         if (!services.Settings.Current.Access.IsInitialized)
@@ -175,6 +176,21 @@ internal static class SnapshotRenderer
         for (var i = 0; i < tabs.Length; i++)
         {
             main.Admin.SelectedTab = i;
+            if (i == 1)
+            {
+                Pump();
+                var probe = FindVisual<System.Windows.Controls.TextBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "Сервер");
+                for (DependencyObject d = probe; d != null && !(d is Window); d = VisualTreeHelper.GetParent(d))
+                {
+                    if (d is FrameworkElement fe)
+                    {
+                        log.Add($"layout: {fe.GetType().Name} {fe.Name} h={fe.ActualHeight:0} w={fe.ActualWidth:0} va={fe.VerticalAlignment} ha={fe.HorizontalAlignment}");
+                    }
+                }
+
+                RunDatabaseFlow(services, main, window, output, log, Shot);
+            }
+
             // Проверка соединения создаёт отсутствующую базу — только для базы, явно указанной для режима проверки.
             if (i == 1 && !string.IsNullOrWhiteSpace(options.Database))
             {
@@ -302,52 +318,169 @@ internal static class SnapshotRenderer
         llm.ProviderId = Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter;
         llm.BaseUrl = baseUrl;
         Pump();
-        log.Add($"add-model: provider={llm.ProviderId}, models={llm.Models.Count}, hint={llm.ModelsHint}");
+        log.Add($"add-model: provider={llm.ProviderId}, model={llm.ModelId}, models={llm.Models.Count}, caption={llm.ModelCaption}");
         shot("07a-admin-llm-new-openrouter");
 
         var passwordBox = FindVisual<System.Windows.Controls.PasswordBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "API-ключ");
-        if (passwordBox == null)
+        var combo = FindVisual<System.Windows.Controls.ComboBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "Модель");
+        if (passwordBox == null || combo == null)
         {
-            log.Add("add-model: FAIL — поле API-ключа не найдено");
+            log.Add("add-model: FAIL — поле API-ключа или список моделей не найдены");
             return;
         }
 
         // Ввод в элемент управления, как с клавиатуры: значение должно дойти до модели представления через привязку.
         passwordBox.Password = key;
-        log.Add($"add-model: key reached view model = {llm.ApiKey == key}");
-        WaitUntil(() => llm.Models.Count > 0 || (llm.ModelsStatus != null && !llm.LoadModelsCommand.IsRunning && !llm.ModelsStatus.StartsWith("Загрузка", StringComparison.Ordinal)));
-        log.Add($"add-model: models loaded = {llm.Models.Count}, status = {llm.ModelsStatus}");
-        var list = FindVisual<System.Windows.Controls.ListBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "Список моделей");
-        if (list == null || list.Items.Count == 0)
+        Pump(1500);
+        log.Add($"add-model: key reached view model = {llm.ApiKey == key}; models before opening the list = {llm.Models.Count}");
+
+        // Открытие выпадающего списка — список загружается, в раскрытом списке есть поле поиска.
+        combo.IsDropDownOpen = true;
+        WaitUntil(() => !llm.LoadModelsCommand.IsRunning && (llm.Models.Count > 0 || llm.ModelsStatus != null));
+        var search = combo.Template.FindName("PART_Search", combo) as System.Windows.Controls.TextBox;
+        var popup = combo.Template.FindName("PART_Popup", combo) as System.Windows.Controls.Primitives.Popup;
+        log.Add($"add-model: after opening the list models = {llm.Models.Count}, items shown = {combo.Items.Count}, search box in list = {search != null && search.IsVisible}, caption = {llm.ModelCaption}");
+        if (search == null || popup == null)
         {
-            log.Add("add-model: FAIL — список моделей пуст");
+            log.Add("add-model: FAIL — нет поля поиска в раскрытом списке");
             return;
         }
 
-        list.BringIntoView();
-        shot("07b-admin-llm-models-loaded");
+        search.Text = "qwen";
+        Pump();
+        log.Add($"add-model: search 'qwen' in the list -> items shown = {combo.Items.Count} of {llm.Models.Count}, model unchanged = {llm.ModelId}");
+        popup.Child.Dispatcher.Invoke(() => { });
+        RenderElement(popup.Child as FrameworkElement, System.IO.Path.Combine(_snapshotOutput, "07b-admin-llm-model-search.png"));
+        combo.SelectedIndex = 0;
+        Pump();
+        log.Add($"add-model: picked -> model = {llm.ModelId}, list open = {combo.IsDropDownOpen}, search cleared = {string.IsNullOrEmpty(search.Text)}, items shown = {combo.Items.Count}");
 
-        llm.ModelFilter = "mini";
+        combo.IsDropDownOpen = true;
         Pump();
-        log.Add($"add-model: filter 'mini' shows {list.Items.Count} of {llm.Models.Count}");
-        list.SelectedIndex = 0;
+        search.Text = "4o-mini";
         Pump();
-        log.Add($"add-model: selected = {llm.ModelId}, manual = {llm.ManualModel}");
-        llm.SaveCommand.Execute(null);
+        var target = combo.Items.Cast<Fakt.Core.Llm.ModelInfo>().FirstOrDefault();
+        combo.SelectedItem = target;
+        Pump();
+        log.Add($"add-model: search '4o-mini' and pick -> model = {llm.ModelId}, manual = {llm.ManualModel}, list open = {combo.IsDropDownOpen}");
+
+        combo.IsDropDownOpen = true;
+        Pump();
+        search.Text = "nothing-like-this";
+        Pump();
+        log.Add($"add-model: no matches -> items shown = {combo.Items.Count}, empty text = {llm.ModelsEmptyText}, use typed = {llm.ShowUseTypedModel}");
+        combo.IsDropDownOpen = false;
+        Pump();
+        log.Add($"add-model: closed without choosing -> model = {llm.ModelId}");
+
+        log.Add($"add-model: click Сохранить = {Click(window, "Сохранить")}");
         Pump();
         var saved = services.Settings.Current.LlmProfiles.FirstOrDefault(p => p.ProviderId == Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter);
         log.Add($"add-model: after save dirty = {llm.IsDirty}, key box cleared = {passwordBox.Password.Length == 0}, delete enabled = {llm.DeleteCommand.CanExecute(null)}");
         log.Add($"add-model: saved profile = {saved?.Name}, model = {saved?.ModelId}, manual = {saved?.ManualModelId}, key saved = {(saved != null && services.Settings.HasApiKey(saved.Id))}, message = {llm.Message}");
         shot("07c-admin-llm-saved");
 
-        llm.ModelId = "custom/model-typed-by-hand";
+        combo.IsDropDownOpen = true;
         Pump();
-        log.Add($"add-model: manual id -> manual = {llm.ManualModel}, summary = {llm.ModelSummary}");
-        llm.SaveCommand.Execute(null);
+        search.Text = "custom/model-typed-by-hand";
+        Pump();
+        var useTyped = Click(popup.Child, "Использовать введённый ID");
+        Pump();
+        log.Add($"add-model: manual id via button = {useTyped} -> model = {llm.ModelId}, manual = {llm.ManualModel}, shown in field = {combo.Tag}, list open = {combo.IsDropDownOpen}");
+        Click(window, "Сохранить");
         Pump();
         saved = services.Settings.Current.LlmProfiles.FirstOrDefault(p => p.ProviderId == Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter);
-        log.Add($"add-model: saved manual model = {saved?.ModelId}, manual = {saved?.ManualModelId}, list kept = {llm.Models.Count}");
-        shot("07d-admin-llm-manual");
+        log.Add($"add-model: saved manual model = {saved?.ModelId}, manual = {saved?.ManualModelId}");
+
+        var gear = Click(window, "Тонкая настройка");
+        Pump();
+        log.Add($"add-model: click gear = {gear}, advanced shown = {llm.ShowAdvanced}");
+        shot("07d-admin-llm-advanced");
+        Click(window, "Тонкая настройка");
+        Pump();
+        log.Add($"add-model: gear again -> advanced shown = {llm.ShowAdvanced}");
+    }
+
+    /// <summary>
+    /// «База данных» так, как это делает пользователь: значения по умолчанию, имя тестовой базы из
+    /// FAKT_SNAPSHOT_DB_UI, кнопка «Сохранить и проверить» (база создаётся), затем шестерёнка.
+    /// </summary>
+    private static void RunDatabaseFlow(AppServices services, MainViewModel main, Window window, string output, List<string> log, Action<string> shot)
+    {
+        var name = Environment.GetEnvironmentVariable("FAKT_SNAPSHOT_DB_UI");
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return;
+        }
+
+        Pump();
+        var previousDialogs = services.Dialogs;
+        services.Dialogs = new SnapshotDialogService(output, log);
+        var db = main.Admin.Database;
+        log.Add($"db: defaults server = {db.Server}, database = {db.Database}, windows = {db.UseWindowsAuth}, encrypt = {db.EncryptMandatory}, advanced = {db.ShowAdvanced}");
+        var box = FindVisual<System.Windows.Controls.TextBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "База данных");
+        if (box == null)
+        {
+            log.Add("db: FAIL — поле «База данных» не найдено");
+            return;
+        }
+
+        box.Text = name;
+        Pump();
+        log.Add($"db: click Сохранить и проверить = {Click(window, "Сохранить и проверить")}");
+        WaitUntil(() => !db.TestCommand.IsRunning && db.Message != null && !db.Message.StartsWith("Проверка", StringComparison.Ordinal));
+        var saved = services.Settings.Current.Database;
+        log.Add($"db: message = {db.Message}");
+        log.Add($"db: saved server = {saved.Server}, database = {saved.Database}, encrypt = {saved.Encrypt}, trust = {saved.TrustServerCertificate}, connected = {db.Report?.Connected}, ready = {db.Report?.CanProcess == true && db.Report?.CanSearch == true}");
+        shot("08a-admin-database-saved");
+
+        // Поиск существующей записи рабочей базы (FAKT_SNAPSHOT_DB_UI_SEARCH) после подготовки базы.
+        var searchText = Environment.GetEnvironmentVariable("FAKT_SNAPSHOT_DB_UI_SEARCH");
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            main.CurrentKey = PageKey.Search;
+            Pump();
+            var found = 0;
+            for (var attempt = 0; attempt < 15 && found == 0; attempt++)
+            {
+                main.Search.Text = searchText;
+                main.Search.SearchCommand.Execute(null);
+                WaitUntil(() => !main.Search.IsSearching);
+                found = main.Search.Results.Count;
+                if (found == 0)
+                {
+                    Pump(1000);
+                }
+            }
+
+            log.Add($"db: search '{searchText}' found = {found}, first = {main.Search.Results.FirstOrDefault()?.GetType().GetProperty("Surname")?.GetValue(main.Search.Results.FirstOrDefault())}");
+            shot("08c-search-existing-record");
+            main.CurrentKey = PageKey.Admin;
+            Pump();
+        }
+
+        services.Dialogs = previousDialogs;
+        var gear = Click(window, "Тонкая настройка");
+        Pump();
+        log.Add($"db: click gear = {gear}, advanced = {db.ShowAdvanced}");
+        shot("08b-admin-database-advanced");
+        Click(window, "Тонкая настройка");
+        Pump();
+    }
+
+    /// <summary>Нажатие кнопки через автоматизацию (как щелчок пользователя): по имени автоматизации или тексту кнопки.</summary>
+    private static bool Click(DependencyObject root, string name)
+    {
+        var button = FindVisual<System.Windows.Controls.Button>(root, b => b.IsVisible &&
+            (System.Windows.Automation.AutomationProperties.GetName(b) == name || (b.Content as string) == name));
+        if (button == null || !button.IsEnabled)
+        {
+            return false;
+        }
+
+        var peer = new System.Windows.Automation.Peers.ButtonAutomationPeer(button);
+        ((System.Windows.Automation.Provider.IInvokeProvider)peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.Invoke)).Invoke();
+        return true;
     }
 
     private static T FindVisual<T>(DependencyObject root, Func<T, bool> match) where T : DependencyObject
@@ -386,6 +519,26 @@ internal static class SnapshotRenderer
         Pump();
         Save(window, path);
         window.Close();
+    }
+
+    private static string _snapshotOutput;
+
+    private static void RenderElement(FrameworkElement element, string path)
+    {
+        if (element == null)
+        {
+            return;
+        }
+
+        element.UpdateLayout();
+        var width = Math.Max(1, (int)Math.Ceiling(element.ActualWidth));
+        var height = Math.Max(1, (int)Math.Ceiling(element.ActualHeight));
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(element);
+        var encoder = new PngBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+        using var stream = File.Create(path);
+        encoder.Save(stream);
     }
 
     /// <summary>Снимок клиентской области окна (корень шаблона окна вместе с фоном).</summary>

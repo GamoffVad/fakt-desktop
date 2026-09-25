@@ -257,7 +257,7 @@ public sealed class PythonWorkerClient : IWorkerClient
         CleanupProcess();
         if (!File.Exists(_launch.PythonPath))
         {
-            throw new WorkerException("worker_start_failed", $"Не найден интерпретатор Python worker: {_launch.PythonPath}. Проверьте поставку worker или путь в «Администрирование → Обработка».");
+            throw new WorkerException("worker_start_failed", $"Не найден интерпретатор Python worker: {_launch.PythonPath}. Папка worker из поставки должна находиться рядом с FAKT.exe — переустановите или распакуйте программу заново.");
         }
 
         if (!File.Exists(_launch.ScriptPath))

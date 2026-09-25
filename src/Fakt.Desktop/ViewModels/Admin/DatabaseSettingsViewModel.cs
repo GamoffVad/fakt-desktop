@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Fakt.Application.Services;
 using Fakt.Core.Security;
 using Fakt.Core.Settings;
 using Fakt.Core.Storage;
@@ -99,6 +100,8 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
     private string _message;
     private MessageKind _messageKind;
     private string _rebuildProgress;
+    private bool _showAdvanced;
+    private bool _savedBeforeTest;
 
     public DatabaseSettingsViewModel(AppServices services)
     {
@@ -114,6 +117,7 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         UseSuggestionCommand = new RelayCommand(p => UseSuggestion(p as SchemaIssue), p => CanEdit && p is SchemaIssue issue && issue.LogicalField != null);
         RevertCommand = new RelayCommand(Revert, () => CanEdit);
         ResetDefaultsCommand = new RelayCommand(ResetDefaults, () => CanEdit);
+        ToggleAdvancedCommand = new RelayCommand(() => ShowAdvanced = !ShowAdvanced);
         PropertyChanged += (_, e) =>
         {
             if (ConnectionInputs.Contains(e.PropertyName))
@@ -142,6 +146,22 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
     public ICommand UseSuggestionCommand { get; }
     public ICommand RevertCommand { get; }
     public ICommand ResetDefaultsCommand { get; }
+    public ICommand ToggleAdvancedCommand { get; }
+
+    /// <summary>Показана ли тонкая настройка (шестерёнка): экземпляр, порт, шифрование, таблицы, миграции.</summary>
+    public bool ShowAdvanced
+    {
+        get => _showAdvanced;
+        set
+        {
+            if (SetProperty(ref _showAdvanced, value))
+            {
+                OnPropertyChanged(nameof(AdvancedButtonText));
+            }
+        }
+    }
+
+    public string AdvancedButtonText => ShowAdvanced ? "Скрыть тонкую настройку" : "Тонкая настройка";
 
     public bool CanEdit => _services.Authorization.IsAllowed(Permission.ManageSettings);
     public bool CanManage => _services.Authorization.IsAllowed(Permission.ManageDatabase);
@@ -510,9 +530,71 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
             return;
         }
 
+        // Существующая (в том числе рабочая) база: создаём недостающие таблицы и объекты FAKT после подтверждения.
+        string setupNote = null;
+        if (CanManage && report.Connected && provision?.Created != true)
+        {
+            var plan = SchemaSetupPlan.AutoApply(report);
+            if (plan.Count > 0)
+            {
+                // Записи, уже лежащие в PersonFacts, индексируются для поиска после подготовки (только для сохранённых настроек).
+                var existingRows = report.PersonFacts?.Exists == true ? report.PersonFacts.ApproximateRows ?? 0 : 0;
+                var indexExisting = existingRows > 0 && _savedBeforeTest;
+                var text = SchemaSetupPlan.Describe(report, plan) +
+                           (indexExisting ? Environment.NewLine + $"Существующие записи (около {existingRows:N0}) будут проиндексированы для поиска." : string.Empty);
+                if (_services.Dialogs.Confirm($"Подготовить базу «{report.DatabaseName}»", text, "Создать таблицы", "Отмена"))
+                {
+                    Message = "Создание таблиц FAKT…";
+                    var setup = await Task.Run(() => _services.Database.SetUpSchemaAsync(settings, password ?? string.Empty, plan, cancellationToken), cancellationToken);
+                    report = await Task.Run(() => _services.Database.InspectAsync(settings, password ?? string.Empty, cancellationToken), cancellationToken);
+                    ApplyReport(report);
+                    if (!setup.Success)
+                    {
+                        _savedBeforeTest = false;
+                        Message = setup.Message + " Изменения, выполненные до ошибки, сохранены; таблицы и данные не удалялись.";
+                        MessageKind = MessageKind.Error;
+                        return;
+                    }
+
+                    setupNote = $"В базе созданы таблицы и объекты FAKT ({setup.Applied.Count}).";
+                    if (indexExisting)
+                    {
+                        Message = "Индексация существующих записей для поиска…";
+                        var total = await Task.Run(() => _services.Database.RebuildSearchProjectionAsync(
+                            new Progress<long>(n => Message = $"Индексация существующих записей для поиска: {n:N0}…"), cancellationToken), cancellationToken);
+                        setupNote += $" Для поиска проиндексировано существующих записей: {total:N0}.";
+                        report = await Task.Run(() => _services.Database.InspectAsync(settings, password ?? string.Empty, cancellationToken), cancellationToken);
+                        ApplyReport(report);
+                    }
+                }
+                else
+                {
+                    setupNote = "Таблицы FAKT не созданы — обработка и поиск будут недоступны, пока база не подготовлена.";
+                }
+            }
+
+            var left = SchemaSetupPlan.LeftForAdministrator(report);
+            if (left.Count > 0)
+            {
+                setupNote = (setupNote == null ? string.Empty : setupNote + " ") +
+                            "Необязательные изменения существующих таблиц не выполнялись (" + string.Join("; ", left.Select(m => m.Title)) + ") — их можно применить в «Тонкой настройке».";
+            }
+        }
+
         var status = !report.Connected ? WithCertificateHint(report.ConnectionError)
-            : report.CanProcess && report.CanSearch ? "Соединение установлено, схема совместима."
-            : "Соединение установлено; есть различия схемы — см. список ниже.";
+            : report.CanProcess && report.CanSearch ? "Соединение установлено, база готова к обработке и поиску."
+            : "Соединение установлено, но есть различия схемы — откройте «Тонкая настройка», чтобы увидеть их.";
+        if (_savedBeforeTest && report.Connected)
+        {
+            status = "Настройки сохранены. " + status;
+        }
+
+        _savedBeforeTest = false;
+        if (setupNote != null)
+        {
+            status = setupNote + " " + status;
+        }
+
         Message = provision?.Created == true ? provision.Message + " " + status : status;
         MessageKind = !report.Connected ? MessageKind.Error : report.CanProcess && report.CanSearch ? MessageKind.Success : MessageKind.Warning;
     }
@@ -583,6 +665,7 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
             // Сразу после сохранения — проверка соединения; отсутствующая база при этом создаётся автоматически.
             if (TestCommand.CanExecute(null))
             {
+                _savedBeforeTest = true;
                 TestCommand.Execute(null);
             }
         }

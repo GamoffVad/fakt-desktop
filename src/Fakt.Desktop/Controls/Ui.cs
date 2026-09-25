@@ -110,6 +110,44 @@ namespace Fakt.Desktop.Controls
 
         #endregion
 
+        #region SearchText / DropDownFooter
+
+        /// <summary>Текст поля поиска внутри выпадающего списка (шаблон ComboBox.SearchableTemplate).</summary>
+        public static readonly DependencyProperty SearchTextProperty = DependencyProperty.RegisterAttached(
+            "SearchText",
+            typeof(string),
+            typeof(Ui),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
+        public static string GetSearchText(DependencyObject element)
+        {
+            return (string)element.GetValue(SearchTextProperty);
+        }
+
+        public static void SetSearchText(DependencyObject element, string value)
+        {
+            element.SetValue(SearchTextProperty, value);
+        }
+
+        /// <summary>Содержимое под списком в раскрытом выпадающем списке (состояние, дополнительные действия).</summary>
+        public static readonly DependencyProperty DropDownFooterProperty = DependencyProperty.RegisterAttached(
+            "DropDownFooter",
+            typeof(object),
+            typeof(Ui),
+            new FrameworkPropertyMetadata(null));
+
+        public static object GetDropDownFooter(DependencyObject element)
+        {
+            return element.GetValue(DropDownFooterProperty);
+        }
+
+        public static void SetDropDownFooter(DependencyObject element, object value)
+        {
+            element.SetValue(DropDownFooterProperty, value);
+        }
+
+        #endregion
+
         #region Placeholder
 
         /// <summary>

@@ -64,6 +64,34 @@ public sealed class DatabaseService
         return result;
     }
 
+    /// <summary>
+    /// Подготовка существующей базы: применяются миграции из <see cref="SchemaSetupPlan.AutoApply"/> по порядку;
+    /// при первой ошибке остальные не выполняются. Все миграции только добавляют объекты.
+    /// </summary>
+    public async Task<SchemaSetupResult> SetUpSchemaAsync(DatabaseSettings settings, string passwordOrNull, IReadOnlyList<MigrationInfo> plan, CancellationToken cancellationToken)
+    {
+        _authorization.Demand(Permission.ManageDatabase);
+        var password = passwordOrNull ?? _settings.SqlPassword(settings);
+        var result = new SchemaSetupResult();
+        foreach (var migration in plan)
+        {
+            var applied = await _admin.ApplyMigrationAsync(settings, password, migration.Id, _authorization.CurrentUserName, cancellationToken).ConfigureAwait(false);
+            if (!applied.Success)
+            {
+                result.Success = false;
+                result.Message = $"Не удалось выполнить «{migration.Title}»: {applied.Message}";
+                _logger.Warn("db.setup_failed", result.Message, e => e.User = _authorization.CurrentUserName);
+                return result;
+            }
+
+            result.Applied.Add(migration.Id);
+        }
+
+        result.Message = result.Applied.Count == 0 ? "Изменений не потребовалось." : $"Созданы таблицы и объекты FAKT ({string.Join(", ", result.Applied)}).";
+        _logger.Info("db.setup", result.Message, e => e.User = _authorization.CurrentUserName);
+        return result;
+    }
+
     public Task<long> RebuildSearchProjectionAsync(IProgress<long> progress, CancellationToken cancellationToken)
     {
         _authorization.Demand(Permission.ManageDatabase);

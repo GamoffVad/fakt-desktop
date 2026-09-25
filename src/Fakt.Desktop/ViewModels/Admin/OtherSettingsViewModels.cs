@@ -32,16 +32,6 @@ public sealed class ProcessingSettingsViewModel : ObservableObject
             Message = ex.Message;
             MessageKind = MessageKind.Error;
         });
-        try
-        {
-            var detected = Fakt.Infrastructure.Worker.WorkerClientFactory.Resolve(null, null, Fakt.Infrastructure.Settings.AppPaths.ApplicationDirectory);
-            DetectedPythonPath = detected.PythonPath;
-            DetectedWorkerDirectory = detected.WorkerDirectory;
-        }
-        catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException || ex is ArgumentException)
-        {
-            // Пути будут определены при запуске worker; подсказка в полях не обязательна.
-        }
     }
 
     private void Load(ProcessingSettings p)
@@ -70,7 +60,7 @@ public sealed class ProcessingSettingsViewModel : ObservableObject
     {
         Load(new ProcessingSettings());
         OnPropertyChanged(string.Empty);
-        Message = "Подставлены значения по умолчанию (Python и worker — встроенные, рядом с приложением). Нажмите «Сохранить параметры обработки».";
+        Message = "Подставлены значения по умолчанию. Нажмите «Сохранить параметры обработки».";
         MessageKind = MessageKind.Info;
     }
 
@@ -79,10 +69,6 @@ public sealed class ProcessingSettingsViewModel : ObservableObject
     public ICommand SaveCommand { get; }
     public ICommand ResetDefaultsCommand { get; }
     public AsyncCommand ProbeCommand { get; }
-
-    /// <summary>Какой python.exe и каталог worker используются, если поля оставлены пустыми.</summary>
-    public string DetectedPythonPath { get; }
-    public string DetectedWorkerDirectory { get; }
 
     public bool RecursiveScan { get; set; }
     public bool FollowReparsePoints { get; set; }

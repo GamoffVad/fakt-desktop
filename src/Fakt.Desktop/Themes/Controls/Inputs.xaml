@@ -532,6 +532,168 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <!-- Выпадающий список с полем поиска внутри раскрытого списка; отображаемое значение — Tag. -->
+    <ControlTemplate x:Key="ComboBox.SearchableTemplate" TargetType="{x:Type ComboBox}">
+        <Grid x:Name="Root" SnapsToDevicePixels="True" UseLayoutRounding="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <!-- Fill and outline are separate layers (no light seam at fractional DPI). -->
+            <Border x:Name="Bd"
+                    Grid.ColumnSpan="2"
+                    Background="{TemplateBinding Background}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="BdOutline"
+                    Grid.ColumnSpan="2"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="HoverBorder"
+                    Grid.ColumnSpan="2"
+                    Opacity="0"
+                    BorderBrush="{DynamicResource Brush.Action.Primary}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+            <Border x:Name="ErrorBorder"
+                    Grid.ColumnSpan="2"
+                    Visibility="Collapsed"
+                    BorderBrush="{DynamicResource Brush.Status.Error}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{StaticResource Radius.Control}"/>
+
+            <!-- Отображаемое значение — Tag: выбранное или введённое вручную значение. -->
+            <Border Padding="{TemplateBinding Padding}" IsHitTestVisible="False">
+                <TextBlock x:Name="DisplayText"
+                           Margin="2,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"
+                           TextTrimming="CharacterEllipsis"/>
+            </Border>
+            <Border Padding="{TemplateBinding Padding}" IsHitTestVisible="False">
+                <TextBlock x:Name="PlaceholderText"
+                           Margin="2,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource Brush.Text.Secondary}"
+                           Text="{Binding Path=(ui:Ui.Placeholder), RelativeSource={RelativeSource TemplatedParent}}"
+                           TextTrimming="CharacterEllipsis"
+                           Visibility="Collapsed"/>
+            </Border>
+            <ToggleButton x:Name="Toggle"
+                          Grid.ColumnSpan="2"
+                          Style="{StaticResource ComboBox.ToggleButton}"
+                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <ui:Icon x:Name="Arrow"
+                     Grid.Column="1"
+                     Margin="8,0,12,0"
+                     Size="{StaticResource Size.Icon.Small}"
+                     Data="{StaticResource Icon.ChevronDown}"
+                     Foreground="{DynamicResource Brush.Text.Primary}"
+                     IsHitTestVisible="False"/>
+            <Border x:Name="FocusRing"
+                    Grid.ColumnSpan="2"
+                    Margin="{StaticResource Thickness.Focus.Outset}"
+                    BorderThickness="{StaticResource Thickness.Focus}"
+                    CornerRadius="{StaticResource Radius.Focus}"
+                    BorderBrush="{DynamicResource Brush.Focus}"
+                    IsHitTestVisible="False"
+                    Visibility="Collapsed"/>
+
+            <Popup x:Name="PART_Popup"
+                   Grid.ColumnSpan="2"
+                   AllowsTransparency="True"
+                   Placement="Bottom"
+                   VerticalOffset="4"
+                   Focusable="False"
+                   PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}"
+                   IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                <Border x:Name="DropDownBorder"
+                        MinWidth="{Binding ActualWidth, ElementName=Root}"
+                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                        Background="{DynamicResource Brush.Background.Surface}"
+                        BorderBrush="{DynamicResource Brush.Border.Subtle}"
+                        BorderThickness="{StaticResource Thickness.Border}"
+                        CornerRadius="{StaticResource Radius.Control}"
+                        Padding="4"
+                        SnapsToDevicePixels="True"
+                        UseLayoutRounding="True">
+                    <DockPanel>
+                        <TextBox x:Name="PART_Search"
+                                 DockPanel.Dock="Top"
+                                 Margin="4,4,4,6"
+                                 Text="{Binding Path=(ui:Ui.SearchText), RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 ui:Ui.Placeholder="Поиск по названию или ID"
+                                 AutomationProperties.Name="Поиск в списке"/>
+                        <ContentPresenter DockPanel.Dock="Bottom"
+                                          Margin="4,4,4,4"
+                                          Content="{Binding Path=(ui:Ui.DropDownFooter), RelativeSource={RelativeSource TemplatedParent}}"/>
+                        <ScrollViewer x:Name="DropDownScrollViewer" Focusable="False">
+                            <ItemsPresenter x:Name="ItemsPresenter"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Popup>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="HasItems" Value="False">
+                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="{StaticResource Size.Dropdown.Item}"/>
+            </Trigger>
+            <Trigger Property="IsGrouping" Value="True">
+                <Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+            </Trigger>
+            <Trigger Property="IsDropDownOpen" Value="True">
+                <Setter TargetName="Arrow" Property="Data" Value="{StaticResource Icon.ChevronUp}"/>
+            </Trigger>
+            <Trigger Property="Tag" Value="{x:Null}">
+                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="Tag" Value="">
+                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsEnabled" Value="True"/>
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="Opacity"
+                                             To="1" Duration="{StaticResource Duration.Hover}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.EnterActions>
+                <MultiTrigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="HoverBorder" Storyboard.TargetProperty="Opacity"
+                                             To="0" Duration="{StaticResource Duration.Hover}"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </MultiTrigger.ExitActions>
+            </MultiTrigger>
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter TargetName="ErrorBorder" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="ui:Ui.HasError" Value="True">
+                <Setter TargetName="ErrorBorder" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter TargetName="FocusRing" Property="Visibility" Value="Visible"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource Brush.Disabled.Background}"/>
+                <Setter TargetName="BdOutline" Property="BorderBrush" Value="{DynamicResource Brush.Disabled.Background}"/>
+                <Setter TargetName="ErrorBorder" Property="Visibility" Value="Collapsed"/>
+                <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
+                <Setter TargetName="PlaceholderText" Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Brush.Disabled.Foreground}"/>
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="ComboBox.Default" TargetType="{x:Type ComboBox}">
         <Setter Property="OverridesDefaultStyle" Value="True"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>

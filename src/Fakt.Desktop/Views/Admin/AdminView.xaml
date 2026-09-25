@@ -16,7 +16,7 @@
         <Border Grid.Row="1" Style="{StaticResource Banner.Info}" Margin="0,0,0,16" Visibility="{Binding ReadOnlyNotice, Converter={StaticResource NullToVisibility}}">
             <TextBlock Text="{Binding ReadOnlyNotice}" TextWrapping="Wrap" />
         </Border>
-        <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedTab}">
+        <TabControl Grid.Row="2" SelectedIndex="{Binding SelectedTab}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
             <TabItem Header="LLM">
                 <admin:LlmSettingsView DataContext="{Binding Llm}" />
             </TabItem>

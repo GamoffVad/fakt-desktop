@@ -91,8 +91,9 @@
         <Setter Property="MinHeight" Value="{StaticResource Size.Control}"/>
         <Setter Property="Padding" Value="12,0"/>
         <Setter Property="Margin" Value="0,0,4,0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <!-- Выравнивание содержимого вкладки (TabControl копирует его в область содержимого): растягивать. -->
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="UseLayoutRounding" Value="True"/>
         <Setter Property="Template">
@@ -106,8 +107,8 @@
                         <ContentPresenter x:Name="ContentSite"
                                           Margin="{TemplateBinding Padding}"
                                           ContentSource="Header"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
                                           RecognizesAccessKey="True"
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         <Border x:Name="Underline"
@@ -163,6 +164,8 @@
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="{DynamicResource Brush.Text.Primary}"/>
         <Setter Property="Padding" Value="0,16,0,0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="UseLayoutRounding" Value="True"/>
         <Setter Property="Template">
@@ -190,6 +193,8 @@
                                 KeyboardNavigation.TabIndex="2">
                             <ContentPresenter x:Name="PART_SelectedContentHost"
                                               ContentSource="SelectedContent"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
                     </Grid>

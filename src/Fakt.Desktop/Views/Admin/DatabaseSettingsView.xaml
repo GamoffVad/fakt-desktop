@@ -17,49 +17,39 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,16,0,0">
-        <StackPanel Margin="0,0,12,16">
-            <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,16" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
-                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
-            </Border>
-
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,16,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <StackPanel Margin="0,0,12,16" VerticalAlignment="Top">
             <!-- ==================== Подключение ==================== -->
             <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="Подключение к SQL Server" />
+                    <DockPanel Margin="0,0,0,4">
+                        <Button DockPanel.Dock="Right" Style="{StaticResource Button.Ghost}" Content="{Binding AdvancedButtonText}" ui:Ui.Icon="{StaticResource Icon.Settings}"
+                                Command="{Binding ToggleAdvancedCommand}" AutomationProperties.Name="Тонкая настройка"
+                                ToolTip="Экземпляр, порт, шифрование, тайм-ауты, таблицы и столбцы, миграции" />
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Подключение к SQL Server" VerticalAlignment="Center" />
+                    </DockPanel>
                     <TextBlock Style="{StaticResource CardIntro}"
-                               Text="Приложение работает с этой базой: регистрирует исходные файлы в SourceFiles, сохраняет лица и факты в PersonFacts и выполняет по ним поиск. Существующие таблицы не удаляются и не пересоздаются; схема существующей базы меняется только явными миграциями ниже." />
+                               Text="По умолчанию — SQL Server этого компьютера и база FAKT. Если базы нет, она будет создана автоматически." />
 
                     <Grid IsEnabled="{Binding CanEdit}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Сервер (имя или IP-адрес)" />
-                            <TextBox Text="{Binding Server, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="localhost — SQL Server этого компьютера" AutomationProperties.Name="Сервер" />
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Сервер" />
+                            <TextBox Text="{Binding Server, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="localhost" AutomationProperties.Name="Сервер" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Именованный экземпляр" />
-                            <TextBox Text="{Binding Instance, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="пусто — по умолчанию" AutomationProperties.Name="Именованный экземпляр" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Порт TCP" />
-                            <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="1433" AutomationProperties.Name="Порт" />
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="База данных" />
+                            <TextBox Text="{Binding Database, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="FAKT" AutomationProperties.Name="База данных" />
                         </StackPanel>
                     </Grid>
-                    <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
-                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="База данных" />
-                        <TextBox Text="{Binding Database, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="База данных" />
-                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,0"
-                                   Text="Если базы с таким именем нет на сервере, она создаётся автоматически при сохранении или проверке соединения — сразу со схемой FAKT (нужно право CREATE DATABASE). Существующая база не изменяется." />
-                    </StackPanel>
 
-                    <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Проверка подлинности" />
+                    <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Вход" />
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,12" IsEnabled="{Binding CanEdit}">
-                        <RadioButton GroupName="SqlAuth" Content="Windows (текущая учётная запись)" IsChecked="{Binding UseWindowsAuth}" Margin="0,0,24,0" />
-                        <RadioButton GroupName="SqlAuth" Content="SQL Server (имя входа и пароль)" IsChecked="{Binding UseSqlAuth}" />
+                        <RadioButton GroupName="SqlAuth" Content="Учётная запись Windows" IsChecked="{Binding UseWindowsAuth}" Margin="0,0,24,0" />
+                        <RadioButton GroupName="SqlAuth" Content="Имя входа и пароль SQL Server" IsChecked="{Binding UseSqlAuth}" />
                     </StackPanel>
                     <Grid Visibility="{Binding IsSqlAuth, Converter={StaticResource BoolToVisibility}}" IsEnabled="{Binding CanEdit}">
                         <Grid.ColumnDefinitions>
@@ -74,117 +64,253 @@
                             <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Пароль" />
                             <PasswordBox b:PasswordBinding.Value="{Binding Password, Mode=TwoWay}" AutomationProperties.Name="Пароль SQL" />
                             <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,0"
-                                       Text="Пароль сохранён в защищённом хранилище (DPAPI) и не отображается. Введите новый, чтобы заменить."
+                                       Text="Пароль сохранён в защищённом хранилище и не отображается. Введите новый, чтобы заменить."
                                        Visibility="{Binding HasSavedPassword, Converter={StaticResource BoolToVisibility}}" />
                         </StackPanel>
                     </Grid>
                     <Border Style="{StaticResource Banner.Warning}" Margin="0,0,16,12" Visibility="{Binding PasswordRebindWarning, Converter={StaticResource NullToVisibility}}">
                         <TextBlock Text="{Binding PasswordRebindWarning}" TextWrapping="Wrap" />
                     </Border>
-
-                    <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Защита соединения" />
-                    <StackPanel Margin="0,4,0,12" IsEnabled="{Binding CanEdit}">
-                        <CheckBox Content="Шифровать соединение (TLS, сертификат сервера проверяется)" IsChecked="{Binding EncryptMandatory}" Margin="0,0,0,8" />
-                        <CheckBox Content="Доверять сертификату сервера без проверки (только для тестового сервера)" IsChecked="{Binding TrustServerCertificate}" />
-                    </StackPanel>
                     <Border Style="{StaticResource Banner.Warning}" Margin="0,0,16,12" Visibility="{Binding SecurityWarning, Converter={StaticResource NullToVisibility}}">
                         <DockPanel>
                             <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Warning}" Size="18" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" VerticalAlignment="Top" />
                             <TextBlock Text="{Binding SecurityWarning}" TextWrapping="Wrap" />
                         </DockPanel>
                     </Border>
-                    <Border Style="{StaticResource Banner.Info}" Margin="0,0,16,12" Visibility="{Binding LocalConnectionNote, Converter={StaticResource NullToVisibility}}">
-                        <DockPanel>
-                            <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Shield}" Size="18" Margin="0,0,8,0" VerticalAlignment="Top" />
-                            <TextBlock Text="{Binding LocalConnectionNote}" TextWrapping="Wrap" />
-                        </DockPanel>
-                    </Border>
 
-                    <Grid IsEnabled="{Binding CanEdit}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <!-- Тонкая настройка подключения -->
+                    <StackPanel Visibility="{Binding ShowAdvanced, Converter={StaticResource BoolToVisibility}}">
+                        <Grid IsEnabled="{Binding CanEdit}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Именованный экземпляр" />
+                                <TextBox Text="{Binding Instance, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="пусто — экземпляр по умолчанию" AutomationProperties.Name="Именованный экземпляр" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Порт TCP" />
+                                <TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="пусто — по умолчанию" AutomationProperties.Name="Порт" />
+                            </StackPanel>
+                        </Grid>
+                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Защита соединения" />
+                        <StackPanel Margin="0,4,0,12" IsEnabled="{Binding CanEdit}">
+                            <CheckBox Content="Шифровать соединение (TLS, сертификат сервера проверяется)" IsChecked="{Binding EncryptMandatory}" Margin="0,0,0,8" />
+                            <CheckBox Content="Доверять сертификату сервера без проверки (только для тестового сервера)" IsChecked="{Binding TrustServerCertificate}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource Banner.Info}" Margin="0,0,16,12" Visibility="{Binding LocalConnectionNote, Converter={StaticResource NullToVisibility}}">
+                            <DockPanel>
+                                <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Shield}" Size="18" Margin="0,0,8,0" VerticalAlignment="Top" />
+                                <TextBlock Text="{Binding LocalConnectionNote}" TextWrapping="Wrap" />
+                            </DockPanel>
+                        </Border>
+                        <Grid IsEnabled="{Binding CanEdit}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тайм-аут соединения, с" />
+                                <TextBox Text="{Binding ConnectTimeout, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Тайм-аут соединения" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тайм-аут команд, с" />
+                                <TextBox Text="{Binding CommandTimeout, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Тайм-аут команд" />
+                            </StackPanel>
+                        </Grid>
                         <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тайм-аут соединения, с" />
-                            <TextBox Text="{Binding ConnectTimeout, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Тайм-аут соединения" />
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Строка подключения (пароль скрыт)" />
+                            <TextBox Text="{Binding ConnectionPreview, Mode=OneWay}" IsReadOnly="True" FontFamily="{StaticResource Font.Mono}" TextWrapping="Wrap"
+                                     AutomationProperties.Name="Строка подключения" />
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Тайм-аут команд, с" />
-                            <TextBox Text="{Binding CommandTimeout, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Тайм-аут команд" />
-                        </StackPanel>
-                    </Grid>
-
-                    <StackPanel Style="{StaticResource Field}">
-                        <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Строка подключения (пароль скрыт)" />
-                        <TextBox Text="{Binding ConnectionPreview, Mode=OneWay}" IsReadOnly="True" FontFamily="{StaticResource Font.Mono}" TextWrapping="Wrap"
-                                 AutomationProperties.Name="Строка подключения" />
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button Style="{StaticResource Button.Secondary}" Content="Проверить без сохранения" ui:Ui.Icon="{StaticResource Icon.Plug}"
+                                    ui:Ui.IsBusy="{Binding TestCommand.IsRunning}" Command="{Binding TestCommand}" Margin="0,0,8,8"
+                                    ToolTip="Подключение, версия сервера, права, ожидаемые столбцы, Full-Text Search и миграции" />
+                            <Button Style="{StaticResource Button.Ghost}" Content="Отменить изменения" ui:Ui.Icon="{StaticResource Icon.Reset}" Command="{Binding RevertCommand}" Margin="0,0,8,8" />
+                            <Button Style="{StaticResource Button.Ghost}" Content="Значения по умолчанию" ui:Ui.Icon="{StaticResource Icon.Refresh}" Command="{Binding ResetDefaultsCommand}" Margin="0,0,8,8"
+                                    ToolTip="Локальный SQL Server (localhost), база FAKT, вход Windows, стандартные таблицы и столбцы" />
+                        </WrapPanel>
                     </StackPanel>
 
                     <WrapPanel Margin="0,4,0,0">
-                        <Button Style="{StaticResource Button.Secondary}" Content="Проверить соединение" ui:Ui.Icon="{StaticResource Icon.Plug}"
-                                ui:Ui.IsBusy="{Binding TestCommand.IsRunning}" Command="{Binding TestCommand}" Margin="0,0,8,8"
-                                ToolTip="Подключение, версия сервера, права, ожидаемые столбцы, Full-Text Search и миграции" />
-                        <Button Style="{StaticResource Button.Primary}" Content="Сохранить" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
-                        <Button Style="{StaticResource Button.Ghost}" Content="Отменить изменения" ui:Ui.Icon="{StaticResource Icon.Reset}" Command="{Binding RevertCommand}" Margin="0,0,8,8" />
-                        <Button Style="{StaticResource Button.Ghost}" Content="Значения по умолчанию" ui:Ui.Icon="{StaticResource Icon.Refresh}" Command="{Binding ResetDefaultsCommand}" Margin="0,0,8,8"
-                                ToolTip="Локальный SQL Server (localhost), база FAKT, вход Windows, стандартные таблицы и столбцы" />
+                        <Button Style="{StaticResource Button.Primary}" Content="Сохранить и проверить" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}"
+                                ui:Ui.IsBusy="{Binding TestCommand.IsRunning}" Margin="0,0,8,8" AutomationProperties.Name="Сохранить и проверить" />
                     </WrapPanel>
+                    <Border Style="{StaticResource Banner.ByKind}" Margin="0,4,0,0" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
+                        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.Name="Сообщение" />
+                    </Border>
                 </StackPanel>
             </Border>
 
-            <!-- ==================== Результат проверки ==================== -->
-            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16" Visibility="{Binding HasReport, Converter={StaticResource BoolToVisibility}}">
-                <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="Результат проверки" Margin="0,0,0,12" />
-                    <DockPanel Margin="0,0,0,6">
-                        <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Server}" Size="18" Margin="0,0,8,0" VerticalAlignment="Top" />
-                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding ServerText}" TextWrapping="Wrap" />
-                    </DockPanel>
-                    <TextBlock Style="{StaticResource Text.Body}" Text="{Binding ReadinessText}" TextWrapping="Wrap" Margin="26,0,0,6"
-                               Visibility="{Binding ReadinessText, Converter={StaticResource NullToVisibility}}" />
-                    <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding PermissionsText}" TextWrapping="Wrap" Margin="26,0,0,6"
-                               Visibility="{Binding PermissionsText, Converter={StaticResource NullToVisibility}}" />
-                    <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding FullTextText}" TextWrapping="Wrap" Margin="26,0,0,6"
-                               Visibility="{Binding FullTextText, Converter={StaticResource NullToVisibility}}" />
+            <!-- Результат проверки, таблицы и столбцы, миграции, поисковая проекция — в тонкой настройке -->
+            <StackPanel Visibility="{Binding ShowAdvanced, Converter={StaticResource BoolToVisibility}}">
+                <!-- ==================== Результат проверки ==================== -->
+                <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16" Visibility="{Binding HasReport, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Результат проверки" Margin="0,0,0,12" />
+                        <DockPanel Margin="0,0,0,6">
+                            <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Server}" Size="18" Margin="0,0,8,0" VerticalAlignment="Top" />
+                            <TextBlock Style="{StaticResource Text.Body}" Text="{Binding ServerText}" TextWrapping="Wrap" />
+                        </DockPanel>
+                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding ReadinessText}" TextWrapping="Wrap" Margin="26,0,0,6"
+                                   Visibility="{Binding ReadinessText, Converter={StaticResource NullToVisibility}}" />
+                        <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding PermissionsText}" TextWrapping="Wrap" Margin="26,0,0,6"
+                                   Visibility="{Binding PermissionsText, Converter={StaticResource NullToVisibility}}" />
+                        <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding FullTextText}" TextWrapping="Wrap" Margin="26,0,0,6"
+                                   Visibility="{Binding FullTextText, Converter={StaticResource NullToVisibility}}" />
 
-                    <StackPanel Visibility="{Binding Issues.Count, Converter={StaticResource CountToVisibility}}" Margin="0,12,0,0">
-                        <TextBlock Style="{StaticResource Text.Label}" Text="Различия схемы" Margin="0,0,0,8" />
-                        <ItemsControl ItemsSource="{Binding Issues}" Focusable="False">
+                        <StackPanel Visibility="{Binding Issues.Count, Converter={StaticResource CountToVisibility}}" Margin="0,12,0,0">
+                            <TextBlock Style="{StaticResource Text.Label}" Text="Различия схемы" Margin="0,0,0,8" />
+                            <ItemsControl ItemsSource="{Binding Issues}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type st:SchemaIssue}">
+                                        <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,0,0,1" Padding="0,8">
+                                            <DockPanel>
+                                                <ui:StatusBadge DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top" MinWidth="96">
+                                                    <ui:StatusBadge.Style>
+                                                        <Style TargetType="ui:StatusBadge" BasedOn="{StaticResource StatusBadge.Default}">
+                                                            <Setter Property="Text" Value="Сведения" />
+                                                            <Setter Property="Tone" Value="Info" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static st:IssueSeverity.Warning}">
+                                                                    <Setter Property="Text" Value="Внимание" />
+                                                                    <Setter Property="Tone" Value="Warning" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Severity}" Value="{x:Static st:IssueSeverity.Blocking}">
+                                                                    <Setter Property="Text" Value="Блокирует" />
+                                                                    <Setter Property="Tone" Value="Error" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ui:StatusBadge.Style>
+                                                </ui:StatusBadge>
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource Button.Ghost}" Content="Сопоставить" VerticalAlignment="Top"
+                                                        Command="{Binding DataContext.UseSuggestionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
+                                                        Visibility="{Binding LogicalField, Converter={StaticResource NullToVisibility}}" />
+                                                <StackPanel>
+                                                    <TextBlock Style="{StaticResource Text.Mono}" Text="{Binding Object}" TextWrapping="Wrap" />
+                                                    <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Message}" TextWrapping="Wrap" />
+                                                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                                                               Visibility="{Binding Expected, Converter={StaticResource NullToVisibility}}">
+                                                        <Run Text="Ожидается:" /> <Run Text="{Binding Expected, Mode=OneWay}" /><Run Text="; фактически:" /> <Run Text="{Binding Actual, Mode=OneWay, TargetNullValue='нет'}" />
+                                                    </TextBlock>
+                                                    <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Suggestion}" TextWrapping="Wrap" Foreground="{DynamicResource Brush.Text.Link}"
+                                                               Visibility="{Binding Suggestion, Converter={StaticResource NullToVisibility}}" />
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== Таблицы и столбцы ==================== -->
+                <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Таблицы и столбцы" />
+                        <TextBlock Style="{StaticResource CardIntro}"
+                                   Text="Если в существующей базе таблицы или столбцы названы иначе, укажите их фактические имена. После «Проверить соединение» в списках появятся столбцы, найденные в базе." />
+                        <UniformGrid Columns="4" IsEnabled="{Binding CanEdit}">
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Схема" />
+                                <TextBox Text="{Binding Schema, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="dbo" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Таблица файлов" />
+                                <TextBox Text="{Binding SourceFilesTable, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="SourceFiles" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Таблица фактов" />
+                                <TextBox Text="{Binding PersonFactsTable, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="PersonFacts" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Схема служебных таблиц" />
+                                <TextBox Text="{Binding AuxSchema, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="та же" />
+                            </StackPanel>
+                        </UniformGrid>
+
+                        <Grid Margin="0,4,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="260" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Style="{StaticResource Text.Label}" Text="Поле" />
+                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="Таблица" />
+                            <TextBlock Grid.Column="2" Style="{StaticResource Text.Label}" Text="Ожидаемый тип" />
+                            <TextBlock Grid.Column="3" Style="{StaticResource Text.Label}" Text="Столбец в базе" />
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding Mappings}" IsEnabled="{Binding CanEdit}" Focusable="False">
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type st:SchemaIssue}">
-                                    <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,0,0,1" Padding="0,8">
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,1,0,0" Padding="0,6">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="180" />
+                                                <ColumnDefinition Width="110" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="260" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Title}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Style="{StaticResource Text.Secondary}" Text="{Binding Table}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="2" Style="{StaticResource Text.Caption}" Text="{Binding Expected}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0" />
+                                            <ComboBox Grid.Column="3" Style="{StaticResource ComboBox.Compact}" IsEditable="True" ItemsSource="{Binding Available}"
+                                                      Text="{Binding Physical, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Title}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
+                                   Text="Сопоставление применяется после «Сохранить». Проверьте его повторной проверкой соединения." />
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== Миграции ==================== -->
+                <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16" Visibility="{Binding Migrations.Count, Converter={StaticResource CountToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Миграции схемы" />
+                        <TextBlock Style="{StaticResource CardIntro}"
+                                   Text="Каждая миграция выполняется только по явной команде после просмотра SQL. Миграции не удаляют таблицы и данные; их применение записывается в журнал SchemaMigrations." />
+                        <ItemsControl ItemsSource="{Binding Migrations}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,1,0,0" Padding="0,10">
                                         <DockPanel>
-                                            <ui:StatusBadge DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top" MinWidth="96">
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                                                <Button Style="{StaticResource Button.Ghost}" Content="Показать SQL" ui:Ui.Icon="{StaticResource Icon.FileText}" Margin="0,0,8,0"
+                                                        Command="{Binding DataContext.ShowScriptCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                                                <Button Style="{StaticResource Button.Secondary}" Content="Применить" ui:Ui.Icon="{StaticResource Icon.Play}"
+                                                        Command="{Binding DataContext.ApplyMigrationCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
+                                                        Visibility="{Binding Applied, Converter={StaticResource InverseBoolToVisibility}}" />
+                                            </StackPanel>
+                                            <ui:StatusBadge DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top" MinWidth="110">
                                                 <ui:StatusBadge.Style>
                                                     <Style TargetType="ui:StatusBadge" BasedOn="{StaticResource StatusBadge.Default}">
-                                                        <Setter Property="Text" Value="Сведения" />
-                                                        <Setter Property="Tone" Value="Info" />
+                                                        <Setter Property="Text" Value="Не применена" />
+                                                        <Setter Property="Tone" Value="Warning" />
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static st:IssueSeverity.Warning}">
-                                                                <Setter Property="Text" Value="Внимание" />
-                                                                <Setter Property="Tone" Value="Warning" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Severity}" Value="{x:Static st:IssueSeverity.Blocking}">
-                                                                <Setter Property="Text" Value="Блокирует" />
-                                                                <Setter Property="Tone" Value="Error" />
+                                                            <DataTrigger Binding="{Binding Applied}" Value="True">
+                                                                <Setter Property="Text" Value="Применена" />
+                                                                <Setter Property="Tone" Value="Success" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </ui:StatusBadge.Style>
                                             </ui:StatusBadge>
-                                            <Button DockPanel.Dock="Right" Style="{StaticResource Button.Ghost}" Content="Сопоставить" VerticalAlignment="Top"
-                                                    Command="{Binding DataContext.UseSuggestionCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                    Visibility="{Binding LogicalField, Converter={StaticResource NullToVisibility}}" />
-                                            <StackPanel>
-                                                <TextBlock Style="{StaticResource Text.Mono}" Text="{Binding Object}" TextWrapping="Wrap" />
-                                                <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Message}" TextWrapping="Wrap" />
-                                                <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
-                                                           Visibility="{Binding Expected, Converter={StaticResource NullToVisibility}}">
-                                                    <Run Text="Ожидается:" /> <Run Text="{Binding Expected, Mode=OneWay}" /><Run Text="; фактически:" /> <Run Text="{Binding Actual, Mode=OneWay, TargetNullValue='нет'}" />
+                                            <StackPanel Margin="0,0,12,0">
+                                                <TextBlock Style="{StaticResource Text.Label}" TextWrapping="Wrap">
+                                                    <Run Text="{Binding Id, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding Title, Mode=OneWay}" />
                                                 </TextBlock>
-                                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding Suggestion}" TextWrapping="Wrap" Foreground="{DynamicResource Brush.Text.Link}"
-                                                           Visibility="{Binding Suggestion, Converter={StaticResource NullToVisibility}}" />
+                                                <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding Description}" TextWrapping="Wrap" />
+                                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding StateText}" TextWrapping="Wrap" />
+                                                <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding FlagsText}" TextWrapping="Wrap"
+                                                           Visibility="{Binding FlagsText, Converter={StaticResource NullToVisibility}}" />
                                             </StackPanel>
                                         </DockPanel>
                                     </Border>
@@ -192,136 +318,24 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- ==================== Таблицы и столбцы ==================== -->
-            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
-                <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="Таблицы и столбцы" />
-                    <TextBlock Style="{StaticResource CardIntro}"
-                               Text="Если в существующей базе таблицы или столбцы названы иначе, укажите их фактические имена. После «Проверить соединение» в списках появятся столбцы, найденные в базе." />
-                    <UniformGrid Columns="4" IsEnabled="{Binding CanEdit}">
-                        <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Схема" />
-                            <TextBox Text="{Binding Schema, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="dbo" />
-                        </StackPanel>
-                        <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Таблица файлов" />
-                            <TextBox Text="{Binding SourceFilesTable, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="SourceFiles" />
-                        </StackPanel>
-                        <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Таблица фактов" />
-                            <TextBox Text="{Binding PersonFactsTable, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="PersonFacts" />
-                        </StackPanel>
-                        <StackPanel Style="{StaticResource Field}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Схема служебных таблиц" />
-                            <TextBox Text="{Binding AuxSchema, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="та же" />
-                        </StackPanel>
-                    </UniformGrid>
-
-                    <Grid Margin="0,4,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="180" />
-                            <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="260" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Style="{StaticResource Text.Label}" Text="Поле" />
-                        <TextBlock Grid.Column="1" Style="{StaticResource Text.Label}" Text="Таблица" />
-                        <TextBlock Grid.Column="2" Style="{StaticResource Text.Label}" Text="Ожидаемый тип" />
-                        <TextBlock Grid.Column="3" Style="{StaticResource Text.Label}" Text="Столбец в базе" />
-                    </Grid>
-                    <ItemsControl ItemsSource="{Binding Mappings}" IsEnabled="{Binding CanEdit}" Focusable="False">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,1,0,0" Padding="0,6">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="180" />
-                                            <ColumnDefinition Width="110" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="260" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Title}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="1" Style="{StaticResource Text.Secondary}" Text="{Binding Table}" VerticalAlignment="Center" />
-                                        <TextBlock Grid.Column="2" Style="{StaticResource Text.Caption}" Text="{Binding Expected}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,12,0" />
-                                        <ComboBox Grid.Column="3" Style="{StaticResource ComboBox.Compact}" IsEditable="True" ItemsSource="{Binding Available}"
-                                                  Text="{Binding Physical, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{Binding Title}" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,8,0,0"
-                               Text="Сопоставление применяется после «Сохранить». Проверьте его повторной проверкой соединения." />
-                </StackPanel>
-            </Border>
-
-            <!-- ==================== Миграции ==================== -->
-            <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16" Visibility="{Binding Migrations.Count, Converter={StaticResource CountToVisibility}}">
-                <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="Миграции схемы" />
-                    <TextBlock Style="{StaticResource CardIntro}"
-                               Text="Каждая миграция выполняется только по явной команде после просмотра SQL. Миграции не удаляют таблицы и данные; их применение записывается в журнал SchemaMigrations." />
-                    <ItemsControl ItemsSource="{Binding Migrations}" Focusable="False">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderBrush="{DynamicResource Brush.Border.Subtle}" BorderThickness="0,1,0,0" Padding="0,10">
-                                    <DockPanel>
-                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
-                                            <Button Style="{StaticResource Button.Ghost}" Content="Показать SQL" ui:Ui.Icon="{StaticResource Icon.FileText}" Margin="0,0,8,0"
-                                                    Command="{Binding DataContext.ShowScriptCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
-                                            <Button Style="{StaticResource Button.Secondary}" Content="Применить" ui:Ui.Icon="{StaticResource Icon.Play}"
-                                                    Command="{Binding DataContext.ApplyMigrationCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
-                                                    Visibility="{Binding Applied, Converter={StaticResource InverseBoolToVisibility}}" />
-                                        </StackPanel>
-                                        <ui:StatusBadge DockPanel.Dock="Left" Margin="0,0,12,0" VerticalAlignment="Top" MinWidth="110">
-                                            <ui:StatusBadge.Style>
-                                                <Style TargetType="ui:StatusBadge" BasedOn="{StaticResource StatusBadge.Default}">
-                                                    <Setter Property="Text" Value="Не применена" />
-                                                    <Setter Property="Tone" Value="Warning" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Applied}" Value="True">
-                                                            <Setter Property="Text" Value="Применена" />
-                                                            <Setter Property="Tone" Value="Success" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ui:StatusBadge.Style>
-                                        </ui:StatusBadge>
-                                        <StackPanel Margin="0,0,12,0">
-                                            <TextBlock Style="{StaticResource Text.Label}" TextWrapping="Wrap">
-                                                <Run Text="{Binding Id, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding Title, Mode=OneWay}" />
-                                            </TextBlock>
-                                            <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding Description}" TextWrapping="Wrap" />
-                                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding StateText}" TextWrapping="Wrap" />
-                                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding FlagsText}" TextWrapping="Wrap"
-                                                       Visibility="{Binding FlagsText, Converter={StaticResource NullToVisibility}}" />
-                                        </StackPanel>
-                                    </DockPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </Border>
-
-            <!-- ==================== Поисковая проекция ==================== -->
-            <Border Style="{StaticResource Panel.Card}" Visibility="{Binding HasReport, Converter={StaticResource BoolToVisibility}}">
-                <StackPanel>
-                    <TextBlock Style="{StaticResource CardTitle}" Text="Поисковая проекция" />
-                    <TextBlock Style="{StaticResource CardIntro}"
-                               Text="Служебная таблица SearchDocs с полнотекстовым индексом строится из PersonFacts и SourceFiles. Перестройка нужна, если данные в основных таблицах изменялись не через FAKT." />
-                    <WrapPanel>
-                        <Button Style="{StaticResource Button.Secondary}" Content="Перестроить проекцию" ui:Ui.Icon="{StaticResource Icon.Refresh}"
-                                ui:Ui.IsBusy="{Binding RebuildCommand.IsRunning}" Command="{Binding RebuildCommand}" Margin="0,0,12,0" />
-                        <Button Style="{StaticResource Button.Ghost}" Content="Остановить" ui:Ui.Icon="{StaticResource Icon.Stop}" Command="{Binding RebuildCommand.CancelCommand}"
-                                Visibility="{Binding RebuildCommand.IsRunning, Converter={StaticResource BoolToVisibility}}" Margin="0,0,12,0" />
-                        <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding RebuildProgress}" VerticalAlignment="Center" TextWrapping="Wrap" />
-                    </WrapPanel>
-                </StackPanel>
-            </Border>
+                <!-- ==================== Поисковая проекция ==================== -->
+                <Border Style="{StaticResource Panel.Card}" Visibility="{Binding HasReport, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Поисковая проекция" />
+                        <TextBlock Style="{StaticResource CardIntro}"
+                                   Text="Служебная таблица SearchDocs с полнотекстовым индексом строится из PersonFacts и SourceFiles. Перестройка нужна, если данные в основных таблицах изменялись не через FAKT." />
+                        <WrapPanel>
+                            <Button Style="{StaticResource Button.Secondary}" Content="Перестроить проекцию" ui:Ui.Icon="{StaticResource Icon.Refresh}"
+                                    ui:Ui.IsBusy="{Binding RebuildCommand.IsRunning}" Command="{Binding RebuildCommand}" Margin="0,0,12,0" />
+                            <Button Style="{StaticResource Button.Ghost}" Content="Остановить" ui:Ui.Icon="{StaticResource Icon.Stop}" Command="{Binding RebuildCommand.CancelCommand}"
+                                    Visibility="{Binding RebuildCommand.IsRunning, Converter={StaticResource BoolToVisibility}}" Margin="0,0,12,0" />
+                            <TextBlock Style="{StaticResource Text.Secondary}" Text="{Binding RebuildProgress}" VerticalAlignment="Center" TextWrapping="Wrap" />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
