@@ -45,8 +45,6 @@
                 <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
                     <Button Style="{StaticResource Button.Secondary}" Content="Проверить соединение" ui:Ui.Icon="{StaticResource Icon.Plug}"
                             ui:Ui.IsBusy="{Binding TestConnectionCommand.IsRunning}" Command="{Binding TestConnectionCommand}" Margin="0,0,8,8" />
-                    <Button Style="{StaticResource Button.Secondary}" Content="Загрузить модели" ui:Ui.Icon="{StaticResource Icon.Download}"
-                            ui:Ui.IsBusy="{Binding LoadModelsCommand.IsRunning}" Command="{Binding LoadModelsCommand}" Margin="0,0,8,8" />
                     <Button Style="{StaticResource Button.Secondary}" Content="Тест извлечения" ui:Ui.Icon="{StaticResource Icon.Sparkle}"
                             ui:Ui.IsBusy="{Binding TestExtractionCommand.IsRunning}" Command="{Binding TestExtractionCommand}" Margin="0,0,8,8"
                             ToolTip="Запрос на синтетических данных: проверяет схему ответа, разделение ФИО, даты, телефоны и несколько лиц" />
@@ -55,12 +53,13 @@
                     <Button Style="{StaticResource Button.Danger}" Content="Удалить профиль" ui:Ui.Icon="{StaticResource Icon.Trash}" Command="{Binding DeleteCommand}" Margin="0,0,8,8" />
                 </WrapPanel>
 
+                <!-- Результат последнего действия — рядом с кнопками, виден при любой прокрутке -->
+                <Border DockPanel.Dock="Bottom" Style="{StaticResource Banner.ByKind}" Margin="0,12,12,0" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
+                    <TextBlock Text="{Binding Message}" TextWrapping="Wrap" AutomationProperties.Name="Сообщение" />
+                </Border>
+
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" IsEnabled="True">
                     <StackPanel Margin="0,0,12,0">
-                        <!-- Сообщения -->
-                        <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,12" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
-                            <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
-                        </Border>
                         <Border Style="{StaticResource Banner.Warning}" Margin="0,0,0,12" Visibility="{Binding DataNotice, Converter={StaticResource NullToVisibility}}">
                             <DockPanel>
                                 <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Cloud}" Size="18" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" VerticalAlignment="Top" />
@@ -126,28 +125,39 @@
 
                         <!-- Модель -->
                         <TextBlock Style="{StaticResource Section}" Text="{Binding ModelLabel}" />
-                        <Grid IsEnabled="{Binding CanEdit}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Style="{StaticResource Field}">
-                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Поиск в списке моделей" />
-                                <TextBox Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Фильтр по названию или ID" AutomationProperties.Name="Фильтр моделей" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Style="{StaticResource Field}">
-                                <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Модели, доступные учётной записи" />
-                                <ComboBox ItemsSource="{Binding ModelsView}" SelectedItem="{Binding SelectedModel}" AutomationProperties.Name="Список моделей" />
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelsStatus}" TextWrapping="Wrap" Margin="0,0,16,8"
-                                   Visibility="{Binding ModelsStatus, Converter={StaticResource NullToVisibility}}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelListingNote}" TextWrapping="Wrap" Margin="0,0,16,8"
-                                   Visibility="{Binding ModelListingNote, Converter={StaticResource NullToVisibility}}" />
-                        <StackPanel Style="{StaticResource Field}" IsEnabled="{Binding CanEdit}">
-                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Точный model ID (можно ввести вручную)" />
-                            <TextBox Text="{Binding ModelId, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Model ID" />
-                            <CheckBox Content="Model ID введён вручную (список моделей недоступен или не содержит нужную)" IsChecked="{Binding ManualModel}" Margin="0,6,0,0" />
+                        <StackPanel IsEnabled="{Binding CanEdit}" Margin="0,0,16,0">
+                            <DockPanel Margin="0,0,0,8">
+                                <Button DockPanel.Dock="Right" Style="{StaticResource Button.Secondary}" Content="Загрузить список" ui:Ui.Icon="{StaticResource Icon.Download}"
+                                        ui:Ui.IsBusy="{Binding LoadModelsCommand.IsRunning}" Command="{Binding LoadModelsCommand}" Margin="8,0,0,0"
+                                        ToolTip="Запросить у провайдера модели, доступные ключу" AutomationProperties.Name="Загрузить список моделей" />
+                                <TextBox Text="{Binding ModelFilter, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="Поиск модели по названию или ID"
+                                         IsEnabled="{Binding HasModels}" AutomationProperties.Name="Поиск модели" />
+                            </DockPanel>
+                            <Border Style="{StaticResource Banner.Info}" Margin="0,0,0,8" Visibility="{Binding ModelsHint, Converter={StaticResource NullToVisibility}}">
+                                <TextBlock Text="{Binding ModelsHint}" TextWrapping="Wrap" />
+                            </Border>
+                            <ListBox ItemsSource="{Binding ModelsView}" SelectedItem="{Binding SelectedModel}" Height="240" Margin="0,0,0,8"
+                                     Visibility="{Binding HasModels, Converter={StaticResource BoolToVisibility}}"
+                                     VirtualizingPanel.IsVirtualizing="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     AutomationProperties.Name="Список моделей">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="4,4">
+                                            <TextBlock Style="{StaticResource Text.Label}" Text="{Binding Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ContextLength, Mode=OneWay, StringFormat='Контекст: {0:N0} токенов', ConverterCulture=ru-RU}"
+                                                       Visibility="{Binding ContextLength, Converter={StaticResource NullToVisibility}}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelsStatus}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Visibility="{Binding ModelsStatus, Converter={StaticResource NullToVisibility}}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelListingNote}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Visibility="{Binding ModelListingNote, Converter={StaticResource NullToVisibility}}" />
+                            <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Model ID — выберите в списке или введите вручную" />
+                            <TextBox Text="{Binding ModelId, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}"
+                                     ui:Ui.Placeholder="например, openai/gpt-4.1-mini" AutomationProperties.Name="Model ID" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding ModelSummary}" TextWrapping="Wrap" Margin="0,4,0,12" />
                         </StackPanel>
                         <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding CapabilitiesText}" TextWrapping="Wrap" Margin="0,0,16,0" />
 

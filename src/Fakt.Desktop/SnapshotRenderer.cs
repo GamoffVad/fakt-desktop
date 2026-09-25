@@ -181,6 +181,10 @@ internal static class SnapshotRenderer
             }
 
             Shot(tabs[i]);
+            if (i == 0)
+            {
+                RunAddModelFlow(services, main, window, log, Shot);
+            }
         }
 
         main.CurrentKey = PageKey.Log;
@@ -277,6 +281,92 @@ internal static class SnapshotRenderer
 
         main.Processing.CurrentFile = main.Processing.Files.FirstOrDefault(f => f.Structure != null);
         shot("14-flow-processed");
+    }
+
+    /// <summary>
+    /// Добавление модели на вкладке «LLM» так, как это делает пользователь: провайдер OpenRouter, ключ вводится в поле
+    /// PasswordBox, список моделей загружается автоматически, модель выбирается в списке, профиль сохраняется.
+    /// Адрес — тестовый сервер из FAKT_SNAPSHOT_MODELS_BASEURL, ключ — из FAKT_SNAPSHOT_MODELS_KEY (синтетический).
+    /// </summary>
+    private static void RunAddModelFlow(AppServices services, MainViewModel main, Window window, List<string> log, Action<string> shot)
+    {
+        var baseUrl = Environment.GetEnvironmentVariable("FAKT_SNAPSHOT_MODELS_BASEURL");
+        var key = Environment.GetEnvironmentVariable("FAKT_SNAPSHOT_MODELS_KEY");
+        if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrEmpty(key))
+        {
+            return;
+        }
+
+        var llm = main.Admin.Llm;
+        llm.ProviderId = Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter;
+        llm.BaseUrl = baseUrl;
+        Pump();
+        log.Add($"add-model: provider={llm.ProviderId}, models={llm.Models.Count}, hint={llm.ModelsHint}");
+        shot("07a-admin-llm-new-openrouter");
+
+        var passwordBox = FindVisual<System.Windows.Controls.PasswordBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "API-ключ");
+        if (passwordBox == null)
+        {
+            log.Add("add-model: FAIL — поле API-ключа не найдено");
+            return;
+        }
+
+        // Ввод в элемент управления, как с клавиатуры: значение должно дойти до модели представления через привязку.
+        passwordBox.Password = key;
+        log.Add($"add-model: key reached view model = {llm.ApiKey == key}");
+        WaitUntil(() => llm.Models.Count > 0 || (llm.ModelsStatus != null && !llm.LoadModelsCommand.IsRunning && !llm.ModelsStatus.StartsWith("Загрузка", StringComparison.Ordinal)));
+        log.Add($"add-model: models loaded = {llm.Models.Count}, status = {llm.ModelsStatus}");
+        var list = FindVisual<System.Windows.Controls.ListBox>(window, b => System.Windows.Automation.AutomationProperties.GetName(b) == "Список моделей");
+        if (list == null || list.Items.Count == 0)
+        {
+            log.Add("add-model: FAIL — список моделей пуст");
+            return;
+        }
+
+        list.BringIntoView();
+        shot("07b-admin-llm-models-loaded");
+
+        llm.ModelFilter = "mini";
+        Pump();
+        log.Add($"add-model: filter 'mini' shows {list.Items.Count} of {llm.Models.Count}");
+        list.SelectedIndex = 0;
+        Pump();
+        log.Add($"add-model: selected = {llm.ModelId}, manual = {llm.ManualModel}");
+        llm.SaveCommand.Execute(null);
+        Pump();
+        var saved = services.Settings.Current.LlmProfiles.FirstOrDefault(p => p.ProviderId == Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter);
+        log.Add($"add-model: after save dirty = {llm.IsDirty}, key box cleared = {passwordBox.Password.Length == 0}, delete enabled = {llm.DeleteCommand.CanExecute(null)}");
+        log.Add($"add-model: saved profile = {saved?.Name}, model = {saved?.ModelId}, manual = {saved?.ManualModelId}, key saved = {(saved != null && services.Settings.HasApiKey(saved.Id))}, message = {llm.Message}");
+        shot("07c-admin-llm-saved");
+
+        llm.ModelId = "custom/model-typed-by-hand";
+        Pump();
+        log.Add($"add-model: manual id -> manual = {llm.ManualModel}, summary = {llm.ModelSummary}");
+        llm.SaveCommand.Execute(null);
+        Pump();
+        saved = services.Settings.Current.LlmProfiles.FirstOrDefault(p => p.ProviderId == Fakt.Infrastructure.Llm.ProviderCatalog.OpenRouter);
+        log.Add($"add-model: saved manual model = {saved?.ModelId}, manual = {saved?.ManualModelId}, list kept = {llm.Models.Count}");
+        shot("07d-admin-llm-manual");
+    }
+
+    private static T FindVisual<T>(DependencyObject root, Func<T, bool> match) where T : DependencyObject
+    {
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T typed && match(typed))
+            {
+                return typed;
+            }
+
+            var found = FindVisual(child, match);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     internal static void RenderDialog(DialogViewModel viewModel, string path) => Dialog(viewModel, path);

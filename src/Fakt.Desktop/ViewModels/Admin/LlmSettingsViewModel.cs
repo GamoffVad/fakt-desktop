@@ -103,6 +103,7 @@ public sealed class LlmSettingsViewModel : ObservableObject
     private ExtractionTestResult _testResult;
     private bool _isDirty;
     private LlmProfile _selectedProfile;
+    private CancellationTokenSource _autoLoadCts;
 
     public LlmSettingsViewModel(AppServices services)
     {
@@ -121,6 +122,13 @@ public sealed class LlmSettingsViewModel : ObservableObject
         ClearKeyCommand = new RelayCommand(ClearKey, () => CanEdit && HasSavedKey);
         TestConnectionCommand = new AsyncCommand(TestConnectionAsync, () => CanUseEndpoint, OnError);
         LoadModelsCommand = new AsyncCommand(LoadModelsAsync, () => CanUseEndpoint, OnError);
+        LoadModelsCommand.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(AsyncCommand.IsRunning))
+            {
+                OnPropertyChanged(nameof(ModelsHint));
+            }
+        };
         TestExtractionCommand = new AsyncCommand(TestExtractionAsync, () => CanUseEndpoint && !string.IsNullOrWhiteSpace(ModelId), OnError);
         AddHeaderCommand = new RelayCommand(() => Headers.Add(new HeaderViewModel()), () => CanEdit);
         RemoveHeaderCommand = new RelayCommand(p => Headers.Remove(p as HeaderViewModel), _ => CanEdit);
@@ -204,7 +212,7 @@ public sealed class LlmSettingsViewModel : ObservableObject
         {
             if (SetDirty(ref _baseUrl, value))
             {
-                OnPropertiesChanged(nameof(DataNotice), nameof(KeyBindingWarning), nameof(CanUseEndpoint));
+                OnPropertiesChanged(nameof(DataNotice), nameof(KeyBindingWarning), nameof(CanUseEndpoint), nameof(ModelsHint));
             }
         }
     }
@@ -216,7 +224,8 @@ public sealed class LlmSettingsViewModel : ObservableObject
         {
             if (SetDirty(ref _apiKey, value))
             {
-                OnPropertyChanged(nameof(CanUseEndpoint));
+                OnPropertiesChanged(nameof(CanUseEndpoint), nameof(ModelsHint));
+                ScheduleModelLoad();
             }
         }
     }
@@ -228,7 +237,7 @@ public sealed class LlmSettingsViewModel : ObservableObject
         {
             if (SetProperty(ref _hasSavedKey, value))
             {
-                OnPropertiesChanged(nameof(KeyHint), nameof(CanUseEndpoint));
+                OnPropertiesChanged(nameof(KeyHint), nameof(CanUseEndpoint), nameof(ModelsHint));
             }
         }
     }
@@ -259,8 +268,54 @@ public sealed class LlmSettingsViewModel : ObservableObject
         }
     }
 
-    public string ModelId { get => _modelId; set { if (SetDirty(ref _modelId, value)) CommandManager.InvalidateRequerySuggested(); } }
-    public bool ManualModel { get => _manualModel; set => SetDirty(ref _manualModel, value); }
+    /// <summary>
+    /// Model ID профиля: выбирается в списке моделей или вводится вручную. Если введённого ID нет в загруженном
+    /// списке, он считается введённым вручную.
+    /// </summary>
+    public string ModelId
+    {
+        get => _modelId;
+        set
+        {
+            if (SetDirty(ref _modelId, value))
+            {
+                ManualModel = !string.IsNullOrWhiteSpace(value) && !Models.Any(m => m.Id == value.Trim());
+                OnPropertiesChanged(nameof(SelectedModel), nameof(ModelSummary));
+                CommandManager.InvalidateRequerySuggested();
+            }
+        }
+    }
+
+    public bool ManualModel { get => _manualModel; private set => SetDirty(ref _manualModel, value); }
+
+    public bool HasModels => Models.Count > 0;
+
+    /// <summary>Подсказка над списком моделей: что нужно сделать, чтобы список появился.</summary>
+    public string ModelsHint
+    {
+        get
+        {
+            if (Models.Count > 0 || LoadModelsCommand?.IsRunning == true)
+            {
+                return null;
+            }
+
+            if (!UrlBuilder.IsValidHttpUrl(BaseUrl, out _) || (BaseUrl ?? string.Empty).Contains("<"))
+            {
+                return "Укажите Base URL, затем нажмите «Загрузить список».";
+            }
+
+            return CanUseEndpoint
+                ? "Список моделей ещё не загружен. Нажмите «Загрузить список» или введите model ID вручную."
+                : "Введите API-ключ — список моделей, доступных ключу, загрузится автоматически. Model ID можно ввести и вручную.";
+        }
+    }
+
+    public string ModelSummary => string.IsNullOrWhiteSpace(ModelId)
+        ? "Модель не выбрана."
+        : ManualModel
+            ? $"Будет использована модель «{ModelId.Trim()}» (введена вручную; проверьте ID «Тестом извлечения»)."
+            : $"Выбрана модель «{ModelId.Trim()}».";
     public string ModelFilter { get => _modelFilter; set { if (SetProperty(ref _modelFilter, value)) ModelsView.Refresh(); } }
     public string ModelsStatus { get => _modelsStatus; private set => SetProperty(ref _modelsStatus, value); }
     public string ModelLabel => Provider?.ModelFieldLabel ?? "Модель";
@@ -272,10 +327,9 @@ public sealed class LlmSettingsViewModel : ObservableObject
         get => Models.FirstOrDefault(m => m.Id == ModelId);
         set
         {
-            if (value != null)
+            if (value != null && value.Id != ModelId)
             {
                 ModelId = value.Id;
-                ManualModel = false;
             }
         }
     }
@@ -423,15 +477,18 @@ public sealed class LlmSettingsViewModel : ObservableObject
             Headers.Add(new HeaderViewModel { Name = header.Name, Value = header.IsSecret ? null : header.Value, IsSecret = header.IsSecret, HasSavedSecret = header.IsSecret });
         }
 
+        _autoLoadCts?.Cancel();
         Models.Clear();
         ModelsStatus = null;
+        _modelFilter = null;
         TestResult = null;
         Message = null;
         IsDirty = false;
         OnPropertiesChanged(nameof(Name), nameof(BaseUrl), nameof(ApiKey), nameof(ModelId), nameof(ManualModel), nameof(TimeoutSeconds), nameof(MaxOutputTokens),
             nameof(MaxConcurrent), nameof(RequestsPerMinute), nameof(TokensPerMinute), nameof(BatchRows), nameof(MaxInputTokens), nameof(Temperature),
             nameof(OutputMode), nameof(PriceIn), nameof(PriceOut), nameof(PriceCurrency), nameof(PriceDate), nameof(PriceSource), nameof(IsActive),
-            nameof(CapabilitiesText), nameof(DataNotice), nameof(KeyBindingWarning), nameof(CanUseEndpoint));
+            nameof(CapabilitiesText), nameof(DataNotice), nameof(KeyBindingWarning), nameof(CanUseEndpoint), nameof(ModelFilter), nameof(SelectedModel),
+            nameof(HasModels), nameof(ModelsHint), nameof(ModelSummary));
     }
 
     private bool SafeHasKey(Guid profileId)
@@ -573,6 +630,12 @@ public sealed class LlmSettingsViewModel : ObservableObject
         try
         {
             var profile = BuildProfile();
+            if (string.IsNullOrWhiteSpace(profile.ModelId))
+            {
+                SetMessage("Выберите модель в списке или введите model ID вручную.", MessageKind.Warning);
+                return;
+            }
+
             if (Provider?.ApiKey == ApiKeyRequirement.Required && string.IsNullOrEmpty(ApiKey) && !HasSavedKey)
             {
                 SetMessage("Введите ключ API: для этого провайдера он обязателен.", MessageKind.Warning);
@@ -591,11 +654,18 @@ public sealed class LlmSettingsViewModel : ObservableObject
             }
 
             var saved = _services.Settings.Current.LlmProfiles.First(p => p.Id == profile.Id);
+            var loadedModels = Models.ToList();
+            var modelsStatus = ModelsStatus;
             Reload();
             _selectedProfile = Profiles.First(p => p.Id == saved.Id);
             OnPropertyChanged(nameof(SelectedProfile));
             Load(saved);
-            SetMessage($"Профиль «{saved.Name}» сохранён. Ключ хранится в защищённом хранилище и не записывается в настройки.", MessageKind.Success);
+            RestoreModels(loadedModels, modelsStatus);
+            var usage = _services.Settings.Current.ActiveLlmProfileId == saved.Id
+                ? " Профиль используется для обработки."
+                : " Чтобы обрабатывать файлы этой моделью, нажмите «Использовать для обработки».";
+            CommandManager.InvalidateRequerySuggested();
+            SetMessage($"Профиль «{saved.Name}» с моделью «{saved.ModelId}» сохранён.{usage} Ключ хранится в защищённом хранилище и не записывается в настройки.", MessageKind.Success);
         }
         catch (Exception ex) when (ex is ArgumentException || ex is AccessDeniedException || ex is InvalidOperationException)
         {
@@ -675,11 +745,76 @@ public sealed class LlmSettingsViewModel : ObservableObject
 
     private async Task LoadModelsAsync(CancellationToken cancellationToken)
     {
-        ModelsStatus = "Загрузка…";
+        ModelsStatus = "Загрузка списка моделей…";
         Models.Clear();
-        var config = TestConfig();
-        var result = await Task.Run(() => _services.Profiles.ListModelsAsync(config, cancellationToken), cancellationToken);
-        ApplyModels(result);
+        OnPropertiesChanged(nameof(HasModels), nameof(ModelsHint));
+        try
+        {
+            var config = TestConfig();
+            var result = await Task.Run(() => _services.Profiles.ListModelsAsync(config, cancellationToken), cancellationToken);
+            ApplyModels(result);
+        }
+        catch (OperationCanceledException)
+        {
+            ModelsStatus = "Загрузка списка моделей отменена.";
+            throw;
+        }
+        catch (Exception ex)
+        {
+            ModelsStatus = "Список моделей не загружен: " + ex.Message;
+            throw;
+        }
+        finally
+        {
+            OnPropertiesChanged(nameof(HasModels), nameof(ModelsHint));
+        }
+    }
+
+    /// <summary>
+    /// После ввода ключа список моделей загружается сам (с задержкой, чтобы не отправлять запрос на каждый символ).
+    /// Запрос уходит только на адрес профиля — тот же, что и при нажатии «Загрузить список».
+    /// </summary>
+    private void ScheduleModelLoad()
+    {
+        _autoLoadCts?.Cancel();
+        if (string.IsNullOrWhiteSpace(ApiKey) || !CanUseEndpoint || !CanEdit)
+        {
+            return;
+        }
+
+        var cts = _autoLoadCts = new CancellationTokenSource();
+        _ = AutoLoadAsync(cts.Token);
+    }
+
+    private async Task AutoLoadAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(800, cancellationToken);
+            if (!cancellationToken.IsCancellationRequested && CanUseEndpoint && LoadModelsCommand.CanExecute(null))
+            {
+                await LoadModelsCommand.ExecuteAsync();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private void RestoreModels(IReadOnlyList<ModelInfo> models, string status)
+    {
+        if (models.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var model in models)
+        {
+            Models.Add(model);
+        }
+
+        ModelsStatus = status;
+        OnPropertiesChanged(nameof(HasModels), nameof(ModelsHint), nameof(SelectedModel));
     }
 
     private void ApplyModels(ModelListResult result)
@@ -693,12 +828,12 @@ public sealed class LlmSettingsViewModel : ObservableObject
         ModelsStatus = result.Status == ModelListStatus.Loaded
             ? $"Загружено моделей: {result.Models.Count}{(result.PagesFetched > 1 ? $" (страниц: {result.PagesFetched})" : string.Empty)}. {result.Message}"
             : ModelListResult.StatusText(result.Status) + (string.IsNullOrEmpty(result.Message) ? string.Empty : ": " + result.Message);
-        if (result.Status != ModelListStatus.Loaded)
+        if (!string.IsNullOrWhiteSpace(ModelId))
         {
-            ManualModel = true;
+            ManualModel = !Models.Any(m => m.Id == ModelId.Trim());
         }
 
-        OnPropertyChanged(nameof(SelectedModel));
+        OnPropertiesChanged(nameof(SelectedModel), nameof(HasModels), nameof(ModelsHint), nameof(ModelSummary));
     }
 
     private async Task TestExtractionAsync(CancellationToken cancellationToken)

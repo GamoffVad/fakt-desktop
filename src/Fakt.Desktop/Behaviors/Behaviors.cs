@@ -135,31 +135,54 @@ public static class PasswordBinding
 
     private static readonly DependencyProperty UpdatingProperty = DependencyProperty.RegisterAttached("Updating", typeof(bool), typeof(PasswordBinding));
 
+    // Обработчик ввода регистрируется для всех PasswordBox сразу: раньше он подключался только при изменении значения
+    // со стороны модели, и при пустом начальном значении набранный ключ или пароль не попадал в модель.
+    static PasswordBinding()
+    {
+        EventManager.RegisterClassHandler(typeof(PasswordBox), PasswordBox.PasswordChangedEvent, new RoutedEventHandler(OnPasswordChanged));
+    }
+
     public static string GetValue(DependencyObject element) => (string)element.GetValue(ValueProperty);
     public static void SetValue(DependencyObject element, string value) => element.SetValue(ValueProperty, value);
 
     private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (!(d is PasswordBox box))
+        if (d is PasswordBox box && !(bool)box.GetValue(UpdatingProperty))
         {
-            return;
+            var value = e.NewValue as string ?? string.Empty;
+            if (box.Password != value)
+            {
+                // Значение пришло из модели: обратно в модель его не отправляем.
+                box.SetValue(UpdatingProperty, true);
+                try
+                {
+                    box.Password = value;
+                }
+                finally
+                {
+                    box.SetValue(UpdatingProperty, false);
+                }
+            }
         }
-
-        box.PasswordChanged -= OnPasswordChanged;
-        if (!(bool)box.GetValue(UpdatingProperty))
-        {
-            box.Password = e.NewValue as string ?? string.Empty;
-        }
-
-        box.PasswordChanged += OnPasswordChanged;
     }
 
     private static void OnPasswordChanged(object sender, RoutedEventArgs e)
     {
         var box = (PasswordBox)sender;
+        if ((bool)box.GetValue(UpdatingProperty) || !BindingOperations.IsDataBound(box, ValueProperty))
+        {
+            return;
+        }
+
         box.SetValue(UpdatingProperty, true);
-        SetValue(box, box.Password);
-        box.SetValue(UpdatingProperty, false);
+        try
+        {
+            SetValue(box, box.Password);
+        }
+        finally
+        {
+            box.SetValue(UpdatingProperty, false);
+        }
     }
 }
 
