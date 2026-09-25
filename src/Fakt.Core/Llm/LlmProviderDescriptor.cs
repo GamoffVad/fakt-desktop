@@ -73,6 +73,9 @@ public sealed class LlmProviderDescriptor
     /// <summary>Подпись поля модели: «Модель» или «Развёртывание (deployment)».</summary>
     public string ModelFieldLabel { get; set; } = "Модель";
 
+    /// <summary>Модель, подставляемая в новый профиль (только проверенная на реальном API); пусто — выбрать в списке.</summary>
+    public string DefaultModelId { get; set; }
+
     /// <summary>Режимы, которые API документирует. Фактическая поддержка моделью проверяется тестовым запросом.</summary>
     public IReadOnlyList<StructuredOutputMode> DocumentedModes { get; set; } = Array.Empty<StructuredOutputMode>();
 

@@ -13,9 +13,6 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,16,0,0">
         <StackPanel Margin="0,0,12,16" IsEnabled="{Binding CanEdit}">
-            <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,16" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
-                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
-            </Border>
 
             <Border Style="{StaticResource Panel.Card}" Margin="0,0,0,16">
                 <StackPanel>
@@ -99,11 +96,13 @@
                     <TextBlock Style="{StaticResource CardTitle}" Text="Python worker" />
                     <StackPanel Style="{StaticResource Field}">
                         <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Путь к python.exe (пусто — встроенный worker\python)" />
-                        <TextBox Text="{Binding PythonPath, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}" />
+                        <TextBox Text="{Binding PythonPath, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}"
+                                 ui:Ui.Placeholder="{Binding DetectedPythonPath}" AutomationProperties.Name="Путь к python.exe" />
                     </StackPanel>
                     <StackPanel Style="{StaticResource Field}">
                         <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Каталог кода worker (пусто — рядом с приложением)" />
-                        <TextBox Text="{Binding WorkerDirectory, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}" />
+                        <TextBox Text="{Binding WorkerDirectory, UpdateSourceTrigger=PropertyChanged}" FontFamily="{StaticResource Font.Mono}"
+                                 ui:Ui.Placeholder="{Binding DetectedWorkerDirectory}" AutomationProperties.Name="Каталог кода worker" />
                     </StackPanel>
                     <TextBlock Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,0,0,12"
                                Text="Worker запускается без аргументов с секретами; ключи и пароли ему не передаются. Поддерживаемая сборка: Python 3.8.10 x64, pandas 2.0.3, numpy 1.23.5 (Windows 7 SP1)." />
@@ -112,7 +111,14 @@
                 </StackPanel>
             </Border>
 
-            <Button Style="{StaticResource Button.Primary}" Content="Сохранить параметры обработки" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" HorizontalAlignment="Left" />
+            <Border Style="{StaticResource Banner.ByKind}" Margin="0,0,0,12" Visibility="{Binding Message, Converter={StaticResource NullToVisibility}}">
+                <TextBlock Text="{Binding Message}" TextWrapping="Wrap" />
+            </Border>
+            <WrapPanel>
+                <Button Style="{StaticResource Button.Primary}" Content="Сохранить параметры обработки" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+                <Button Style="{StaticResource Button.Ghost}" Content="Значения по умолчанию" ui:Ui.Icon="{StaticResource Icon.Refresh}" Command="{Binding ResetDefaultsCommand}" Margin="0,0,8,8"
+                        ToolTip="Рекомендуемые параметры обработки; сохраняются кнопкой «Сохранить параметры обработки»" />
+            </WrapPanel>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

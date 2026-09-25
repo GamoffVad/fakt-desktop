@@ -87,6 +87,32 @@ public sealed class DatabaseProvisioningTests : IClassFixture<SqlServerFixture>
     }
 
     [Fact]
+    public async Task LocalDefaultsConnectWithoutDisablingCertificateValidation()
+    {
+        // Значения по умолчанию (localhost, вход Windows, без шифрования транспорта для локального сервера, проверка
+        // сертификата не отключена) подключаются к SQL Server этого компьютера и создают отсутствующую базу.
+        var name = "FaktIT_defaults_" + Guid.NewGuid().ToString("N").Substring(0, 8);
+        var settings = DatabaseSettings.LocalDefaults();
+        settings.Database = name;
+        Assert.False(settings.TrustServerCertificate);
+        var admin = new DatabaseAdmin(null);
+        try
+        {
+            var result = await admin.EnsureDatabaseAsync(settings, null, "integration-test", CancellationToken.None);
+            Assert.True(result.Success, result.Message);
+            Assert.True(result.Created);
+
+            var report = await admin.InspectAsync(settings, null, CancellationToken.None);
+            Assert.True(report.Connected, report.ConnectionError);
+            Assert.True(report.CanProcess && report.CanSearch, string.Join("; ", report.ProcessingBlockers.Concat(report.SearchBlockers)));
+        }
+        finally
+        {
+            await DropAsync(name);
+        }
+    }
+
+    [Fact]
     public async Task ExistingDatabaseIsLeftUnchanged()
     {
         // База фикстуры существует, но таблиц FAKT в ней нет: автоматические миграции к ней не применяются.

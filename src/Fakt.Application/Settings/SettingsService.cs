@@ -28,7 +28,36 @@ public sealed class SettingsService
         _secretFactory = secretFactory;
         _identity = identity;
         _logger = logger ?? NullLogger.Instance;
-        _current = store.Load();
+        _current = WithDefaults(store.Load());
+    }
+
+    /// <summary>
+    /// Подключение к базе ещё не задано — подставляется локальный SQL Server и база FAKT (см.
+    /// <see cref="DatabaseSettings.LocalDefaults"/>), чтобы не вводить значения вручную. Сопоставление столбцов,
+    /// тайм-ауты и имена таблиц сохраняются; явно заданное подключение не меняется.
+    /// </summary>
+    public static AppSettings WithDefaults(AppSettings settings)
+    {
+        if (settings == null)
+        {
+            return null;
+        }
+
+        settings.Database ??= new DatabaseSettings();
+        var db = settings.Database;
+        if (string.IsNullOrWhiteSpace(db.Server) && string.IsNullOrWhiteSpace(db.Database) && db.Port == null && string.IsNullOrWhiteSpace(db.Instance))
+        {
+            var defaults = DatabaseSettings.LocalDefaults();
+            db.Server = defaults.Server;
+            db.Database = defaults.Database;
+            db.Authentication = defaults.Authentication;
+            db.UserName = null;
+            db.Encrypt = defaults.Encrypt;
+            db.TrustServerCertificate = defaults.TrustServerCertificate;
+        }
+
+        settings.Processing ??= new ProcessingSettings();
+        return settings;
     }
 
     public IAuthorizationService Authorization { get; set; }
@@ -52,7 +81,7 @@ public sealed class SettingsService
     {
         lock (_gate)
         {
-            _current = _store.Load();
+            _current = WithDefaults(_store.Load());
         }
 
         SettingsChanged?.Invoke();

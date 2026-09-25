@@ -30,6 +30,9 @@ public sealed class DataServicesAuthorizationTests
     public async Task Search_ByOperator_PassesAuthorization()
     {
         using var h = new SettingsHarness(FakeIdentityProvider.Operator());
+        // Подключение по умолчанию (localhost/FAKT) убрано: проверяется только прохождение авторизации.
+        h.Service.Current.Database.Server = null;
+        h.Service.Current.Database.Database = null;
         var search = new SearchService(h.Service, h.Service.Authorization, null, null);
 
         // Права есть: дальше сервис сообщает, что база не настроена.

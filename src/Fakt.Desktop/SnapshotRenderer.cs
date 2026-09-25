@@ -175,7 +175,8 @@ internal static class SnapshotRenderer
         for (var i = 0; i < tabs.Length; i++)
         {
             main.Admin.SelectedTab = i;
-            if (i == 1 && services.Settings.Current.Database.IsConfigured)
+            // Проверка соединения создаёт отсутствующую базу — только для базы, явно указанной для режима проверки.
+            if (i == 1 && !string.IsNullOrWhiteSpace(options.Database))
             {
                 Wait(main.Admin.Database.TestCommand.ExecuteAsync(null));
             }

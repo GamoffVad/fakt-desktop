@@ -113,6 +113,7 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         RebuildCommand = new AsyncCommand(RebuildAsync, () => CanManage && Report?.Connected == true, OnError);
         UseSuggestionCommand = new RelayCommand(p => UseSuggestion(p as SchemaIssue), p => CanEdit && p is SchemaIssue issue && issue.LogicalField != null);
         RevertCommand = new RelayCommand(Revert, () => CanEdit);
+        ResetDefaultsCommand = new RelayCommand(ResetDefaults, () => CanEdit);
         PropertyChanged += (_, e) =>
         {
             if (ConnectionInputs.Contains(e.PropertyName))
@@ -140,12 +141,32 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
     public AsyncCommand RebuildCommand { get; }
     public ICommand UseSuggestionCommand { get; }
     public ICommand RevertCommand { get; }
+    public ICommand ResetDefaultsCommand { get; }
 
     public bool CanEdit => _services.Authorization.IsAllowed(Permission.ManageSettings);
     public bool CanManage => _services.Authorization.IsAllowed(Permission.ManageDatabase);
     public bool IsReadOnly => !CanEdit;
 
-    public string Server { get => _server; set => SetProperty(ref _server, value); }
+    public string Server
+    {
+        get => _server;
+        set
+        {
+            var wasLocal = DatabaseSettings.IsLocalServer(_server);
+            if (!SetProperty(ref _server, value))
+            {
+                return;
+            }
+
+            // Сетевой сервер: данные пойдут по сети — шифрование включается автоматически (его можно отключить явно).
+            if (wasLocal && !string.IsNullOrWhiteSpace(value) && !DatabaseSettings.IsLocalServer(value) && !EncryptMandatory)
+            {
+                EncryptMandatory = true;
+            }
+
+            OnPropertiesChanged(nameof(SecurityWarning), nameof(LocalConnectionNote));
+        }
+    }
     public string Port { get => _port; set => SetProperty(ref _port, value); }
     public string Instance { get => _instance; set => SetProperty(ref _instance, value); }
     public string Database { get => _database; set => SetProperty(ref _database, value); }
@@ -181,7 +202,7 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         set
         {
             _encrypt = value ? SqlEncryptMode.Mandatory : SqlEncryptMode.Optional;
-            OnPropertiesChanged(nameof(EncryptMandatory), nameof(SecurityWarning));
+            OnPropertiesChanged(nameof(EncryptMandatory), nameof(SecurityWarning), nameof(LocalConnectionNote));
         }
     }
 
@@ -247,8 +268,13 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
     }
 
     public string SecurityWarning =>
-        !EncryptMandatory ? "Шифрование отключено: данные передаются открытым текстом — только для изолированной сети." :
+        !EncryptMandatory && !DatabaseSettings.IsLocalServer(Server) ? "Шифрование отключено: данные передаются по сети открытым текстом — только для изолированной сети." :
         TrustServerCertificate ? "Сертификат сервера не проверяется." : null;
+
+    /// <summary>Пояснение для локального сервера без шифрования транспорта.</summary>
+    public string LocalConnectionNote => !EncryptMandatory && DatabaseSettings.IsLocalServer(Server)
+        ? "Локальный SQL Server: соединение не выходит за пределы компьютера (общая память), поэтому транспорт не шифруется, а проверка сертификата остаётся включённой. Для сетевого сервера шифрование включится автоматически."
+        : null;
 
     public string ConnectTimeout { get => _connectTimeout; set => SetProperty(ref _connectTimeout, value); }
     public string CommandTimeout { get => _commandTimeout; set => SetProperty(ref _commandTimeout, value); }
@@ -331,6 +357,7 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         Password = null;
         _encrypt = settings.Encrypt;
         _trustCertificate = settings.TrustServerCertificate;
+        OnPropertiesChanged(nameof(EncryptMandatory), nameof(TrustServerCertificate), nameof(SecurityWarning), nameof(LocalConnectionNote));
         ConnectTimeout = settings.ConnectTimeoutSeconds.ToString(CultureInfo.InvariantCulture);
         CommandTimeout = settings.CommandTimeoutSeconds.ToString(CultureInfo.InvariantCulture);
         Schema = settings.Schema;
@@ -422,6 +449,22 @@ public sealed class DatabaseSettingsViewModel : ObservableObject
         TrustServerCertificate = _trustCertificate,
         ConnectTimeoutSeconds = int.TryParse(ConnectTimeout?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var timeout) && timeout > 0 ? timeout : 15,
     };
+
+    /// <summary>
+    /// Значения по умолчанию: локальный SQL Server, база FAKT, вход Windows, стандартные таблицы и столбцы.
+    /// Ничего не сохраняется до нажатия «Сохранить»; существующие базы и таблицы не изменяются.
+    /// </summary>
+    private void ResetDefaults()
+    {
+        var defaults = DatabaseSettings.LocalDefaults();
+        Load(defaults);
+        Report = null;
+        Issues.Clear();
+        Migrations.Clear();
+        Message = $"Подставлены значения по умолчанию: сервер {defaults.Server}, база {defaults.Database}, вход Windows. Нажмите «Проверить соединение» " +
+                  "(если базы нет, она будет создана) и «Сохранить».";
+        MessageKind = MessageKind.Info;
+    }
 
     private void Revert()
     {

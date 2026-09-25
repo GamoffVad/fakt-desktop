@@ -24,7 +24,28 @@ public sealed class ProcessingSettingsViewModel : ObservableObject
     public ProcessingSettingsViewModel(AppServices services)
     {
         _services = services;
-        var p = services.Settings.Current.Processing;
+        Load(services.Settings.Current.Processing);
+        SaveCommand = new RelayCommand(Save, () => CanEdit);
+        ResetDefaultsCommand = new RelayCommand(ResetDefaults, () => CanEdit);
+        ProbeCommand = new AsyncCommand(ProbeAsync, onError: ex =>
+        {
+            Message = ex.Message;
+            MessageKind = MessageKind.Error;
+        });
+        try
+        {
+            var detected = Fakt.Infrastructure.Worker.WorkerClientFactory.Resolve(null, null, Fakt.Infrastructure.Settings.AppPaths.ApplicationDirectory);
+            DetectedPythonPath = detected.PythonPath;
+            DetectedWorkerDirectory = detected.WorkerDirectory;
+        }
+        catch (Exception ex) when (ex is System.IO.IOException || ex is UnauthorizedAccessException || ex is ArgumentException)
+        {
+            // Пути будут определены при запуске worker; подсказка в полях не обязательна.
+        }
+    }
+
+    private void Load(ProcessingSettings p)
+    {
         RecursiveScan = p.RecursiveScan;
         FollowReparsePoints = p.FollowReparsePoints;
         IncludeHidden = p.IncludeHiddenFiles;
@@ -42,18 +63,26 @@ public sealed class ProcessingSettingsViewModel : ObservableObject
         ConfirmAbove = p.ConfirmStructureRequestsAbove.ToString(CultureInfo.InvariantCulture);
         PythonPath = p.PythonPath;
         WorkerDirectory = p.WorkerDirectory;
-        SaveCommand = new RelayCommand(Save, () => CanEdit);
-        ProbeCommand = new AsyncCommand(ProbeAsync, onError: ex =>
-        {
-            Message = ex.Message;
-            MessageKind = MessageKind.Error;
-        });
+    }
+
+    /// <summary>Рекомендуемые значения; сохраняются только по кнопке «Сохранить».</summary>
+    private void ResetDefaults()
+    {
+        Load(new ProcessingSettings());
+        OnPropertyChanged(string.Empty);
+        Message = "Подставлены значения по умолчанию (Python и worker — встроенные, рядом с приложением). Нажмите «Сохранить параметры обработки».";
+        MessageKind = MessageKind.Info;
     }
 
     public bool CanEdit => _services.Authorization.IsAllowed(Permission.ManageSettings);
     public bool IsReadOnly => !CanEdit;
     public ICommand SaveCommand { get; }
+    public ICommand ResetDefaultsCommand { get; }
     public AsyncCommand ProbeCommand { get; }
+
+    /// <summary>Какой python.exe и каталог worker используются, если поля оставлены пустыми.</summary>
+    public string DetectedPythonPath { get; }
+    public string DetectedWorkerDirectory { get; }
 
     public bool RecursiveScan { get; set; }
     public bool FollowReparsePoints { get; set; }

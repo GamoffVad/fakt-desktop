@@ -553,6 +553,7 @@ public sealed class LlmSettingsViewModel : ObservableObject
             Name = descriptor.DisplayName,
             ProviderId = descriptor.Id,
             BaseUrl = descriptor.DefaultBaseUrl,
+            ModelId = descriptor.DefaultModelId,
             MaxConcurrentRequests = 2,
         };
         foreach (var field in descriptor.Fields)
@@ -567,7 +568,10 @@ public sealed class LlmSettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedProfile));
         Load(draft);
         IsDirty = true;
-        SetMessage($"Новый профиль {descriptor.DisplayName}: подставлены публичные значения по умолчанию. Ключ другого провайдера не переносится.", MessageKind.Info);
+        var model = descriptor.DefaultModelId != null ? $", модель {descriptor.DefaultModelId}" : string.Empty;
+        SetMessage($"Новый профиль {descriptor.DisplayName}: подставлены значения по умолчанию (адрес{model}, ограничения запросов). " +
+                   (descriptor.ApiKey == ApiKeyRequirement.Required ? "Введите API-ключ и нажмите «Сохранить»." : "Нажмите «Сохранить»; ключ для этого провайдера необязателен.") +
+                   " Ключ другого провайдера не переносится.", MessageKind.Info);
     }
 
     private LlmProfile BuildProfile()

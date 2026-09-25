@@ -38,7 +38,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Style="{StaticResource Field}">
                             <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Сервер (имя или IP-адрес)" />
-                            <TextBox Text="{Binding Server, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="например, sql01.corp.local" AutomationProperties.Name="Сервер" />
+                            <TextBox Text="{Binding Server, UpdateSourceTrigger=PropertyChanged}" ui:Ui.Placeholder="localhost — SQL Server этого компьютера" AutomationProperties.Name="Сервер" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Style="{StaticResource Field}">
                             <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Именованный экземпляр" />
@@ -84,13 +84,19 @@
 
                     <TextBlock Style="{StaticResource Text.FieldLabel}" Text="Защита соединения" />
                     <StackPanel Margin="0,4,0,12" IsEnabled="{Binding CanEdit}">
-                        <CheckBox Content="Шифровать соединение (TLS) и проверять сертификат сервера" IsChecked="{Binding EncryptMandatory}" Margin="0,0,0,8" />
+                        <CheckBox Content="Шифровать соединение (TLS, сертификат сервера проверяется)" IsChecked="{Binding EncryptMandatory}" Margin="0,0,0,8" />
                         <CheckBox Content="Доверять сертификату сервера без проверки (только для тестового сервера)" IsChecked="{Binding TrustServerCertificate}" />
                     </StackPanel>
                     <Border Style="{StaticResource Banner.Warning}" Margin="0,0,16,12" Visibility="{Binding SecurityWarning, Converter={StaticResource NullToVisibility}}">
                         <DockPanel>
                             <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Warning}" Size="18" Foreground="{DynamicResource Brush.Status.Warning}" Margin="0,0,8,0" VerticalAlignment="Top" />
                             <TextBlock Text="{Binding SecurityWarning}" TextWrapping="Wrap" />
+                        </DockPanel>
+                    </Border>
+                    <Border Style="{StaticResource Banner.Info}" Margin="0,0,16,12" Visibility="{Binding LocalConnectionNote, Converter={StaticResource NullToVisibility}}">
+                        <DockPanel>
+                            <ui:Icon DockPanel.Dock="Left" Data="{StaticResource Icon.Shield}" Size="18" Margin="0,0,8,0" VerticalAlignment="Top" />
+                            <TextBlock Text="{Binding LocalConnectionNote}" TextWrapping="Wrap" />
                         </DockPanel>
                     </Border>
 
@@ -121,6 +127,8 @@
                                 ToolTip="Подключение, версия сервера, права, ожидаемые столбцы, Full-Text Search и миграции" />
                         <Button Style="{StaticResource Button.Primary}" Content="Сохранить" ui:Ui.Icon="{StaticResource Icon.Save}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
                         <Button Style="{StaticResource Button.Ghost}" Content="Отменить изменения" ui:Ui.Icon="{StaticResource Icon.Reset}" Command="{Binding RevertCommand}" Margin="0,0,8,8" />
+                        <Button Style="{StaticResource Button.Ghost}" Content="Значения по умолчанию" ui:Ui.Icon="{StaticResource Icon.Refresh}" Command="{Binding ResetDefaultsCommand}" Margin="0,0,8,8"
+                                ToolTip="Локальный SQL Server (localhost), база FAKT, вход Windows, стандартные таблицы и столбцы" />
                     </WrapPanel>
                 </StackPanel>
             </Border>

@@ -169,6 +169,7 @@ public static class ProviderCatalog
         new()
         {
             Id = OpenRouter, DisplayName = "OpenRouter", DefaultBaseUrl = "https://openrouter.ai/api/v1",
+            DefaultModelId = "openai/gpt-4.1-mini", // проверена: тест извлечения, определение структуры и обработка (docs/PROVIDERS.md)
             DocumentedModes = OpenAiLikeModes, DocumentationUrl = "https://openrouter.ai/docs",
             Notes = "Строгость схемы зависит от конечного провайдера модели. Ответ HTTP 200 может содержать ошибку в теле.",
         },

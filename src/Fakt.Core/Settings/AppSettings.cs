@@ -43,6 +43,55 @@ public enum SqlEncryptMode
 
 public sealed class DatabaseSettings
 {
+    /// <summary>Сервер по умолчанию — SQL Server на этом компьютере.</summary>
+    public const string DefaultServer = "localhost";
+
+    /// <summary>База по умолчанию; если её нет, она создаётся автоматически вместе со схемой FAKT.</summary>
+    public const string DefaultDatabase = "FAKT";
+
+    /// <summary>
+    /// Подключение по умолчанию: локальный SQL Server, база FAKT, вход Windows. Соединение с локальным сервером идёт
+    /// через общую память (shared memory) или loopback и не выходит за пределы компьютера, поэтому транспорт не
+    /// шифруется: с обязательным шифрованием подключение к серверу с самоподписанным сертификатом отклоняется, а
+    /// отключать проверку сертификата нельзя. Для сетевого сервера шифрование включается автоматически.
+    /// </summary>
+    public static DatabaseSettings LocalDefaults() => new()
+    {
+        Server = DefaultServer,
+        Database = DefaultDatabase,
+        Authentication = SqlAuthMode.Windows,
+        Encrypt = SqlEncryptMode.Optional,
+        TrustServerCertificate = false,
+    };
+
+    /// <summary>Адрес указывает на SQL Server этого компьютера (localhost, ., (local), 127.0.0.1, ::1, имя компьютера).</summary>
+    public static bool IsLocalServer(string server)
+    {
+        var value = (server ?? string.Empty).Trim();
+        if (value.StartsWith("tcp:", StringComparison.OrdinalIgnoreCase) || value.StartsWith("np:", StringComparison.OrdinalIgnoreCase) ||
+            value.StartsWith("lpc:", StringComparison.OrdinalIgnoreCase))
+        {
+            value = value.Substring(value.IndexOf(':') + 1);
+        }
+
+        var cut = value.IndexOfAny(new[] { '\\', ',' });
+        if (cut >= 0)
+        {
+            value = value.Substring(0, cut);
+        }
+
+        value = value.Trim();
+        if (value.Length == 0)
+        {
+            return false;
+        }
+
+        return value == "." || value == "127.0.0.1" || value == "::1" ||
+               value.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals("(local)", StringComparison.OrdinalIgnoreCase) ||
+               value.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase);
+    }
+
     public string Server { get; set; }
 
     /// <summary>Порт TCP; пусто — порт по умолчанию или экземпляр через SQL Browser.</summary>
